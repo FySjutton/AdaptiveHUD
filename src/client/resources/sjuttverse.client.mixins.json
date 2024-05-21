@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "fy17.sjuttverse.mixin.client",
+	"compatibilityLevel": "JAVA_17",
+	"client": [
+		"InGameHudMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
