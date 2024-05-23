@@ -21,27 +21,21 @@ public class SjuttverseClient implements ClientModInitializer {
 	}
 
 	private int parseColor(String colorString) {
-		Color color;
-		if (colorString.startsWith("#")) {
-			colorString = colorString.substring(1);
-		}
-		if (colorString.length() == 7) {
-			colorString = "FF" + colorString;
-		}
-		try {
-			color = Color.decode(colorString);
-			return (color.getAlpha() << 24) | (color.getRed() << 16) | (color.getGreen() << 8) | color.getBlue();
-		} catch (NumberFormatException e) {
-			return 0xC100FFFF;
-		}
+		String[] rgba = colorString.split(",");
+		return (
+			(((int) (Float.parseFloat(rgba[3]) * 255)) << 24) |
+			(Integer.parseInt(rgba[0]) << 16) |
+			(Integer.parseInt(rgba[1]) << 8) |
+			Integer.parseInt(rgba[2])
+		);
 	}
 
 	private void renderCustomHud(DrawContext drawContext, float tickDelta) {
 		MinecraftClient client = MinecraftClient.getInstance();
 		String[][] elements = {
-			// Text, paddingX, paddingY, posX, posY, textColor, boxColor
-			{"Hello!", "5", "5", "50", "200", "#ff0000", "#00ff4808"},
-			{"Goodbye!", "10", "10", "80", "150", "#3103ff", "#ffee0008"}
+			// Text, paddingX, paddingY, posX, posY, textColor, boxColor, shadow
+			{"FPS: {fps}", "5", "5", "50", "200", "255,255,255,1", "0,0,0,0.3", "1"},
+			{"Goodbye!", "10", "10", "80", "150", "0,255,55,0.7", "5,24,255,0.4", "0"}
 		};
 
 		for (String[] x : elements) {
@@ -51,37 +45,23 @@ public class SjuttverseClient implements ClientModInitializer {
 				Integer.parseInt(x[3]) + client.textRenderer.getWidth(x[0]) + 2 * Integer.parseInt(x[1]),
 				Integer.parseInt(x[4]) + client.textRenderer.fontHeight + 2 * Integer.parseInt(x[2]),
 				parseColor(x[6])
-//					(int) Long.parseLong(x[6].substring(1), 16) | 0xFF000000
-			);
-			drawContext.drawText(
-				client.textRenderer,
-				x[0],
-				Integer.parseInt(x[3]) + Integer.parseInt(x[1]),
-				Integer.parseInt(x[4]) + Integer.parseInt(x[2]) + 1,
-				Integer.parseInt(x[5].substring(1), 16) | 0xFF000000,
-				false
 			);
 
-//			String text = "Hello, World!";
-//
-//			int textWidth = client.textRenderer.getWidth(text);
-//			int textHeight = client.textRenderer.fontHeight;
-//
-//			int paddingX = 5;
-//			int paddingY = 20;
-//
-//			int boxX = 50;
-//			int boxY = 5;
-//
-//			int boxColor = 0x90000000;
-//			int textColor = 0xFFFFFF;
-//
-//			drawContext.fill(boxX, boxY, boxX + textWidth + 2 * paddingX, boxY + textHeight + 2 * paddingY, boxColor);
-//
-//			int textX = boxX + paddingX;
-//			int textY = boxY + paddingY + 1;
-//
-//			drawContext.drawText(client.textRenderer, text, textX, textY, textColor, false);
+			drawContext.drawText(
+				client.textRenderer,
+				replaceVariables(x[0]),
+				Integer.parseInt(x[3]) + Integer.parseInt(x[1]),
+				Integer.parseInt(x[4]) + Integer.parseInt(x[2]) + 1,
+				parseColor(x[5]),
+				Boolean.parseBoolean(x[7])
+			);
 		}
+	}
+
+	private String replaceVariables(String text) {
+		text = text.replace("{fps}", String.valueOf(
+				MinecraftClient.getInstance().fpsDebugString.split(" ")[0]
+		));
+		return text;
 	}
 }
