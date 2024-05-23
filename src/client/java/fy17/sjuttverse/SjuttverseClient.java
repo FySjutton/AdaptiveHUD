@@ -20,34 +20,47 @@ public class SjuttverseClient implements ClientModInitializer {
 		HudRenderCallback.EVENT.register(this::renderCustomHud);
 	}
 
+	private int parseColor(String colorString) {
+		Color color;
+		if (colorString.startsWith("#")) {
+			colorString = colorString.substring(1);
+		}
+		if (colorString.length() == 7) {
+			colorString = "FF" + colorString;
+		}
+		try {
+			color = Color.decode(colorString);
+			return (color.getAlpha() << 24) | (color.getRed() << 16) | (color.getGreen() << 8) | color.getBlue();
+		} catch (NumberFormatException e) {
+			return 0xC100FFFF;
+		}
+	}
+
 	private void renderCustomHud(DrawContext drawContext, float tickDelta) {
 		MinecraftClient client = MinecraftClient.getInstance();
-		if (client != null && client.player != null) {
-			String[][] elements = {
-					// Text, paddingX, paddingY, posX, posY, textColor, boxColor
-					{"Hello!", "5", "5", "50", "200", "#00ff0d", "#ff00e6"},
-					{"Goodbye!", "10", "10", "80", "150", "#ffffff", "#00000085"}
-			};
+		String[][] elements = {
+			// Text, paddingX, paddingY, posX, posY, textColor, boxColor
+			{"Hello!", "5", "5", "50", "200", "#ff0000", "#00ff4808"},
+			{"Goodbye!", "10", "10", "80", "150", "#3103ff", "#ffee0008"}
+		};
 
-			for (String[] x : elements) {
-				drawContext.fill(
-					0,//Integer.parseInt(x[3]),
-					0,//Integer.parseInt(x[4]),
-					5,
-					//Integer.parseInt(x[3]) + client.textRenderer.getWidth(x[0]) + 2 * Integer.parseInt(x[1]),
-					5,//Integer.parseInt(x[4]) + client.textRenderer.fontHeight + 2 * Integer.parseInt(x[2]),
-					//(int) Long.parseLong(x[6].substring(1), 16)
-						0xff00e6
-				);
-				drawContext.drawText(
-					client.textRenderer,
-					x[0],
-					Integer.parseInt(x[3]) + Integer.parseInt(x[1]),
-					Integer.parseInt(x[4]) + Integer.parseInt(x[2]) + 1,
-					(int) Long.parseLong(x[5].substring(1), 16),
-					false
-				);
-			}
+		for (String[] x : elements) {
+			drawContext.fill(
+				Integer.parseInt(x[3]),
+				Integer.parseInt(x[4]),
+				Integer.parseInt(x[3]) + client.textRenderer.getWidth(x[0]) + 2 * Integer.parseInt(x[1]),
+				Integer.parseInt(x[4]) + client.textRenderer.fontHeight + 2 * Integer.parseInt(x[2]),
+				parseColor(x[6])
+//					(int) Long.parseLong(x[6].substring(1), 16) | 0xFF000000
+			);
+			drawContext.drawText(
+				client.textRenderer,
+				x[0],
+				Integer.parseInt(x[3]) + Integer.parseInt(x[1]),
+				Integer.parseInt(x[4]) + Integer.parseInt(x[2]) + 1,
+				Integer.parseInt(x[5].substring(1), 16) | 0xFF000000,
+				false
+			);
 
 //			String text = "Hello, World!";
 //
