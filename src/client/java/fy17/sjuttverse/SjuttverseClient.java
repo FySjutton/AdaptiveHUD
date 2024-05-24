@@ -5,10 +5,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
-import java.awt.*;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-
 import static fy17.sjuttverse.Sjuttverse.LOGGER;
 
 public class SjuttverseClient implements ClientModInitializer {
@@ -32,36 +28,33 @@ public class SjuttverseClient implements ClientModInitializer {
 
 	private void renderCustomHud(DrawContext drawContext, float tickDelta) {
 		MinecraftClient client = MinecraftClient.getInstance();
+		VariableParser parser = new VariableParser();
 		String[][] elements = {
 			// Text, paddingX, paddingY, posX, posY, textColor, boxColor, shadow
-			{"FPS: {fps}", "5", "5", "50", "200", "255,255,255,1", "0,0,0,0.3", "1"},
-			{"Goodbye!", "10", "10", "80", "150", "0,255,55,0.7", "5,24,255,0.4", "0"}
+			{"FPS: ${fps}, light sky ${sky_light} light block ${block_light}", "5", "5", "50", "200", "255,255,255,1", "0,0,0,0.3", "true"},
+			{"Position: X: ${x:R4}, Y: ${y:R3}, Z: ${z:D2}", "10", "10", "80", "150", "0,255,55,0.7", "5,24,255,0.4", "true"},
+			{"Biome: ${biome}", "10", "10", "0", "50", "255,255,255,1", "0,0,0,0.3", "true"}
 		};
+//		${varName[:(Rantaldecimaler|)]
 
 		for (String[] x : elements) {
+			String parsedText = parser.parseVariable(x[0]);
 			drawContext.fill(
 				Integer.parseInt(x[3]),
 				Integer.parseInt(x[4]),
-				Integer.parseInt(x[3]) + client.textRenderer.getWidth(x[0]) + 2 * Integer.parseInt(x[1]),
+				Integer.parseInt(x[3]) + client.textRenderer.getWidth(parsedText) + 2 * Integer.parseInt(x[1]),
 				Integer.parseInt(x[4]) + client.textRenderer.fontHeight + 2 * Integer.parseInt(x[2]),
 				parseColor(x[6])
 			);
 
 			drawContext.drawText(
 				client.textRenderer,
-				replaceVariables(x[0]),
+				parsedText,
 				Integer.parseInt(x[3]) + Integer.parseInt(x[1]),
 				Integer.parseInt(x[4]) + Integer.parseInt(x[2]) + 1,
 				parseColor(x[5]),
 				Boolean.parseBoolean(x[7])
 			);
 		}
-	}
-
-	private String replaceVariables(String text) {
-		text = text.replace("{fps}", String.valueOf(
-				MinecraftClient.getInstance().fpsDebugString.split(" ")[0]
-		));
-		return text;
 	}
 }
