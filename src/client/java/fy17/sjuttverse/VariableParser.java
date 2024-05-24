@@ -5,6 +5,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.LightType;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -12,52 +14,80 @@ import java.util.regex.Pattern;
 
 import java.text.DecimalFormat;
 
+import java.lang.reflect.Method;
+
 public class VariableParser {
-    private final Map<String, String> variables;
     PlayerEntity player = MinecraftClient.getInstance().player;
-
-    public VariableParser() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        BlockPos playerPos = client.player.getBlockPos();
-
-        this.variables = new HashMap<>();
-        this.variables.put("fps", client.fpsDebugString.split(" ")[0]);
-        this.variables.put("x", String.valueOf(player.getX()));
-        this.variables.put("y", String.valueOf(player.getY()));
-        this.variables.put("z", String.valueOf(player.getZ()));
-        this.variables.put("sky_light", String.valueOf(client.world.getLightLevel(LightType.SKY, playerPos)));
-        this.variables.put("block_light", String.valueOf(client.world.getLightLevel(LightType.BLOCK, playerPos)));
-        this.variables.put("biome", String.valueOf(client.world.getBiome(playerPos).getKey().get().getValue()));
-    }
+    Class<?> variablesClass = Variables.class;
 
     public String parseVariable(String text) {
-        Pattern pattern = Pattern.compile("\\$\\{(\\w+)(?::(\\w[\\da-zA-Z,]+))?\\}");
+        Pattern pattern = Pattern.compile("\\$\\{(\\w+)(?::((?:\\w{1,5}=\\w{1,7})(?:,\\w{1,5}=\\w{1,7})*))?\\}");
         Matcher matcher = pattern.matcher(text);
         StringBuffer result = new StringBuffer();
 
         while (matcher.find()) {
             String varName = matcher.group(1);
             String attributes = matcher.group(2);
-            String replacement = variables.getOrDefault(varName, "${" + varName + "}");
 
-            if (attributes != null) {
-                for (String x : attributes.split(",")) {
-                    if (x.startsWith("R")) {
-                        DecimalFormat decimalFormat = new DecimalFormat();
-                        decimalFormat.setMinimumFractionDigits(Integer.parseInt(x.substring(1)));
-                        decimalFormat.setMaximumFractionDigits(Integer.parseInt(x.substring(1)));
-                        replacement = decimalFormat.format(Float.parseFloat(replacement));
+            try {
+                Method method = variablesClass.getMethod("get_" + varName);
+                Variables variables = new Variables();
+
+                String replacement = String.valueOf(method.invoke(variables));
+                if (attributes != null) {
+                    for (String x : attributes.split(",")) {
+                        String[] settValues = x.split("=");
+                        if (settValues[0].equals("R")) {
+                            DecimalFormat decimalFormat = new DecimalFormat();
+                            decimalFormat.setMinimumFractionDigits(Integer.parseInt(settValues[1]));
+                            decimalFormat.setMaximumFractionDigits(Integer.parseInt(settValues[1]));
+                            replacement = decimalFormat.format(Float.parseFloat(replacement));
+                        } else if (settValues[0].equals("S")) {
+                            if (Boolean.parseBoolean(settValues[1])) {
+                                replacement = replacement.split(":")[1];
+                            }
+                        }
                     }
                 }
-            }
-            try {
-                matcher.appendReplacement(result, replacement);
-            } catch(Exception e) {
-                matcher.appendReplacement(result, "#ERROR!");
-            }
-        }
-        matcher.appendTail(result);
 
-        return result.toString();
+                matcher.appendReplacement(result, replacement);
+
+
+            } catch (Exception e) {
+                matcher.appendReplacement(result, "#Error!");
+//                System.out.println(e);
+            }
+
+
+//            Variables variables = new Variables(); // Create an instance of Variables
+//            String replacement = (String) variables.getClass().getDeclaredMethod("getFPS").invoke(variables);
+
+//            String replacement = variables.getOrDefault(varName, "${" + varName + "}");
+
+//            if (attributes != null) {
+//                for (String x : attributes.split(",")) {
+//                    String[] settValues = x.split("=");
+////                    System.out.println(Arrays.toString(settValues));
+//                    if (settValues[0].equals("R")) {
+//                        DecimalFormat decimalFormat = new DecimalFormat();
+//                        decimalFormat.setMinimumFractionDigits(Integer.parseInt(settValues[1]));
+//                        decimalFormat.setMaximumFractionDigits(Integer.parseInt(settValues[1]));
+//                        replacement = decimalFormat.format(Float.parseFloat(replacement));
+//                    } else if (settValues[0].equals("S")) {
+//                        if (Boolean.parseBoolean(settValues[1])) {
+//                            replacement = replacement.split(":")[1];
+//                        }
+//                    }
+//                }
+//            }
+//            try {
+//                matcher.appendReplacement(result, replacement);
+//            } catch(Exception e) {
+//                matcher.appendReplacement(result, "#ERROR!");
+//            }
+        }
+//        matcher.appendTail(result);
+        matcher.appendTail(result);
+        return String.valueOf(result);
     }
 }

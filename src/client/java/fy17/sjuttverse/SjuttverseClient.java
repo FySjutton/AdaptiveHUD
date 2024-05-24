@@ -31,9 +31,9 @@ public class SjuttverseClient implements ClientModInitializer {
 		VariableParser parser = new VariableParser();
 		String[][] elements = {
 			// Text, paddingX, paddingY, posX, posY, textColor, boxColor, shadow
-			{"FPS: ${fps}, light sky ${sky_light} light block ${block_light}", "5", "5", "50", "200", "255,255,255,1", "0,0,0,0.3", "true"},
-			{"Position: X: ${x:R4}, Y: ${y:R3}, Z: ${z:D2}", "10", "10", "80", "150", "0,255,55,0.7", "5,24,255,0.4", "true"},
-			{"Biome: ${biome}", "10", "10", "0", "50", "255,255,255,1", "0,0,0,0.3", "true"}
+			{"FPS: ${fps}, light sky ${sky_light} light block ${block_light}", "5", "5", "15", "0", "255,255,255,1", "0,0,0,0.3", "true"},
+			{"Position: X: ${x:R=4}, Y: ${y:R=3}, Z: ${z:D=2}", "10", "10", "20", "25", "0,255,55,0.7", "5,24,255,0.4", "true"},
+			{"Biome: ${biome:S=true}", "10", "10", "0", "50", "255,255,255,1", "0,0,0,0.3", "true"}
 		};
 //		${varName[:(Rantaldecimaler|)]
 
