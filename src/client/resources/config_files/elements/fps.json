@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+
+  "value": "FPS: ${fps}",
+  "textColor": "255,255,255,1",
+  "posX": 0,
+  "posY": 0,
+  "shadow": true,
+
+  "background": {
+    "enabled": true,
+    "paddingX": 5,
+    "paddingY": 5,
+    "backgroundColor": "0,0,0,0.3"
+  }
+}
