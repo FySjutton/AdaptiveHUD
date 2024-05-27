@@ -22,7 +22,7 @@
 			"fy17.sjuttverse.SjuttverseClient"
 		],
 		"modmenu": [
-			"ModMenuIntegration"
+			"fy17.sjuttverse.ModMenuIntegration"
 		]
 	},
 	"mixins": [
