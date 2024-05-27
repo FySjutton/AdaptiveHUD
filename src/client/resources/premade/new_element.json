@@ -1,6 +1,7 @@
 {
   "enabled": true,
 
+  "name": "newElement",
   "value": "Empty",
   "textColor": "255,255,255,1",
   "posX": 0,
