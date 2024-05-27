@@ -8,19 +8,32 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.screen.ScreenHandler;
 import org.lwjgl.glfw.GLFW;
 
-import static fy17.sjuttverse.ConfigFiles.elementArray;
+import java.util.Iterator;
+
+import static fy17.sjuttverse.Sjuttverse.LOGGER;
 
 public class SjuttverseClient implements ClientModInitializer {
 
-	public static final KeyBinding myKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-			"key.sjuttverse.reloadelements", // Keybind identifier
-			InputUtil.Type.KEYSYM, // Key type
-			GLFW.GLFW_KEY_Z, // Default key
-			"category.sjuttverse" // Keybind category
+	public static final KeyBinding reloadElementsKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+			// TRANSLATION KEYS SHOULD BE USED; RESOURCE FILES; CHANGE: https://fabricmc.net/wiki/tutorial:keybinds
+			"Reload Elements",
+			InputUtil.Type.KEYSYM,
+			GLFW.GLFW_KEY_UNKNOWN,
+			"Sjuttverse"
+	));
+	public static final KeyBinding openConfigKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+			// TRANSLATION KEYS SHOULD BE USED; RESOURCE FILES; CHANGE: https://fabricmc.net/wiki/tutorial:keybinds
+			"Open Config",
+			InputUtil.Type.KEYSYM,
+			GLFW.GLFW_KEY_C,
+			"Sjuttverse"
 	));
 
 	@Override
@@ -28,10 +41,17 @@ public class SjuttverseClient implements ClientModInitializer {
 		new ConfigFiles().CheckDefaultConfigs();
 		new ConfigFiles().GenerateElementArray();
 		HudRenderCallback.EVENT.register(this::renderCustomHud);
+		new ConfigScreen();
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			if (myKeyBinding.wasPressed()) {
+			if (reloadElementsKeyBind.wasPressed()) {
 				new ConfigFiles().GenerateElementArray();
+			}
+			if (openConfigKeyBind.wasPressed()) {
+				LOGGER.info("Loading?");
+//				new ConfigScreen().init();
+
+//				MinecraftClient.getInstance().player.openHandledScreen((NamedScreenHandlerFactory) new ConfigScreen());
 			}
 		});
 	}
@@ -50,36 +70,46 @@ public class SjuttverseClient implements ClientModInitializer {
 		MinecraftClient client = MinecraftClient.getInstance();
 		VariableParser parser = new VariableParser();
 
-		for (JsonElement element : elementArray) {
-			JsonObject x = element.getAsJsonObject();
-			if (x.get("enabled").getAsBoolean()) {
-				String parsedText = parser.parseVariable(x.get("value").getAsString());
+		Iterator<JsonElement> iterator = ConfigFiles.elementArray.iterator();
+		while (iterator.hasNext()) {
+			JsonElement element = iterator.next();
+			try {
+				JsonObject x = element.getAsJsonObject();
+				if (x.get("enabled").getAsBoolean()) {
+					String parsedText = parser.parseVariable(x.get("value").getAsString());
 
-				boolean loadBackground = x.get("background").getAsJsonObject().get("enabled").getAsBoolean();
-				int paddingY = 0;
-				int paddingX = 0;
+					boolean loadBackground = x.get("background").getAsJsonObject().get("enabled").getAsBoolean();
+					int paddingY = 0;
+					int paddingX = 0;
 
-				if (loadBackground) {
-					paddingX = x.get("background").getAsJsonObject().get("paddingX").getAsInt();
-					paddingY = x.get("background").getAsJsonObject().get("paddingY").getAsInt();
+					if (loadBackground) {
+						paddingX = x.get("background").getAsJsonObject().get("paddingX").getAsInt();
+						paddingY = x.get("background").getAsJsonObject().get("paddingY").getAsInt();
 
-					drawContext.fill(
-						x.get("posX").getAsInt(),
-						x.get("posY").getAsInt(),
-						x.get("posX").getAsInt() + client.textRenderer.getWidth(parsedText) + 2 * paddingX,
-						x.get("posY").getAsInt() + client.textRenderer.fontHeight + 2 * paddingY,
-						parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
+						drawContext.fill(
+								x.get("posX").getAsInt(),
+								x.get("posY").getAsInt(),
+								x.get("posX").getAsInt() + client.textRenderer.getWidth(parsedText) + 2 * paddingX,
+								x.get("posY").getAsInt() + client.textRenderer.fontHeight + 2 * paddingY,
+								parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
+						);
+					}
+
+					drawContext.drawText(
+							client.textRenderer,
+							parsedText,
+							x.get("posX").getAsInt() + paddingX,
+							x.get("posY").getAsInt() + paddingY + 1,
+							parseColor(x.get("textColor").getAsString()),
+							x.get("shadow").getAsBoolean()
 					);
 				}
-
-				drawContext.drawText(
-					client.textRenderer,
-					parsedText,
-					x.get("posX").getAsInt() + paddingX,
-					x.get("posY").getAsInt() + paddingY + 1,
-					parseColor(x.get("textColor").getAsString()),
-					x.get("shadow").getAsBoolean()
-				);
+			} catch (Exception e) {
+				LOGGER.error("Error encountered while loading " + element.getAsJsonObject().get("name") + "!");
+				LOGGER.error("Started unloading the file...");
+				iterator.remove();
+				LOGGER.error("Element has been removed... Please fix the corrupted file manually, and then restart your game. This most likely means a required key is missing. Do not edit element files manually unless you know what you're doing. Error:");
+				LOGGER.error(String.valueOf(e));
 			}
 		}
 	}

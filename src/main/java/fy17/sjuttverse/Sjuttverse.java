@@ -1,5 +1,7 @@
 package fy17.sjuttverse;
 
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
+import com.terraformersmc.modmenu.api.ModMenuApi;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -18,4 +20,11 @@ public class Sjuttverse implements ModInitializer {
 		// Proceed with mild caution.
 
 	}
+
+//	public static class ModMenuIntegration implements ModMenuApi {
+//		@Override
+//		public ConfigScreenFactory<?> getModConfigScreenFactory() {
+//			return parent -> new ConfigScreen();
+//		}
+//	}
 }
