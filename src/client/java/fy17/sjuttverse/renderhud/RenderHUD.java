@@ -59,13 +59,17 @@ public class RenderHUD {
         }
     }
 
-    private int parseColor(String colorString) {
+    public int parseColor(String colorString) {
         String[] rgba = colorString.split(",");
-        return (
-            (((int) (Float.parseFloat(rgba[3]) * 255)) << 24) |
-            (Integer.parseInt(rgba[0]) << 16) |
-            (Integer.parseInt(rgba[1]) << 8) |
-            Integer.parseInt(rgba[2])
-        );
+        try {
+            return (
+                    (((int) (Float.parseFloat(rgba[3]) * 255)) << 24) |
+                            (Integer.parseInt(rgba[0]) << 16) |
+                            (Integer.parseInt(rgba[1]) << 8) |
+                            Integer.parseInt(rgba[2])
+            );
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }

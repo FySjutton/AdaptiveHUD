@@ -1,31 +1,55 @@
 package fy17.sjuttverse.configscreen;
 
+import com.google.gson.JsonElement;
+import fy17.sjuttverse.ConfigFiles;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.text.Text;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
+
+import static fy17.sjuttverse.ConfigFiles.elementArray;
+import static fy17.sjuttverse.Sjuttverse.LOGGER;
 
 public class ScrollableList extends ScrollableWidget {
-    private final List<String> stringList;
     private final List<ButtonWidget> buttonList;
-    private final int buttonHeight;
-    private final int buttonMargin;
+    private final int buttonHeight = 20;
+    private final int buttonMargin = 5;
 
-    public ScrollableList(int x, int y, int width, int height, List<String> stringList, List<ButtonWidget> buttonList, int buttonHeight, int buttonMargin) {
-        super(x, y, width, height, Text.literal("Elements"));
-        this.stringList = stringList;
-        this.buttonList = buttonList;
-        this.buttonHeight = buttonHeight;
-        this.buttonMargin = buttonMargin;
+    public ScrollableList(int height, int width) {
+        super(width / 2, height / 2, width / 2 - 10, height / 2 - 5, Text.literal("Elements"));
+
+        buttonList = new ArrayList<>();
+
+        int yPosition = height / 2 + buttonMargin;
+
+
+        Iterator<JsonElement> iterator = ConfigFiles.elementArray.iterator();
+        while (iterator.hasNext()) {
+            JsonElement element = iterator.next();
+            try {
+                ButtonWidget button = ButtonWidget.builder(Text.literal(element.getAsJsonObject().get("name").getAsString()), btn -> handleButtonClick(element.getAsJsonObject().get("name").getAsString()))
+                        .dimensions(width / 2 + 5, yPosition, width / 3, buttonHeight)
+                        .build();
+                buttonList.add(button);
+                yPosition += buttonHeight + buttonMargin;
+            } catch (Exception e) {
+                LOGGER.error("Error encountered while loading " + element.getAsJsonObject().get("name") + "!");
+                LOGGER.error("Started unloading the file...");
+                iterator.remove();
+                LOGGER.error("Element has been removed... Please fix the corrupted file manually, and then restart your game. This most likely means a required key is missing. Do not edit element files manually unless you know what you're doing. Error:");
+                LOGGER.error(String.valueOf(e));
+            }
+        }
     }
 
     @Override
     protected int getContentsHeight() {
-        return stringList.size() * (buttonHeight + buttonMargin);
+        return buttonList.size() * (buttonHeight + buttonMargin);
     }
 
     @Override
@@ -43,7 +67,9 @@ public class ScrollableList extends ScrollableWidget {
             int buttonTop = buttonWidget.getY();
             int buttonBottom = buttonTop + buttonHeight;
 
-            buttonWidget.render(context, mouseX, (int) adjustedMouseY, delta);
+            if (buttonBottom >= startY && buttonTop <= endY) {
+                buttonWidget.render(context, mouseX, (int) adjustedMouseY, delta);
+            }
         }
     }
 
@@ -51,6 +77,7 @@ public class ScrollableList extends ScrollableWidget {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         double adjustedMouseY = mouseY + getScrollY();
         for (ButtonWidget buttonWidget : buttonList) {
+
             if (buttonWidget.isMouseOver(mouseX, adjustedMouseY)) {
                 buttonWidget.onClick(mouseX, adjustedMouseY);
                 return true;
@@ -61,5 +88,9 @@ public class ScrollableList extends ScrollableWidget {
 
     @Override
     protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+    }
+
+    private void handleButtonClick(String str) {
+        System.out.println("Button clicked: " + str);
     }
 }

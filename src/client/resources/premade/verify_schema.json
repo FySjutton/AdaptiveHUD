@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["enabled", "name", "value", "textColor", "posX", "posY", "shadow", "background"],
+  "properties": {
+    "enabled": { "type": "boolean" },
+    "name": { "type": "string" },
+    "value": { "type": "string" },
+    "textColor": {
+      "type": "string",
+      "pattern": "^\\d{1,3},\\d{1,3},\\d{1,3},(0|0\\.\\d+|1)$"
+    },
+    "posX": { "type": "integer" },
+    "posY": { "type": "integer" },
+    "shadow": { "type": "boolean" },
+    "background": {
+      "type": "object",
+      "required": ["enabled", "paddingX", "paddingY", "backgroundColor"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "paddingX": { "type": "integer" },
+        "paddingY": { "type": "integer" },
+        "backgroundColor": {
+          "type": "string",
+          "pattern": "^\\d{1,3},\\d{1,3},\\d{1,3},(0|0\\.\\d+|1)$"
+        }
+      }
+    }
+  }
+}
