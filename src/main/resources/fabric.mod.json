@@ -3,13 +3,12 @@
 	"id": "sjuttverse",
 	"version": "${version}",
 	"name": "Sjuttverse",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "A highly configurable mod which adds HUD elements to your screen! Like a little mini F3 visible at all times!",
 	"authors": [
-		"Me!"
+		"Fy17"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"issues": "https://discord.gg/6gBT2CgqQj"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/sjuttverse/icon.png",
@@ -39,9 +38,10 @@
 		"modmenu": ">=9.0.0"
 	},
 	"custom": {
-		"modmenu:api": "ModMenuIntegration"
-	},
-	"suggests": {
-		"another-mod": "*"
+		"sjuttverse": {
+			"links": {
+				"sjuttverse.discord": "https://discord.gg/V2BXH2q6Rq"
+			}
+		}
 	}
 }
