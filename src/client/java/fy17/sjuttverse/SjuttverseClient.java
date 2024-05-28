@@ -1,23 +1,15 @@
 package fy17.sjuttverse;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import fy17.sjuttverse.configscreen.ConfigScreen;
+import fy17.sjuttverse.renderhud.RenderHUD;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.ScreenHandler;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.Iterator;
-
-import static fy17.sjuttverse.RenderHUD.*;
 import static fy17.sjuttverse.Sjuttverse.LOGGER;
 
 public class SjuttverseClient implements ClientModInitializer {

@@ -1,4 +1,4 @@
-package fy17.sjuttverse;
+package fy17.sjuttverse.renderhud;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;

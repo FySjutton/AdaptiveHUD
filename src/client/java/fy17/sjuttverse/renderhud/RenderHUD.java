@@ -1,7 +1,8 @@
-package fy17.sjuttverse;
+package fy17.sjuttverse.renderhud;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import fy17.sjuttverse.ConfigFiles;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
