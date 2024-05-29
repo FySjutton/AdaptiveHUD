@@ -4,10 +4,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import fy17.sjuttverse.ConfigFiles;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.Iterator;
 
+import static fy17.sjuttverse.ConfigFiles.configFile;
 import static fy17.sjuttverse.Sjuttverse.LOGGER;
 
 public class RenderHUD {
@@ -15,16 +18,23 @@ public class RenderHUD {
         MinecraftClient client = MinecraftClient.getInstance();
         VariableParser parser = new VariableParser();
 
+        drawContext.getMatrices().push();
+        Float scale = configFile.getAsJsonObject().get("default_size").getAsFloat();
+        drawContext.getMatrices().scale(scale, scale, 1);
+
         for (JsonElement element : ConfigFiles.elementArray) {
             JsonObject x = element.getAsJsonObject();
             if (x.get("enabled").getAsBoolean()) {
                 String parsedText = parser.parseVariable(x.get("value").getAsString());
 
-                boolean loadBackground = x.get("background").getAsJsonObject().get("enabled").getAsBoolean();
                 int paddingY = 0;
                 int paddingX = 0;
 
-                if (loadBackground) {
+                if (x.has("advanced")) {
+                    drawContext.getMatrices().scale(0.5f, 0.5f, 1);
+                }
+
+                if (x.get("background").getAsJsonObject().get("enabled").getAsBoolean()) {
                     paddingX = x.get("background").getAsJsonObject().get("paddingX").getAsInt();
                     paddingY = x.get("background").getAsJsonObject().get("paddingY").getAsInt();
 
@@ -45,6 +55,7 @@ public class RenderHUD {
                         parseColor(x.get("textColor").getAsString()),
                         x.get("shadow").getAsBoolean()
                 );
+                drawContext.getMatrices().pop();
             }
         }
     }

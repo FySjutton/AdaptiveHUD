@@ -1,6 +1,7 @@
 package fy17.sjuttverse;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,6 +27,7 @@ import static fy17.sjuttverse.Sjuttverse.LOGGER;
 
 public class ConfigFiles {
     public static List<JsonElement> elementArray = new ArrayList<>();
+    public static JsonElement configFile;
     public void CheckDefaultConfigs() {
         Path configDir = FabricLoader.getInstance().getConfigDir();
 
@@ -41,6 +43,13 @@ public class ConfigFiles {
                 LOGGER.error("[CRITICAL] - CONFIGURATION LOADING FAILED.");
                 throw new RuntimeException(e);
             }
+        }
+
+        try {
+            configFile = JsonParser.parseReader(new FileReader(configDir + "/Sjuttverse/config.json"));
+        } catch (FileNotFoundException e) {
+            LOGGER.error("[CRITICAL] - CONFIGURATION LOADING FAILED.");
+            throw new RuntimeException(e);
         }
     }
 
