@@ -15,46 +15,36 @@ public class RenderHUD {
         MinecraftClient client = MinecraftClient.getInstance();
         VariableParser parser = new VariableParser();
 
-        Iterator<JsonElement> iterator = ConfigFiles.elementArray.iterator();
-        while (iterator.hasNext()) {
-            JsonElement element = iterator.next();
-            try {
-                JsonObject x = element.getAsJsonObject();
-                if (x.get("enabled").getAsBoolean()) {
-                    String parsedText = parser.parseVariable(x.get("value").getAsString());
+        for (JsonElement element : ConfigFiles.elementArray) {
+            JsonObject x = element.getAsJsonObject();
+            if (x.get("enabled").getAsBoolean()) {
+                String parsedText = parser.parseVariable(x.get("value").getAsString());
 
-                    boolean loadBackground = x.get("background").getAsJsonObject().get("enabled").getAsBoolean();
-                    int paddingY = 0;
-                    int paddingX = 0;
+                boolean loadBackground = x.get("background").getAsJsonObject().get("enabled").getAsBoolean();
+                int paddingY = 0;
+                int paddingX = 0;
 
-                    if (loadBackground) {
-                        paddingX = x.get("background").getAsJsonObject().get("paddingX").getAsInt();
-                        paddingY = x.get("background").getAsJsonObject().get("paddingY").getAsInt();
+                if (loadBackground) {
+                    paddingX = x.get("background").getAsJsonObject().get("paddingX").getAsInt();
+                    paddingY = x.get("background").getAsJsonObject().get("paddingY").getAsInt();
 
-                        drawContext.fill(
-                                x.get("posX").getAsInt(),
-                                x.get("posY").getAsInt(),
-                                x.get("posX").getAsInt() + client.textRenderer.getWidth(parsedText) + 2 * paddingX,
-                                x.get("posY").getAsInt() + client.textRenderer.fontHeight + 2 * paddingY,
-                                parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
-                        );
-                    }
-
-                    drawContext.drawText(
-                            client.textRenderer,
-                            parsedText,
-                            x.get("posX").getAsInt() + paddingX,
-                            x.get("posY").getAsInt() + paddingY + 1,
-                            parseColor(x.get("textColor").getAsString()),
-                            x.get("shadow").getAsBoolean()
+                    drawContext.fill(
+                            x.get("posX").getAsInt(),
+                            x.get("posY").getAsInt(),
+                            x.get("posX").getAsInt() + client.textRenderer.getWidth(parsedText) + 2 * paddingX,
+                            x.get("posY").getAsInt() + client.textRenderer.fontHeight + 2 * paddingY,
+                            parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
                     );
                 }
-            } catch (Exception e) {
-                LOGGER.error("Error encountered while loading " + element.getAsJsonObject().get("name") + "!");
-                LOGGER.error("Started unloading the file...");
-                iterator.remove();
-                LOGGER.error("Element has been removed... Please fix the corrupted file manually, and then restart your game. This most likely means a required key is missing. Do not edit element files manually unless you know what you're doing. Error:");
-                LOGGER.error(String.valueOf(e));
+
+                drawContext.drawText(
+                        client.textRenderer,
+                        parsedText,
+                        x.get("posX").getAsInt() + paddingX,
+                        x.get("posY").getAsInt() + paddingY + 1,
+                        parseColor(x.get("textColor").getAsString()),
+                        x.get("shadow").getAsBoolean()
+                );
             }
         }
     }

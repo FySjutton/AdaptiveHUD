@@ -22,28 +22,16 @@ public class ScrollableList extends ScrollableWidget {
 
     public ScrollableList(int height, int width) {
         super(width / 2, height / 2, width / 2 - 10, height / 2 - 5, Text.literal("Elements"));
-
         buttonList = new ArrayList<>();
-
         int yPosition = height / 2 + buttonMargin;
 
-
         Iterator<JsonElement> iterator = ConfigFiles.elementArray.iterator();
-        while (iterator.hasNext()) {
-            JsonElement element = iterator.next();
-            try {
-                ButtonWidget button = ButtonWidget.builder(Text.literal(element.getAsJsonObject().get("name").getAsString()), btn -> handleButtonClick(element.getAsJsonObject().get("name").getAsString()))
-                        .dimensions(width / 2 + 5, yPosition, width / 3, buttonHeight)
-                        .build();
-                buttonList.add(button);
-                yPosition += buttonHeight + buttonMargin;
-            } catch (Exception e) {
-                LOGGER.error("Error encountered while loading " + element.getAsJsonObject().get("name") + "!");
-                LOGGER.error("Started unloading the file...");
-                iterator.remove();
-                LOGGER.error("Element has been removed... Please fix the corrupted file manually, and then restart your game. This most likely means a required key is missing. Do not edit element files manually unless you know what you're doing. Error:");
-                LOGGER.error(String.valueOf(e));
-            }
+        for (JsonElement element : elementArray) {
+            ButtonWidget button = ButtonWidget.builder(Text.literal(element.getAsJsonObject().get("name").getAsString()), btn -> handleButtonClick(element.getAsJsonObject().get("name").getAsString()))
+                    .dimensions(width / 2 + 5, yPosition, width / 3, buttonHeight)
+                    .build();
+            buttonList.add(button);
+            yPosition += buttonHeight + buttonMargin;
         }
     }
 
