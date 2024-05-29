@@ -1,22 +1,28 @@
 package fy17.sjuttverse;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import fy17.sjuttverse.renderhud.RenderHUD;
+
+import com.networknt.schema.JsonSchema;
+import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SpecVersion;
+import com.networknt.schema.ValidationMessage;
+
 import net.fabricmc.loader.api.FabricLoader;
 import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import java.io.File;
+import java.util.Set;
 
 import static fy17.sjuttverse.Sjuttverse.LOGGER;
 
@@ -44,23 +50,24 @@ public class ConfigFiles {
         elementArray.clear();
         File[] files = new File(FabricLoader.getInstance().getConfigDir() + "/Sjuttverse/elements").listFiles();
 
+        ObjectMapper mapper = new ObjectMapper();
         for (File file : files) {
-            JsonElement jsonElement = null;
+            File schemaFile = new File("../src/client/resources/premade/verify_schema.json");
+
+            JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4);
+            JsonSchema jsonSchema = factory.getSchema(schemaFile.toURI());
             try {
-                JsonSchemaFactory schemaFactory = JsonSchemaFactory.getInstance();
-                JsonSchema schema = schemaFactory.getSchema(new FileReader("path/to/your/schema.json"));
-
-                // Load the JSON data you want to validate
-                FileReader fileReader = new FileReader("path/to/your/json/file.json");
-                // Parse the JSON data into a JSON object
-                JsonElement jsonElement = JsonParser.parseReader(fileReader);
-
-                // Validate the JSON data against the schema
-                Set<ValidationMessage> validationResult = schema.validate(jsonElement);
-            } catch (Exception e) {
-                LOGGER.error("Failed to load element (" + file.getName() + ")! If you don't know what's wrong, please seek help in Sjuttverse discord server! Common reasons include extra / missing commas, missing quotation marks or other invalid json formats. Error:");
-                LOGGER.error(String.valueOf(e));
+                JsonNode jsonNode = mapper.readTree(file);
+                Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
+                if (errors.isEmpty()) {
+                    LOGGER.info("Success");
+                } else {
+                    LOGGER.info("Error");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
+
         }
 
         LOGGER.info("All elements have been reloaded.");
