@@ -28,7 +28,14 @@
     },
     "advanced": {
       "type": "object",
-      "properties": {}
+      "required": ["scale"],
+      "properties": {
+        "scale": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10
+        }
+      }
     }
   }
 }

@@ -4,11 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import fy17.sjuttverse.ConfigFiles;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
-
-import java.util.Iterator;
 
 import static fy17.sjuttverse.ConfigFiles.configFile;
 import static fy17.sjuttverse.Sjuttverse.LOGGER;
@@ -18,9 +15,11 @@ public class RenderHUD {
         MinecraftClient client = MinecraftClient.getInstance();
         VariableParser parser = new VariableParser();
 
-        drawContext.getMatrices().push();
-        Float scale = configFile.getAsJsonObject().get("default_size").getAsFloat();
-        drawContext.getMatrices().scale(scale, scale, 1);
+        Float defaultScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
+        MatrixStack matrices = drawContext.getMatrices();
+
+        matrices.push();
+        matrices.scale(defaultScale, defaultScale, 1);
 
         for (JsonElement element : ConfigFiles.elementArray) {
             JsonObject x = element.getAsJsonObject();
@@ -31,7 +30,9 @@ public class RenderHUD {
                 int paddingX = 0;
 
                 if (x.has("advanced")) {
-                    drawContext.getMatrices().scale(0.5f, 0.5f, 1);
+                    Float decScale = x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
+                    matrices.push();
+                    matrices.scale(decScale, decScale, 1);
                 }
 
                 if (x.get("background").getAsJsonObject().get("enabled").getAsBoolean()) {
@@ -55,19 +56,23 @@ public class RenderHUD {
                         parseColor(x.get("textColor").getAsString()),
                         x.get("shadow").getAsBoolean()
                 );
-                drawContext.getMatrices().pop();
+
+                if (x.has("advanced")) {
+                    matrices.pop();
+                }
             }
         }
+        matrices.pop();
     }
 
     public int parseColor(String colorString) {
         String[] rgba = colorString.split(",");
         try {
             return (
-                    (((int) (Float.parseFloat(rgba[3]) * 255)) << 24) |
-                            (Integer.parseInt(rgba[0]) << 16) |
-                            (Integer.parseInt(rgba[1]) << 8) |
-                            Integer.parseInt(rgba[2])
+                (((int) (Float.parseFloat(rgba[3]) * 255)) << 24) |
+                (Integer.parseInt(rgba[0]) << 16) |
+                (Integer.parseInt(rgba[1]) << 8) |
+                Integer.parseInt(rgba[2])
             );
         } catch (Exception e) {
             return 0;

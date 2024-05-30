@@ -21,6 +21,7 @@ import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import org.apache.commons.io.FileUtils;
 
 import static fy17.sjuttverse.Sjuttverse.LOGGER;
@@ -44,13 +45,6 @@ public class ConfigFiles {
                 throw new RuntimeException(e);
             }
         }
-
-        try {
-            configFile = JsonParser.parseReader(new FileReader(configDir + "/Sjuttverse/config.json"));
-        } catch (FileNotFoundException e) {
-            LOGGER.error("[CRITICAL] - CONFIGURATION LOADING FAILED.");
-            throw new RuntimeException(e);
-        }
     }
 
     public void GenerateElementArray() {
@@ -63,13 +57,22 @@ public class ConfigFiles {
         JsonSchema jsonSchema = factory.getSchema(schemaFile.toURI());
 
         int fails = 0;
+        List<String> names = new ArrayList<>();
+
         for (File file : files) {
             try {
                 JsonElement elm = JsonParser.parseReader(new FileReader(file));
                 JsonNode jsonNode = mapper.readTree(file);
                 Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
                 if (errors.isEmpty()) {
-                    elementArray.add(elm);
+                    String name = elm.getAsJsonObject().get("name").getAsString();
+                    if (names.contains(name)) {
+                        LOGGER.error("Failed to load element file " + file.getName() + "! The identifier (\"name\" key) must be unique!");
+                        fails += 1;
+                    } else {
+                        elementArray.add(elm);
+                        names.add(name);
+                    }
                 } else {
                     LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in Sjuttverse discord server! This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error Code: 51");
                     for (ValidationMessage error : errors) {
@@ -84,5 +87,33 @@ public class ConfigFiles {
         }
 
         LOGGER.info(files.length - fails + "/" + files.length + " elements have successfully been reloaded.");
+    }
+
+    public void generateConfigArray() {
+        Path configDir = FabricLoader.getInstance().getConfigDir();
+
+        ObjectMapper mapper = new ObjectMapper();
+        File schemaFile = new File("../src/client/resources/premade/config_schema.json");
+        JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012);
+        JsonSchema jsonSchema = factory.getSchema(schemaFile.toURI());
+
+        try {
+            File config = new File(configDir + "/Sjuttverse/config.json");
+            JsonElement elm = JsonParser.parseReader(new FileReader(config));
+            JsonNode jsonNode = mapper.readTree(config);
+            Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
+
+            if (!errors.isEmpty()) {
+                LOGGER.error("[CRITICAL] - Configuration file could not be read properly. This is most likely because of a missing key or similar, the file does not follow the required format. For help, please seek help in Sjuttverse discord server. Exiting minecraft.");
+                for (ValidationMessage error : errors) {
+                    LOGGER.error(error.getMessage());
+                }
+                MinecraftClient.getInstance().stop();
+            }
+            configFile = elm;
+        } catch (Exception e) {
+            LOGGER.error("[CRITICAL] - CONFIGURATION LOADING FAILED.");
+            throw new RuntimeException(e);
+        }
     }
 }

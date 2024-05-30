@@ -20,6 +20,13 @@ public class SjuttverseClient implements ClientModInitializer {
 			GLFW.GLFW_KEY_UNKNOWN,
 			"Sjuttverse"
 	));
+	public static final KeyBinding reloadConfigKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+			// TRANSLATION KEYS SHOULD BE USED; RESOURCE FILES; CHANGE: https://fabricmc.net/wiki/tutorial:keybinds
+			"Reload Config",
+			InputUtil.Type.KEYSYM,
+			GLFW.GLFW_KEY_UNKNOWN,
+			"Sjuttverse"
+	));
 	public static final KeyBinding openConfigKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			// TRANSLATION KEYS SHOULD BE USED; RESOURCE FILES; CHANGE: https://fabricmc.net/wiki/tutorial:keybinds
 			"Open Config",
@@ -32,12 +39,16 @@ public class SjuttverseClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		new ConfigFiles().CheckDefaultConfigs();
 		new ConfigFiles().GenerateElementArray();
+		new ConfigFiles().generateConfigArray();
+
 		HudRenderCallback.EVENT.register(new RenderHUD()::renderCustomHud);
-		new ConfigScreen();
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (reloadElementsKeyBind.wasPressed()) {
 				new ConfigFiles().GenerateElementArray();
+			}
+			if (reloadConfigKeyBind.wasPressed()) {
+				new ConfigFiles().generateConfigArray();
 			}
 			if (openConfigKeyBind.wasPressed()) {
 				LOGGER.info("Loading?");
