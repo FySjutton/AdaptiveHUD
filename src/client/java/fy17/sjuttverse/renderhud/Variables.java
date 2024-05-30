@@ -1,9 +1,12 @@
 package fy17.sjuttverse.renderhud;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.LightType;
+
+import static net.minecraft.loot.LootDataType.stream;
 
 public class Variables {
     MinecraftClient client = MinecraftClient.getInstance();
@@ -17,7 +20,13 @@ public class Variables {
     public String get_sky_light() {return String.valueOf(client.world.getLightLevel(LightType.SKY, playerPos));}
     public String get_block_light() {return String.valueOf(client.world.getLightLevel(LightType.BLOCK, playerPos));}
     public String get_tps() {return "";}
-//    public String get_tpsp() {return "";}
+
+    public String get_entities() {
+        int entities = 0;
+        for (Entity entity : MinecraftClient.getInstance().world.getEntities()) { entities++; }
+        return String.valueOf(entities);
+    }
+
 //    public String get_tpsp() {return "";}
 //    public String get_tpsp() {return "";}
 //    public String get_tpsp() {return "";}
