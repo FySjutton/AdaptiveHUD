@@ -22,6 +22,9 @@ import com.networknt.schema.ValidationMessage;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.toast.SystemToast;
+import net.minecraft.text.Text;
 import org.apache.commons.io.FileUtils;
 
 import static fy17.sjuttverse.Sjuttverse.LOGGER;
@@ -59,7 +62,10 @@ public class ConfigFiles {
         int fails = 0;
         List<String> names = new ArrayList<>();
 
+        List<List<String>> problems = new ArrayList<>();
+
         for (File file : files) {
+            List<String> problemsFile = new ArrayList<>();
             try {
                 JsonElement elm = JsonParser.parseReader(new FileReader(file));
                 JsonNode jsonNode = mapper.readTree(file);
@@ -67,6 +73,8 @@ public class ConfigFiles {
                 if (errors.isEmpty()) {
                     String name = elm.getAsJsonObject().get("name").getAsString();
                     if (names.contains(name)) {
+                        problemsFile.add(file.getName());
+                        problemsFile.add("Key name must be unique!");
                         LOGGER.error("Failed to load element file " + file.getName() + "! The identifier (\"name\" key) must be unique!");
                         fails += 1;
                     } else {
@@ -75,18 +83,44 @@ public class ConfigFiles {
                     }
                 } else {
                     LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in Sjuttverse discord server! This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error Code: 51");
+                    problemsFile.add(file.getName());
+                    String errorMessage = "";
+                    problemsFile.add("Key name must be unique!");
                     for (ValidationMessage error : errors) {
                         LOGGER.error(error.getMessage());
+                        errorMessage += " " + error;
                     }
+                    problemsFile.add(errorMessage);
                     fails += 1;
                 }
             } catch (Exception e) {
                 LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in Sjuttverse discord server! This might be caused by a missing comma or similar. This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error Code: 52");
                 fails += 1;
+                problemsFile.add(file.getName());
+                problemsFile.add("Invalid json format or similar!");
+            }
+            if (problemsFile.size() > 0) {
+                problems.add(problemsFile);
             }
         }
 
-        LOGGER.info(files.length - fails + "/" + files.length + " elements have successfully been reloaded.");
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        if (textRenderer != null) {
+            for (List<String> problem : problems) {
+                MinecraftClient.getInstance().getToastManager().add(
+                        new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
+                                Text.literal("§c" + problem.get(0)),
+                                Text.literal("§f" + problem.get(1))
+                        )
+                );
+            }
+            MinecraftClient.getInstance().getToastManager().add(
+                    new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
+                            Text.literal("§aElements Reloaded!"),
+                            Text.literal("§e" + (files.length - fails) + "/" + files.length + " elements have successfully been reloaded.")
+                    )
+            );
+        }
     }
 
     public void generateConfigArray() {

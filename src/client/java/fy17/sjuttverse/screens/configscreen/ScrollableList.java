@@ -20,9 +20,11 @@ public class ScrollableList extends ScrollableWidget {
     private final List<ButtonWidget> buttonList = new ArrayList<>();
     private final int buttonHeight = 20;
     private final int buttonMargin = 5;
+    private final ConfigScreen parent;
 
-    public ScrollableList(int height, int width) {
+    public ScrollableList(int height, int width, ConfigScreen parent) {
         super(width / 2, 45, width / 2 - 10, height - 50, Text.literal("Elements"));
+        this.parent = parent;
         updateElementList(width);
     }
 
@@ -34,20 +36,24 @@ public class ScrollableList extends ScrollableWidget {
 
         for (JsonElement element : elementArray) {
             ButtonWidget button = ButtonWidget.builder(Text.literal(element.getAsJsonObject().get("name").getAsString()), btn -> handleButtonClick(element.getAsJsonObject().get("name").getAsString()))
-                    .dimensions(boxPosX + 5, yPosition, (int) ((boxWidth - 5) * 0.75), buttonHeight)
+                    .dimensions(boxPosX + 5, yPosition, (int) (0.6 * boxWidth - 12), buttonHeight)
                     .build();
             buttonList.add(button);
             ButtonWidget enableButton = ButtonWidget.builder(Text.literal((element.getAsJsonObject().get("enabled").getAsBoolean() ? "On" : "Off")), btn -> switchEnabled(btn, element))
-                    .dimensions((int) (boxPosX + (boxWidth - 5) * 0.75 + 10), yPosition, (boxWidth / 4 - 10), buttonHeight)
+                    .dimensions((int) (boxPosX + 0.6 * boxWidth - 2), yPosition, (int) (0.25 * boxWidth - 5), buttonHeight)
                     .build();
             buttonList.add(enableButton);
+            ButtonWidget deleteButton = ButtonWidget.builder(Text.literal("\uD83D\uDDD1"), btn -> this.parent.deleteElement(element, width))
+                    .dimensions((int) (0.6 * boxPosX + 1.25 * boxWidth + 2), yPosition, (int) (0.15 * boxWidth - 3), buttonHeight)
+                    .build();
+            buttonList.add(deleteButton);
             yPosition += buttonHeight + buttonMargin;
         }
     }
 
     @Override
     protected int getContentsHeight() {
-        return buttonList.size() / 2 * (buttonHeight + buttonMargin);
+        return buttonList.size() / 3 * (buttonHeight + buttonMargin);
     }
 
     @Override
@@ -104,4 +110,6 @@ public class ScrollableList extends ScrollableWidget {
         elementArray.remove(element);
         elementArray.add(new_object);
     }
+
+
 }
