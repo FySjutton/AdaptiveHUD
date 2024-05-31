@@ -2,15 +2,14 @@ package fy17.sjuttverse.screens.configscreen;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import fy17.sjuttverse.ConfigFiles;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static fy17.sjuttverse.ConfigFiles.elementArray;
@@ -35,16 +34,19 @@ public class ScrollableList extends ScrollableWidget {
         int boxPosX = width / 2;
 
         for (JsonElement element : elementArray) {
-            ButtonWidget button = ButtonWidget.builder(Text.literal(element.getAsJsonObject().get("name").getAsString()), btn -> handleButtonClick(element.getAsJsonObject().get("name").getAsString()))
+            ButtonWidget button = ButtonWidget.builder(Text.literal(element.getAsJsonObject().get("name").getAsString()), btn -> editElement(element.getAsJsonObject().get("name").getAsString()))
                     .dimensions(boxPosX + 5, yPosition, (int) (0.6 * boxWidth - 12), buttonHeight)
+                    .tooltip(Tooltip.of(Text.of("Edit element...")))
                     .build();
             buttonList.add(button);
             ButtonWidget enableButton = ButtonWidget.builder(Text.literal((element.getAsJsonObject().get("enabled").getAsBoolean() ? "On" : "Off")), btn -> switchEnabled(btn, element))
                     .dimensions((int) (boxPosX + 0.6 * boxWidth - 2), yPosition, (int) (0.25 * boxWidth - 5), buttonHeight)
+                    .tooltip(Tooltip.of(Text.of("Toggle element...")))
                     .build();
             buttonList.add(enableButton);
             ButtonWidget deleteButton = ButtonWidget.builder(Text.literal("\uD83D\uDDD1"), btn -> this.parent.deleteElement(element, width))
                     .dimensions((int) (0.6 * boxPosX + 1.25 * boxWidth + 2), yPosition, (int) (0.15 * boxWidth - 3), buttonHeight)
+                    .tooltip(Tooltip.of(Text.of("Delete element...")))
                     .build();
             buttonList.add(deleteButton);
             yPosition += buttonHeight + buttonMargin;
@@ -67,7 +69,6 @@ public class ScrollableList extends ScrollableWidget {
         int startY = this.getY() + (int) getScrollY();
         int endY = startY + this.height;
 
-//        LOGGER.info(buttonList.toString());
         for (ButtonWidget buttonWidget : buttonList) {
             int buttonTop = buttonWidget.getY();
             int buttonBottom = buttonTop + buttonHeight;
@@ -94,8 +95,8 @@ public class ScrollableList extends ScrollableWidget {
     @Override
     protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
 
-    private void handleButtonClick(String buttonName) {
-        System.out.println("Button clicked: " + buttonName);
+    private void editElement(String buttonName) {
+        LOGGER.info("Edit element: " + buttonName);
     }
 
     private void switchEnabled(ButtonWidget button, JsonElement element) {
@@ -109,7 +110,6 @@ public class ScrollableList extends ScrollableWidget {
         }
         elementArray.remove(element);
         elementArray.add(new_object);
+        parent.changesMade();
     }
-
-
 }
