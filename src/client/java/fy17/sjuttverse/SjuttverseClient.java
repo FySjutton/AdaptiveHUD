@@ -1,6 +1,5 @@
 package fy17.sjuttverse;
 
-import fy17.sjuttverse.configscreen.ConfigScreen;
 import fy17.sjuttverse.renderhud.RenderHUD;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
