@@ -26,6 +26,7 @@ public class ConfigScreen extends Screen {
     private ScrollableList scrollableList;
     private final Screen parent;
     private final List<JsonElement> backupElementArr = new ArrayList<>();
+    private Boolean fileChanged = false;
 
     public ConfigScreen(Screen parent) {
         super(Text.literal("Sjuttverse"));
@@ -110,6 +111,9 @@ public class ConfigScreen extends Screen {
     }
 
     private void saveAndExit() {
+        if (fileChanged) {
+            new ConfigFiles().saveElementFiles(elementArray);
+        }
         close();
     }
 
@@ -119,11 +123,14 @@ public class ConfigScreen extends Screen {
     }
 
     public void changesMade() {
+        fileChanged = true;
+
         ButtonWidget reloadElementsElm = (ButtonWidget) children().get(1);
         ButtonWidget saveButtonElm = (ButtonWidget) children().get(3);
         ButtonWidget cancelButtonElm = (ButtonWidget) children().get(2);
 
         reloadElementsElm.active = false;
+        reloadElementsElm.setTooltip(Tooltip.of(Text.of("You have unsaved changes!")));
         cancelButtonElm.active = true;
         cancelButtonElm.setTooltip(Tooltip.of(Text.of("Your changes will not be saved!")));
         saveButtonElm.setMessage(Text.of("Save"));

@@ -1,9 +1,6 @@
 package fy17.sjuttverse;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,8 +10,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
+import com.google.gson.stream.JsonWriter;
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
@@ -149,5 +146,49 @@ public class ConfigFiles {
             LOGGER.error("[CRITICAL] - CONFIGURATION LOADING FAILED.");
             throw new RuntimeException(e);
         }
+    }
+
+    public void saveElementFiles(List<JsonElement> elmArray) {
+        Path configDir = FabricLoader.getInstance().getConfigDir();
+        int fails = 0;
+        for (JsonElement elm : elmArray) {
+            try {
+                JsonObject obj = elm.getAsJsonObject();
+                String fileName = obj.get("name").getAsString() + ".json";
+                File elmFile = new File(configDir + "/Sjuttverse/elements/" + fileName);
+                if (elmFile.exists()) {
+                    try (FileWriter writer = new FileWriter(elmFile)) {
+                        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                        JsonWriter jsonWriter = gson.newJsonWriter(writer);
+                        gson.toJson(obj, jsonWriter);
+                        jsonWriter.flush();
+                    }
+                } else {
+                    Files.createDirectories(elmFile.getParentFile().toPath());
+                    try (FileWriter writer = new FileWriter(elmFile)) {
+                        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                        JsonWriter jsonWriter = gson.newJsonWriter(writer);
+                        gson.toJson(obj, jsonWriter);
+                        jsonWriter.flush();
+                    }
+                    LOGGER.info("Created new element file: " + elmFile);
+                }
+            } catch (Exception e) {
+                LOGGER.error("Error saving element file: " + e.getMessage());
+                MinecraftClient.getInstance().getToastManager().add(
+                        new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
+                                Text.literal("§cFailed to save file!"),
+                                Text.literal("§f" + e.getMessage())
+                        )
+                );
+                fails++;
+            }
+        }
+        MinecraftClient.getInstance().getToastManager().add(
+                new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
+                        Text.literal("§aChanges have been saved!"),
+                        Text.literal("§e" + (elmArray.size() - fails) + "/" + elmArray.size() + " files successfully saved.")
+                )
+        );
     }
 }
