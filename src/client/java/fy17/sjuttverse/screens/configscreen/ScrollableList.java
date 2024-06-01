@@ -2,6 +2,8 @@ package fy17.sjuttverse.screens.configscreen;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import fy17.sjuttverse.screens.elementscreen.ElementScreen;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -34,7 +36,7 @@ public class ScrollableList extends ScrollableWidget {
         int boxPosX = width / 2;
 
         for (JsonElement element : elementArray) {
-            ButtonWidget button = ButtonWidget.builder(Text.literal(element.getAsJsonObject().get("name").getAsString()), btn -> editElement(element.getAsJsonObject().get("name").getAsString()))
+            ButtonWidget button = ButtonWidget.builder(Text.literal(element.getAsJsonObject().get("name").getAsString()), btn -> editElement(element))
                     .dimensions(boxPosX + 5, yPosition, (int) (0.6 * boxWidth - 12), buttonHeight)
                     .tooltip(Tooltip.of(Text.of("Edit element...")))
                     .build();
@@ -95,8 +97,8 @@ public class ScrollableList extends ScrollableWidget {
     @Override
     protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
 
-    private void editElement(String buttonName) {
-        LOGGER.info("Edit element: " + buttonName);
+    private void editElement(JsonElement element) {
+        MinecraftClient.getInstance().setScreen(new ElementScreen(parent, element));
     }
 
     private void switchEnabled(ButtonWidget button, JsonElement element) {
