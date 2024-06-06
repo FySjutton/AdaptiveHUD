@@ -11,10 +11,13 @@ import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static fy17.sjuttverse.Sjuttverse.LOGGER;
 
 
 public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
@@ -27,15 +30,15 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
         this.parent = parent;
 
         for (int i = 0; i < titles.size(); i++) {
-            this.addEntry(new Entry());
+            this.addEntry(new Entry(i));
         }
     }
 
     public class Entry extends ElementListWidget.Entry<Entry> {
         private final TextFieldWidget textField;
 
-        public Entry() {
-            this.textField = new TextFieldWidget(textRenderer, 100, 20, Text.literal("waha"));
+        public Entry(int i) {
+            this.textField = new TextFieldWidget(textRenderer, 100, 20 + i * 5, Text.literal("waha" + i));
         }
 
         @Override
@@ -50,12 +53,27 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
 
         @Override
         public void render(DrawContext drawContext, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            this.textField.setX(width / 2 - entryWidth / 4);
+            this.textField.setX(x + width / 2 - entryWidth / 4);
             this.textField.setY(y);
             this.textField.render(drawContext, mouseX, mouseY, tickDelta);
 
 
             drawContext.drawText(textRenderer, titles.get(index), 25, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF, true);
+        }
+
+        @Override
+        public boolean charTyped(char chr, int keyCode) {
+            return textField.charTyped(chr, keyCode);
+        }
+
+        @Override
+        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+            return textField.keyPressed(keyCode, scanCode, modifiers);
+        }
+
+        @Override
+        public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+            return textField.keyReleased(keyCode, scanCode, modifiers);
         }
     }
 }

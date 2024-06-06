@@ -8,6 +8,8 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
+import static fy17.sjuttverse.Sjuttverse.LOGGER;
+
 @Environment(EnvType.CLIENT)
 public class ElementScreen extends Screen {
     private final Screen parent;
@@ -48,5 +50,29 @@ public class ElementScreen extends Screen {
     @Override
     public boolean shouldCloseOnEsc() {
         return true;
+    }
+
+    @Override
+    public boolean charTyped(char chr, int keyCode) {
+        if (scrollableArea.charTyped(chr, keyCode)) {
+            return true;
+        }
+        return super.charTyped(chr, keyCode);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (scrollableArea.keyPressed(keyCode, scanCode, modifiers)) {
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+        if (scrollableArea.keyReleased(keyCode, scanCode, modifiers)) {
+            return true;
+        }
+        return super.keyReleased(keyCode, scanCode, modifiers);
     }
 }
