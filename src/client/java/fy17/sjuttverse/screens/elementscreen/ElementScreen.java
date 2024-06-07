@@ -67,12 +67,4 @@ public class ElementScreen extends Screen {
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
-
-    @Override
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        if (scrollableArea.keyReleased(keyCode, scanCode, modifiers)) {
-            return true;
-        }
-        return super.keyReleased(keyCode, scanCode, modifiers);
-    }
 }

@@ -70,10 +70,5 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
             return textField.keyPressed(keyCode, scanCode, modifiers);
         }
-
-        @Override
-        public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-            return textField.keyReleased(keyCode, scanCode, modifiers);
-        }
     }
 }
