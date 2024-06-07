@@ -157,11 +157,13 @@ public class ConfigFiles {
                 String fileName = obj.get("name").getAsString() + ".json";
                 File elmFile = new File(configDir + "/Sjuttverse/elements/" + fileName);
                 if (elmFile.exists()) {
-                    try (FileWriter writer = new FileWriter(elmFile)) {
-                        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                        JsonWriter jsonWriter = gson.newJsonWriter(writer);
-                        gson.toJson(obj, jsonWriter);
-                        jsonWriter.flush();
+                    if (JsonParser.parseReader(new FileReader(elmFile)).equals(elm)) {
+                        try (FileWriter writer = new FileWriter(elmFile)) {
+                            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                            JsonWriter jsonWriter = gson.newJsonWriter(writer);
+                            gson.toJson(obj, jsonWriter);
+                            jsonWriter.flush();
+                        }
                     }
                 } else {
                     Files.createDirectories(elmFile.getParentFile().toPath());
@@ -190,5 +192,20 @@ public class ConfigFiles {
                         Text.literal("§e" + (elmArray.size() - fails) + "/" + elmArray.size() + " files successfully saved.")
                 )
         );
+    }
+
+    public boolean validateJson(JsonElement elm) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            File schemaFile = new File("../src/client/resources/premade/verify_schema.json");
+            JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012);
+            JsonSchema jsonSchema = factory.getSchema(schemaFile.toURI());
+
+            JsonNode jsonNode = mapper.readTree(elm.toString());
+            Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
+            return errors.isEmpty();
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

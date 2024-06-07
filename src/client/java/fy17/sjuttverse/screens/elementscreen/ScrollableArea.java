@@ -27,7 +27,7 @@ import static fy17.sjuttverse.Sjuttverse.LOGGER;
 
 public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
     private final ElementScreen parent;
-    private final ArrayList<String> titles = new ArrayList<>(Arrays.asList("name", "value", "textColor", "posX", "posY", "shadow"));
+    public final ArrayList<String> titles = new ArrayList<>(Arrays.asList("name", "value", "textColor", "posX", "posY", "shadow"));
     private final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
     public ScrollableArea(int height, int width, ElementScreen parent) {
@@ -45,10 +45,12 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
     }
 
     public class Entry extends ElementListWidget.Entry<Entry> {
-        private TextFieldWidget textField;
-        private ButtonWidget button;
+        public TextFieldWidget textField;
+        public ButtonWidget button;
+        public String setting;
 
         public Entry(String item) {
+            this.setting = item;
             if (item.equals("shadow")) {
                 this.button = ButtonWidget.builder(
                     Text.literal(parent.elm.get(item).getAsBoolean() ? "On" : "Off"),
@@ -103,19 +105,8 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
 
         @Override
         public boolean mouseReleased(double mouseX, double mouseY, int button) {
-//            if ((this.getFocused() instanceof TextFieldWidget && !this.getFocused().isMouseOver(mouseX, mouseY)) || this.getFocused() instanceof ButtonWidget) {
-//                elm.add(titles.get(children().indexOf(this.getFocused())), this.getFocused().);
-//                titles.get(children().indexOf(this.getFocused()));
-//                parent.checkChanges();
-//            }
-
             if (!(this.getFocused() instanceof TextFieldWidget)) {
-                if (this.getFocused() instanceof ButtonWidget) {
-                    LOGGER.info(String.valueOf(children().indexOf(this.getFocused())));
-                    parent.elm.add(titles.get(children().indexOf(this.getFocused())), JsonParser.parseString(((ButtonWidget) this.getFocused()).getMessage().getString().equals("On") ? "true" : "false"));
-                    LOGGER.info(String.valueOf(parent.elm));
-                    this.setFocused(null);
-                }
+                this.setFocused(null);
             } else if (!this.getFocused().isMouseOver(mouseX, mouseY)) {
                 this.setFocused(null);
             }

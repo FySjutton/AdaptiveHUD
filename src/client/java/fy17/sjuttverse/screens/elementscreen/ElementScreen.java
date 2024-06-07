@@ -2,12 +2,22 @@ package fy17.sjuttverse.screens.elementscreen;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import fy17.sjuttverse.ConfigFiles;
+import fy17.sjuttverse.screens.configscreen.ConfigScreen;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static fy17.sjuttverse.ConfigFiles.elementArray;
 import static fy17.sjuttverse.Sjuttverse.LOGGER;
@@ -15,34 +25,32 @@ import static fy17.sjuttverse.Sjuttverse.LOGGER;
 @Environment(EnvType.CLIENT)
 public class ElementScreen extends Screen {
     private final Screen parent;
-    private final JsonObject beforeEdit;
-    private boolean fileChanged = false;
     private ScrollableArea scrollableArea;
+    private final JsonElement beforeEditing;
     public JsonObject elm;
 
     public ElementScreen(Screen parent, JsonElement elm) {
         super(Text.literal("Sjuttverse"));
         this.parent = parent;
-        this.elm = elm.getAsJsonObject();
+        this.elm = elm.deepCopy().getAsJsonObject();
 
-        beforeEdit = elm.deepCopy().getAsJsonObject();
+        beforeEditing = elm.deepCopy();
+//        LOGGER.info(String.valueOf(beforeEditing));
     }
 
     @Override
     protected void init() {
-        ButtonWidget cancelBtn = ButtonWidget.builder(Text.literal("Cancel"), btn -> {close();})
-            .dimensions(width / 2 - 105, height - 35, 100, 20)
-            .build();
-        addDrawableChild(cancelBtn);
-        ButtonWidget saveBtn = ButtonWidget.builder(Text.literal("Done"), btn -> {})
-                .dimensions(width / 2 + 5, height - 35, 100, 20)
+//        ButtonWidget cancelBtn = ButtonWidget.builder(Text.literal("Cancel"), btn -> {close();})
+//            .dimensions(width / 2 - 105, height - 35, 100, 20)
+//            .build();
+//        addDrawableChild(cancelBtn);
+        ButtonWidget saveBtn = ButtonWidget.builder(Text.literal("Done"), btn -> saveChanges())
+                .dimensions(width / 2 - 50, height - 35, 100, 20)
                 .build();
         addDrawableChild(saveBtn);
 
         scrollableArea = new ScrollableArea(height, width, this);
         addSelectableChild(scrollableArea);
-
-        checkChanges();
     }
 
     @Override
@@ -85,16 +93,48 @@ public class ElementScreen extends Screen {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    public void checkChanges() {
-        LOGGER.info("HERE");
-        if (fileChanged != elm.equals(beforeEdit)) {
-            fileChanged = !elm.equals(beforeEdit);
-
-            ButtonWidget cancelButton = (ButtonWidget) children().get(0);
-            ButtonWidget saveButton = (ButtonWidget) children().get(1);
-
-            cancelButton.active = fileChanged;
-            saveButton.setMessage(Text.of(fileChanged ? "Save" : "Done"));
+    private void saveChanges() {
+        for (ScrollableArea.Entry x : scrollableArea.children()) {
+            if (x.textField != null) {
+                if (x.setting.equals("posX") || x.setting.equals("posY")) {
+                    try {
+                        elm.addProperty(x.setting, Integer.parseInt(x.textField.getText()));
+                    } catch (Exception e) {
+                        elm.addProperty(x.setting, x.textField.getText());
+                    }
+                } else {
+                    elm.addProperty(x.setting, x.textField.getText());
+                }
+            }
+            if (x.button != null) {
+                elm.addProperty(x.setting, x.button.getMessage().getString().equals("On"));
+            }
         }
+        if (new ConfigFiles().validateJson(elm)) {
+            List<JsonElement> deepCopyArray = new ArrayList<>();
+            for (JsonElement elm : elementArray) {
+                deepCopyArray.add(elm.deepCopy());
+            }
+            deepCopyArray.remove(beforeEditing);
+            if (!deepCopyArray.toString().contains("\"name\":\"" + elm.get("name").getAsString() + "\",")) {
+                elementArray.set(elementArray.indexOf(beforeEditing.getAsJsonObject()), elm);
+                close();
+            } else {
+                MinecraftClient.getInstance().getToastManager().add(
+                    new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
+                        Text.literal("§cInvalid!"),
+                        Text.literal("§fThe name must be unique!")
+                    )
+                );
+            }
+        } else {
+            MinecraftClient.getInstance().getToastManager().add(
+                new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
+                    Text.literal("§cInvalid!"),
+                    Text.literal("§fSomething is not following the required format.")
+                )
+            );
+        }
+
     }
 }
