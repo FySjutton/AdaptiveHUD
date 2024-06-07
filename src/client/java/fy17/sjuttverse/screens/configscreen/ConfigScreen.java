@@ -11,10 +11,15 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +32,8 @@ public class ConfigScreen extends Screen {
     private final Screen parent;
     private final List<JsonElement> backupElementArr = new ArrayList<>();
     private Boolean fileChanged = false;
+    private final Identifier discordTexture = new Identifier("sjuttverse", "textures/gui/discord_logo.png");
+    private int discordWidth;
 
     public ConfigScreen(Screen parent) {
         super(Text.literal("Sjuttverse"));
@@ -35,6 +42,8 @@ public class ConfigScreen extends Screen {
 
     @Override
     protected void init() {
+        discordWidth = textRenderer.getWidth("Get help here!") + 16 + 5 + 3 + 5;
+
         for (JsonElement elm : elementArray) {
             backupElementArr.add(elm.deepCopy());
         }
@@ -57,6 +66,11 @@ public class ConfigScreen extends Screen {
                 .build();
         addDrawableChild(saveAndExitElm);
 
+        ButtonWidget discordButton = ButtonWidget.builder(Text.literal(""), btn -> openDiscord())
+                .dimensions(width - discordWidth - 10, 20, discordWidth, 20)
+                .build();
+        addDrawableChild(discordButton);
+
         scrollableList = new ScrollableList(height, width, this);
         addDrawableChild(scrollableList);
     }
@@ -65,6 +79,9 @@ public class ConfigScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(textRenderer, Text.literal("Sjuttverse"), width / 2, 20, 0xffffff);
+
+        context.drawTexture(discordTexture, width - discordWidth - 5, 23, 0, 0, 14, 14, 14, 14);
+        context.drawText(textRenderer, "Get help here!", width - discordWidth + 14, (int) (26.5), 0xFFFFFF, true);
     }
 
     @Override
@@ -140,5 +157,15 @@ public class ConfigScreen extends Screen {
         elementArray.remove(element);
         scrollableList.updateElementList(width);
         changesMade();
+    }
+
+    private void openDiscord() {
+        try {
+            Desktop.getDesktop().browse(new URI("https://discord.gg/tqn38v6w7k"));
+            LOGGER.info("Opening discord support server invite link in browser... (https://discord.gg/tqn38v6w7k)");
+        } catch (Exception e) {
+            LOGGER.error("Failed to open discord link! Link: https://discord.gg/tqn38v6w7k");
+            LOGGER.error(String.valueOf(e));
+        }
     }
 }
