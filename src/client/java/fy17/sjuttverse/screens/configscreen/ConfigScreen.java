@@ -17,9 +17,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,15 +36,15 @@ public class ConfigScreen extends Screen {
     public ConfigScreen(Screen parent) {
         super(Text.literal("Sjuttverse"));
         this.parent = parent;
+
+        for (JsonElement elm : elementArray) {
+            backupElementArr.add(elm.deepCopy());
+        }
     }
 
     @Override
     protected void init() {
         discordWidth = textRenderer.getWidth("Get help here!") + 16 + 5 + 3 + 5;
-
-        for (JsonElement elm : elementArray) {
-            backupElementArr.add(elm.deepCopy());
-        }
 
         ButtonWidget newElm = ButtonWidget.builder(Text.literal("Create new element"), btn -> createNewElement())
             .dimensions(width / 16, 50, width / 8 * 3, 20)
@@ -60,7 +58,6 @@ public class ConfigScreen extends Screen {
                 .dimensions(width / 16, height - 50, width / 16 * 3 - 3, 20)
                 .build();
         addDrawableChild(closeElm);
-        closeElm.active = false;
         ButtonWidget saveAndExitElm = ButtonWidget.builder(Text.literal("Done"), btn -> saveAndExit())
                 .dimensions(width / 4 + 3, height - 50, width / 16 * 3 - 3, 20)
                 .build();
@@ -73,6 +70,8 @@ public class ConfigScreen extends Screen {
 
         scrollableList = new ScrollableList(height, width, this);
         addDrawableChild(scrollableList);
+
+        changesMade();
     }
 
     @Override
@@ -98,7 +97,7 @@ public class ConfigScreen extends Screen {
 
     @Override
     public boolean shouldCloseOnEsc() {
-        return false;
+        return !fileChanged;
     }
 
     private void createNewElement() {
@@ -140,17 +139,19 @@ public class ConfigScreen extends Screen {
     }
 
     public void changesMade() {
-        fileChanged = true;
+        fileChanged = !elementArray.equals(backupElementArr);
 
         ButtonWidget reloadElementsElm = (ButtonWidget) children().get(1);
         ButtonWidget saveButtonElm = (ButtonWidget) children().get(3);
         ButtonWidget cancelButtonElm = (ButtonWidget) children().get(2);
 
-        reloadElementsElm.active = false;
-        reloadElementsElm.setTooltip(Tooltip.of(Text.of("You have unsaved changes!")));
-        cancelButtonElm.active = true;
-        cancelButtonElm.setTooltip(Tooltip.of(Text.of("Your changes will not be saved!")));
-        saveButtonElm.setMessage(Text.of("Save"));
+        reloadElementsElm.active = !fileChanged;
+        reloadElementsElm.setTooltip(fileChanged ? Tooltip.of(Text.of("You have unsaved changes!")) : null);
+
+        cancelButtonElm.active = fileChanged;
+        cancelButtonElm.setTooltip(fileChanged ? Tooltip.of(Text.of("Your changes will not be saved!")) : null);
+
+        saveButtonElm.setMessage(Text.of(fileChanged ? "Save" : "Done"));
     }
 
     public void deleteElement(JsonElement element, int width) {
