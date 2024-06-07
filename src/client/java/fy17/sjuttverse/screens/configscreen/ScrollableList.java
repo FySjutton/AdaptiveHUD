@@ -110,8 +110,7 @@ public class ScrollableList extends ScrollableWidget {
             button.setMessage(Text.of("On"));
             new_object.addProperty("enabled", true);
         }
-        elementArray.remove(element);
-        elementArray.add(new_object);
+        elementArray.set(elementArray.indexOf(element), new_object);
         parent.changesMade();
     }
 }
