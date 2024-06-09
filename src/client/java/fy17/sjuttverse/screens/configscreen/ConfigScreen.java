@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static fy17.sjuttverse.ConfigFiles.elementArray;
@@ -32,6 +33,7 @@ public class ConfigScreen extends Screen {
     private Boolean fileChanged = false;
     private final Identifier discordTexture = new Identifier("sjuttverse", "textures/gui/discord_logo.png");
     private int discordWidth;
+    public final List<String> deletedFiles = new ArrayList<>();
 
     public ConfigScreen(Screen parent) {
         super(Text.literal("Sjuttverse"));
@@ -128,13 +130,17 @@ public class ConfigScreen extends Screen {
 
     private void saveAndExit() {
         if (fileChanged) {
-            new ConfigFiles().saveElementFiles(elementArray);
+            new ConfigFiles().saveElementFiles(elementArray, deletedFiles);
         }
         close();
     }
 
     private void reloadElements() {
         new ConfigFiles().GenerateElementArray();
+        backupElementArr.clear();
+        for (JsonElement elm : elementArray) {
+            backupElementArr.add(elm.deepCopy());
+        }
         scrollableList.updateElementList(width);
     }
 
@@ -156,6 +162,8 @@ public class ConfigScreen extends Screen {
 
     public void deleteElement(JsonElement element, int width) {
         elementArray.remove(element);
+        String deleted_file_name = element.getAsJsonObject().get("name").getAsString();
+        addDeletedFile(deleted_file_name);
         scrollableList.updateElementList(width);
         changesMade();
     }
@@ -167,6 +175,14 @@ public class ConfigScreen extends Screen {
         } catch (Exception e) {
             LOGGER.error("Failed to open discord link! Link: https://discord.gg/tqn38v6w7k");
             LOGGER.error(String.valueOf(e));
+        }
+    }
+
+    public void addDeletedFile(String oldFileName) {
+        if (!deletedFiles.contains(oldFileName)) {
+            if (backupElementArr.toString().contains("\"name\":\"" + oldFileName + "\",")) {
+                deletedFiles.add(oldFileName);
+            }
         }
     }
 }

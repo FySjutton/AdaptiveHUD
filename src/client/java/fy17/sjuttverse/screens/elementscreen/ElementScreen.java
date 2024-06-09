@@ -102,6 +102,8 @@ public class ElementScreen extends Screen {
                     } catch (Exception e) {
                         elm.addProperty(x.setting, x.textField.getText());
                     }
+                } else if (x.setting.equals("name")) {
+                    elm.addProperty(x.setting, x.textField.getText().toLowerCase());
                 } else {
                     elm.addProperty(x.setting, x.textField.getText());
                 }
@@ -116,25 +118,19 @@ public class ElementScreen extends Screen {
                 deepCopyArray.add(elm.deepCopy());
             }
             deepCopyArray.remove(beforeEditing);
-            if (!deepCopyArray.toString().contains("\"name\":\"" + elm.get("name").getAsString() + "\",")) {
+            if (!deepCopyArray.toString().toLowerCase().contains("\"name\":\"" + elm.get("name").getAsString().toLowerCase() + "\",")) {
+                String old_file_name = beforeEditing.getAsJsonObject().get("name").getAsString();
+                if (!old_file_name.equals(elm.getAsJsonObject().get("name").getAsString())) {
+                    ((ConfigScreen) parent).addDeletedFile(old_file_name);
+                }
+
                 elementArray.set(elementArray.indexOf(beforeEditing.getAsJsonObject()), elm);
                 close();
             } else {
-                MinecraftClient.getInstance().getToastManager().add(
-                    new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
-                        Text.literal("§cInvalid!"),
-                        Text.literal("§fThe name must be unique!")
-                    )
-                );
+                new ConfigFiles().sendToast("§cInvalid!", "§fThe name must be unique!");
             }
         } else {
-            MinecraftClient.getInstance().getToastManager().add(
-                new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
-                    Text.literal("§cInvalid!"),
-                    Text.literal("§fSomething is not following the required format.")
-                )
-            );
+            new ConfigFiles().sendToast("§cInvalid!", "§fSomething is not following the required format.");
         }
-
     }
 }

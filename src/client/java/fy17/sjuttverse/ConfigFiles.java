@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.List;
@@ -64,19 +65,21 @@ public class ConfigFiles {
         for (File file : files) {
             List<String> problemsFile = new ArrayList<>();
             try {
-                JsonElement elm = JsonParser.parseReader(new FileReader(file));
+                FileReader fileReader = new FileReader(file);
+                JsonElement elm = JsonParser.parseReader(fileReader);
+                fileReader.close();
                 JsonNode jsonNode = mapper.readTree(file);
                 Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
                 if (errors.isEmpty()) {
                     String name = elm.getAsJsonObject().get("name").getAsString();
-                    if (names.contains(name)) {
+                    if (names.contains(name.toLowerCase())) {
                         problemsFile.add(file.getName());
                         problemsFile.add("Key name must be unique!");
                         LOGGER.error("Failed to load element file " + file.getName() + "! The identifier (\"name\" key) must be unique!");
                         fails += 1;
                     } else {
                         elementArray.add(elm);
-                        names.add(name);
+                        names.add(name.toLowerCase());
                     }
                 } else {
                     LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in Sjuttverse discord server! This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error Code: 51");
@@ -104,19 +107,9 @@ public class ConfigFiles {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         if (textRenderer != null) {
             for (List<String> problem : problems) {
-                MinecraftClient.getInstance().getToastManager().add(
-                        new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
-                                Text.literal("§c" + problem.get(0)),
-                                Text.literal("§f" + problem.get(1))
-                        )
-                );
+                sendToast("§c" + problem.get(0), "§f" + problem.get(1));
             }
-            MinecraftClient.getInstance().getToastManager().add(
-                    new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
-                            Text.literal("§aElements Reloaded!"),
-                            Text.literal("§e" + (files.length - fails) + "/" + files.length + " elements have successfully been reloaded.")
-                    )
-            );
+            sendToast("§aElements Reloaded!", "§e" + (files.length - fails) + "/" + files.length + " elements have successfully been reloaded.");
         }
     }
 
@@ -130,7 +123,9 @@ public class ConfigFiles {
 
         try {
             File config = new File(configDir + "/Sjuttverse/config.json");
-            JsonElement elm = JsonParser.parseReader(new FileReader(config));
+            FileReader fileReader = new FileReader(config);
+            JsonElement elm = JsonParser.parseReader(fileReader);
+            fileReader.close();
             JsonNode jsonNode = mapper.readTree(config);
             Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
 
@@ -148,22 +143,41 @@ public class ConfigFiles {
         }
     }
 
-    public void saveElementFiles(List<JsonElement> elmArray) {
+    public void saveElementFiles(List<JsonElement> elmArray, List<String> deletedFiles) {
         Path configDir = FabricLoader.getInstance().getConfigDir();
         int fails = 0;
+        for (String fileName : deletedFiles) {
+            try {
+                File delFile = new File(configDir + "/Sjuttverse/elements/" + fileName + ".json");
+                if (delFile.exists()) {
+                    Files.delete(delFile.toPath());
+                } else {
+                    LOGGER.warn("Could not delete element file " + fileName + ".json, because the file doesn't exist.");
+                    fails++;
+                }
+            } catch (Exception e) {
+                LOGGER.error("Failed to delete element file " + fileName + ".json! For help, please join our discord. Error:");
+                LOGGER.error(String.valueOf(e));
+                sendToast("§cFailed to delete file!", "§fCheck console for further information");
+                fails++;
+            }
+        }
+
         for (JsonElement elm : elmArray) {
             try {
                 JsonObject obj = elm.getAsJsonObject();
-                String fileName = obj.get("name").getAsString() + ".json";
+                String fileName = obj.get("name").getAsString().toLowerCase() + ".json";
                 File elmFile = new File(configDir + "/Sjuttverse/elements/" + fileName);
                 if (elmFile.exists()) {
-                    if (JsonParser.parseReader(new FileReader(elmFile)).equals(elm)) {
-                        try (FileWriter writer = new FileWriter(elmFile)) {
-                            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                            JsonWriter jsonWriter = gson.newJsonWriter(writer);
-                            gson.toJson(obj, jsonWriter);
-                            jsonWriter.flush();
-                        }
+                    FileReader fileReader = new FileReader(elmFile);
+                    JsonElement parsed = JsonParser.parseReader(fileReader);
+                    fileReader.close();
+                    if (!parsed.equals(elm)) {
+                        FileWriter writer = new FileWriter(elmFile);
+                        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                        JsonWriter jsonWriter = gson.newJsonWriter(writer);
+                        gson.toJson(obj, jsonWriter);
+                        jsonWriter.flush();
                     }
                 } else {
                     Files.createDirectories(elmFile.getParentFile().toPath());
@@ -173,25 +187,14 @@ public class ConfigFiles {
                         gson.toJson(obj, jsonWriter);
                         jsonWriter.flush();
                     }
-                    LOGGER.info("Created new element file: " + elmFile);
                 }
             } catch (Exception e) {
                 LOGGER.error("Error saving element file: " + e.getMessage());
-                MinecraftClient.getInstance().getToastManager().add(
-                        new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
-                                Text.literal("§cFailed to save file!"),
-                                Text.literal("§f" + e.getMessage())
-                        )
-                );
+                sendToast("§cFailed to save file!", "§f" + e.getMessage());
                 fails++;
             }
         }
-        MinecraftClient.getInstance().getToastManager().add(
-                new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
-                        Text.literal("§aChanges have been saved!"),
-                        Text.literal("§e" + (elmArray.size() - fails) + "/" + elmArray.size() + " files successfully saved.")
-                )
-        );
+        sendToast("§aChanges have been saved!", "§e" + fails + " errors encountered!");
     }
 
     public boolean validateJson(JsonElement elm) {
@@ -206,6 +209,21 @@ public class ConfigFiles {
             return errors.isEmpty();
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    // Should not be in this file
+    public void sendToast(String title, String description) {
+        try {
+            MinecraftClient.getInstance().getToastManager().add(
+                    new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
+                            Text.literal(title),
+                            Text.literal(description)
+                    )
+            );
+        } catch (Exception e) {
+            LOGGER.warn("Failed to display toast! Error:");
+            LOGGER.error(String.valueOf(e));
         }
     }
 }
