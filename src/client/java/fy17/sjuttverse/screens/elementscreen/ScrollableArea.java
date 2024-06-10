@@ -44,6 +44,11 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
         return width - 15;
     }
 
+    @Override
+    public int getRowWidth() {
+        return width - 15;
+    }
+
     public class Entry extends ElementListWidget.Entry<Entry> {
         public TextFieldWidget textField;
         public ButtonWidget button;
@@ -80,17 +85,17 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
         @Override
         public void render(DrawContext drawContext, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             if (this.textField != null) {
-                this.textField.setX(width / 6 * 5 - 100);
+                this.textField.setX(width / 2 + 50);
                 this.textField.setY(y);
                 this.textField.render(drawContext, mouseX, mouseY, tickDelta);
             }
             if (this.button != null) {
-                this.button.setX(width / 6 * 5 - 100);
+                this.button.setX(width / 2 + 50);
                 this.button.setY(y);
                 this.button.render(drawContext, mouseX, mouseY, tickDelta);
             }
 
-            drawContext.drawText(textRenderer, titles.get(index), width / 6, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF, true);
+            drawContext.drawText(textRenderer, titles.get(index), width / 2 - 100, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF, true);
         }
 
         @Override
