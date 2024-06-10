@@ -1,8 +1,8 @@
-package fy17.sjuttverse.screens.configscreen;
+package fy17.adaptivehud.screens.configscreen;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import fy17.sjuttverse.screens.elementscreen.ElementScreen;
+import fy17.adaptivehud.screens.elementscreen.ElementScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -14,8 +14,8 @@ import net.minecraft.text.Text;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fy17.sjuttverse.ConfigFiles.elementArray;
-import static fy17.sjuttverse.Sjuttverse.LOGGER;
+import static fy17.adaptivehud.ConfigFiles.elementArray;
+import static fy17.adaptivehud.adaptivehud.LOGGER;
 
 public class ScrollableList extends ScrollableWidget {
     private final List<ButtonWidget> buttonList = new ArrayList<>();

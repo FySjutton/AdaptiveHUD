@@ -1,6 +1,6 @@
-package fy17.sjuttverse;
+package fy17.adaptivehud;
 
-import fy17.sjuttverse.renderhud.RenderHUD;
+import fy17.adaptivehud.renderhud.RenderHUD;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -9,29 +9,29 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
-import static fy17.sjuttverse.Sjuttverse.LOGGER;
+import static fy17.adaptivehud.adaptivehud.LOGGER;
 
-public class SjuttverseClient implements ClientModInitializer {
+public class adaptivehudClient implements ClientModInitializer {
 	public static final KeyBinding reloadElementsKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			// TRANSLATION KEYS SHOULD BE USED; RESOURCE FILES; CHANGE: https://fabricmc.net/wiki/tutorial:keybinds
 			"Reload Elements",
 			InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_UNKNOWN,
-			"Sjuttverse"
+			"AdaptiveHUD"
 	));
 	public static final KeyBinding reloadConfigKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			// TRANSLATION KEYS SHOULD BE USED; RESOURCE FILES; CHANGE: https://fabricmc.net/wiki/tutorial:keybinds
 			"Reload Config",
 			InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_UNKNOWN,
-			"Sjuttverse"
+			"AdaptiveHUD"
 	));
 	public static final KeyBinding openConfigKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			// TRANSLATION KEYS SHOULD BE USED; RESOURCE FILES; CHANGE: https://fabricmc.net/wiki/tutorial:keybinds
 			"Open Config",
 			InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_C,
-			"Sjuttverse"
+			"AdaptiveHUD"
 	));
 
 	@Override

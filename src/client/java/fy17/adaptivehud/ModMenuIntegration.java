@@ -1,8 +1,8 @@
-package fy17.sjuttverse;
+package fy17.adaptivehud;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import fy17.sjuttverse.screens.configscreen.ConfigScreen;
+import fy17.adaptivehud.screens.configscreen.ConfigScreen;
 
 public class ModMenuIntegration implements ModMenuApi {
     @Override

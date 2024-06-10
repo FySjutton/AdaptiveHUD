@@ -1,4 +1,4 @@
-package fy17.sjuttverse;
+package fy17.adaptivehud;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -25,7 +25,7 @@ import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 import org.apache.commons.io.FileUtils;
 
-import static fy17.sjuttverse.Sjuttverse.LOGGER;
+import static fy17.adaptivehud.adaptivehud.LOGGER;
 
 public class ConfigFiles {
     public static List<JsonElement> elementArray = new ArrayList<>();
@@ -33,11 +33,11 @@ public class ConfigFiles {
     public void CheckDefaultConfigs() {
         Path configDir = FabricLoader.getInstance().getConfigDir();
 
-        if (Files.notExists(configDir.resolve("Sjuttverse"))) {
+        if (Files.notExists(configDir.resolve("adaptivehud"))) {
             LOGGER.warn("Configuration folder not found - generating folder and example files.");
-            new File(configDir + "/Sjuttverse").mkdir();
+            new File(configDir + "/adaptivehud").mkdir();
             Path sourceDir = Paths.get("../src/client/resources/premade/default_setup");
-            Path targetDir = Paths.get(configDir + "/Sjuttverse");
+            Path targetDir = Paths.get(configDir + "/adaptivehud");
 
             try {
                 FileUtils.copyDirectory(sourceDir.toFile(), targetDir.toFile());
@@ -50,7 +50,7 @@ public class ConfigFiles {
 
     public void GenerateElementArray() {
         elementArray.clear();
-        File[] files = new File(FabricLoader.getInstance().getConfigDir() + "/Sjuttverse/elements").listFiles();
+        File[] files = new File(FabricLoader.getInstance().getConfigDir() + "/adaptivehud/elements").listFiles();
 
         ObjectMapper mapper = new ObjectMapper();
         File schemaFile = new File("../src/client/resources/premade/verify_schema.json");
@@ -82,7 +82,7 @@ public class ConfigFiles {
                         names.add(name.toLowerCase());
                     }
                 } else {
-                    LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in Sjuttverse discord server! This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error Code: 51");
+                    LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error Code: 51");
                     problemsFile.add(file.getName());
                     String errorMessage = "";
                     problemsFile.add("Key name must be unique!");
@@ -94,7 +94,7 @@ public class ConfigFiles {
                     fails += 1;
                 }
             } catch (Exception e) {
-                LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in Sjuttverse discord server! This might be caused by a missing comma or similar. This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error Code: 52");
+                LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! This might be caused by a missing comma or similar. This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error Code: 52");
                 fails += 1;
                 problemsFile.add(file.getName());
                 problemsFile.add("Invalid json format or similar!");
@@ -122,7 +122,7 @@ public class ConfigFiles {
         JsonSchema jsonSchema = factory.getSchema(schemaFile.toURI());
 
         try {
-            File config = new File(configDir + "/Sjuttverse/config.json");
+            File config = new File(configDir + "/adaptivehud/config.json");
             FileReader fileReader = new FileReader(config);
             JsonElement elm = JsonParser.parseReader(fileReader);
             fileReader.close();
@@ -130,7 +130,7 @@ public class ConfigFiles {
             Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
 
             if (!errors.isEmpty()) {
-                LOGGER.error("[CRITICAL] - Configuration file could not be read properly. This is most likely because of a missing key or similar, the file does not follow the required format. For help, please seek help in Sjuttverse discord server. Exiting minecraft.");
+                LOGGER.error("[CRITICAL] - Configuration file could not be read properly. This is most likely because of a missing key or similar, the file does not follow the required format. For help, please seek help in adaptivehud discord server. Exiting minecraft.");
                 for (ValidationMessage error : errors) {
                     LOGGER.error(error.getMessage());
                 }
@@ -148,7 +148,7 @@ public class ConfigFiles {
         int fails = 0;
         for (String fileName : deletedFiles) {
             try {
-                File delFile = new File(configDir + "/Sjuttverse/elements/" + fileName + ".json");
+                File delFile = new File(configDir + "/adaptivehud/elements/" + fileName + ".json");
                 if (delFile.exists()) {
                     Files.delete(delFile.toPath());
                 } else {
@@ -167,7 +167,7 @@ public class ConfigFiles {
             try {
                 JsonObject obj = elm.getAsJsonObject();
                 String fileName = obj.get("name").getAsString().toLowerCase() + ".json";
-                File elmFile = new File(configDir + "/Sjuttverse/elements/" + fileName);
+                File elmFile = new File(configDir + "/adaptivehud/elements/" + fileName);
                 if (elmFile.exists()) {
                     FileReader fileReader = new FileReader(elmFile);
                     JsonElement parsed = JsonParser.parseReader(fileReader);

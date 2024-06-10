@@ -1,17 +1,15 @@
-package fy17.sjuttverse;
+package fy17.adaptivehud;
 
-import com.terraformersmc.modmenu.api.ConfigScreenFactory;
-import com.terraformersmc.modmenu.api.ModMenuApi;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Sjuttverse implements ModInitializer {
+public class adaptivehud implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
-    public static final Logger LOGGER = LoggerFactory.getLogger("sjuttverse");
+    public static final Logger LOGGER = LoggerFactory.getLogger("adaptivehud");
 
 	@Override
 	public void onInitialize() {

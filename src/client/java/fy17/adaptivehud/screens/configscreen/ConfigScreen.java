@@ -1,9 +1,9 @@
-package fy17.sjuttverse.screens.configscreen;
+package fy17.adaptivehud.screens.configscreen;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import fy17.sjuttverse.ConfigFiles;
+import fy17.adaptivehud.ConfigFiles;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static fy17.sjuttverse.ConfigFiles.elementArray;
-import static fy17.sjuttverse.Sjuttverse.LOGGER;
+import static fy17.adaptivehud.ConfigFiles.elementArray;
+import static fy17.adaptivehud.adaptivehud.LOGGER;
 
 @Environment(EnvType.CLIENT)
 public class ConfigScreen extends Screen {
@@ -31,12 +31,12 @@ public class ConfigScreen extends Screen {
     private final Screen parent;
     private final List<JsonElement> backupElementArr = new ArrayList<>();
     private Boolean fileChanged = false;
-    private final Identifier discordTexture = new Identifier("sjuttverse", "textures/gui/discord_logo.png");
+    private final Identifier discordTexture = new Identifier("adaptivehud", "textures/gui/discord_logo.png");
     private int discordWidth;
     public final List<String> deletedFiles = new ArrayList<>();
 
     public ConfigScreen(Screen parent) {
-        super(Text.literal("Sjuttverse"));
+        super(Text.literal("AdaptiveHUD"));
         this.parent = parent;
 
         for (JsonElement elm : elementArray) {
@@ -79,7 +79,7 @@ public class ConfigScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredTextWithShadow(textRenderer, Text.literal("Sjuttverse"), width / 2, 20, 0xffffff);
+        context.drawCenteredTextWithShadow(textRenderer, Text.literal("AdaptiveHUD"), width / 2, 20, 0xffffff);
 
         context.drawTexture(discordTexture, width - discordWidth - 5, 23, 0, 0, 14, 14, 14, 14);
         context.drawText(textRenderer, "Get help here!", width - discordWidth + 14, (int) (26.5), 0xFFFFFF, true);

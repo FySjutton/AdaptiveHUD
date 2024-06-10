@@ -1,4 +1,4 @@
-package fy17.sjuttverse.mixin;
+package fy17.adaptivehud.mixin;
 
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;

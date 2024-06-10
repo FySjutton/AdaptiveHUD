@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"id": "sjuttverse",
+	"id": "adaptivehud",
 	"version": "${version}",
-	"name": "Sjuttverse",
+	"name": "AdaptiveHUD",
 	"description": "A highly configurable mod which adds HUD elements to your screen! Like a little mini F3 visible at all times!",
 	"authors": [
 		"Fy17"
@@ -11,23 +11,23 @@
 		"issues": "https://discord.gg/6gBT2CgqQj"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/sjuttverse/icon.png",
+	"icon": "assets/adaptivehud/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"fy17.sjuttverse.Sjuttverse"
+			"fy17.adaptivehud.adaptivehud"
 		],
 		"client": [
-			"fy17.sjuttverse.SjuttverseClient"
+			"fy17.adaptivehud.adaptivehudClient"
 		],
 		"modmenu": [
-			"fy17.sjuttverse.ModMenuIntegration"
+			"fy17.adaptivehud.ModMenuIntegration"
 		]
 	},
 	"mixins": [
-		"sjuttverse.mixins.json",
+		"adaptivehud.mixins.json",
 		{
-			"config": "sjuttverse.client.mixins.json",
+			"config": "adaptivehud.client.mixins.json",
 			"environment": "client"
 		}
 	],
@@ -38,9 +38,9 @@
 		"modmenu": ">=9.0.0"
 	},
 	"custom": {
-		"sjuttverse": {
+		"adaptivehud": {
 			"links": {
-				"sjuttverse.discord": "https://discord.gg/V2BXH2q6Rq"
+				"adaptivehud.discord": "https://discord.gg/V2BXH2q6Rq"
 			}
 		}
 	}

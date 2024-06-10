@@ -1,4 +1,4 @@
-package fy17.sjuttverse.screens.elementscreen;
+package fy17.adaptivehud.screens.elementscreen;
 
 import com.google.gson.JsonObject;
 import net.minecraft.client.MinecraftClient;
