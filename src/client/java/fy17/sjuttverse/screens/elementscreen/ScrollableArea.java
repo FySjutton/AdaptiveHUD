@@ -1,33 +1,23 @@
 package fy17.sjuttverse.screens.elementscreen;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
-import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-
-import static fy17.sjuttverse.Sjuttverse.LOGGER;
-
 
 public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
     private final ElementScreen parent;
-    public final ArrayList<String> titles = new ArrayList<>(Arrays.asList("name", "value", "textColor", "posX", "posY", "shadow"));
+    public final ArrayList<String> titles = new ArrayList<>(Arrays.asList("MAIN", "name", "value", "textColor", "posX", "posY", "shadow", "BACKGROUND", "enabled", "paddingX", "paddingY", "backgroundColor"));
     private final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
     public ScrollableArea(int height, int width, ElementScreen parent) {
@@ -53,12 +43,23 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
         public TextFieldWidget textField;
         public ButtonWidget button;
         public String setting;
+        public String title;
 
         public Entry(String item) {
             this.setting = item;
-            if (item.equals("shadow")) {
+
+            JsonObject parentElm;
+            if (item.equals("enabled") || item.equals("paddingX") || item.equals("paddingY") || item.equals("backgroundColor")) {
+                parentElm = parent.elm.get("background").getAsJsonObject();
+            } else {
+                parentElm = parent.elm;
+            }
+
+            if (item.equals("MAIN") || item.equals("BACKGROUND")) {
+                this.title = item;
+            } else if (item.equals("shadow") || item.equals("enabled")) {
                 this.button = ButtonWidget.builder(
-                    Text.literal(parent.elm.get(item).getAsBoolean() ? "On" : "Off"),
+                    Text.literal(parentElm.get(item).getAsBoolean() ? "On" : "Off"),
                     ScrollableArea.this::toggleOnOff
                 )
                     .dimensions(0, 0, 100, 20)
@@ -68,18 +69,32 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
                 if (item.equals("value")) {
                     this.textField.setMaxLength(350);
                 }
-                this.textField.setText(parent.elm.get(item).getAsString());
+                this.textField.setText(parentElm.get(item).getAsString());
             }
         }
 
         @Override
         public List<? extends Selectable> selectableChildren() {
-            return button != null ? List.of(button) : List.of(textField);
+            List<Selectable> children = new ArrayList<>();
+            if (button != null) {
+                children.add(button);
+            }
+            if (textField != null) {
+                children.add(textField);
+            }
+            return children;
         }
 
         @Override
         public List<? extends net.minecraft.client.gui.Element> children() {
-            return button != null ? List.of(button) : List.of(textField);
+            List<Element> children = new ArrayList<>();
+            if (button != null) {
+                children.add(button);
+            }
+            if (textField != null) {
+                children.add(textField);
+            }
+            return children;
         }
 
         @Override
@@ -88,14 +103,17 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
                 this.textField.setX(width / 2 + 50);
                 this.textField.setY(y);
                 this.textField.render(drawContext, mouseX, mouseY, tickDelta);
+                drawContext.drawText(textRenderer, titles.get(index), width / 2 - 150, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF, true);
             }
             if (this.button != null) {
                 this.button.setX(width / 2 + 50);
                 this.button.setY(y);
                 this.button.render(drawContext, mouseX, mouseY, tickDelta);
+                drawContext.drawText(textRenderer, titles.get(index), width / 2 - 150, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF, true);
             }
-
-            drawContext.drawText(textRenderer, titles.get(index), width / 2 - 100, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF, true);
+            if (this.title != null) {
+                drawContext.drawCenteredTextWithShadow(textRenderer, this.title, width / 2, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF);
+            }
         }
 
         @Override
