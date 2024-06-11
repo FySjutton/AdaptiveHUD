@@ -1,29 +1,25 @@
 package ahud.adaptivehud;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.List;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.SpecVersion;
-import com.networknt.schema.ValidationMessage;
-
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import static ahud.adaptivehud.adaptivehud.LOGGER;
 
@@ -36,12 +32,14 @@ public class ConfigFiles {
         if (Files.notExists(configDir.resolve("adaptivehud"))) {
             LOGGER.warn("Configuration folder not found - generating folder and example files.");
             new File(configDir + "/adaptivehud").mkdir();
-            Path sourceDir = Paths.get("../src/client/resources/premade/default_setup");
+
             Path targetDir = Paths.get(configDir + "/adaptivehud");
 
             try {
-                FileUtils.copyDirectory(sourceDir.toFile(), targetDir.toFile());
-            } catch (IOException e) {
+                URL resource = ConfigFiles.class.getResource("/assets/premade/default_setup");
+                File resourceFile = Paths.get(resource.toURI()).toFile();
+                FileUtils.copyDirectory(resourceFile, targetDir.toFile());
+            } catch (Exception e) {
                 LOGGER.error("[CRITICAL] - CONFIGURATION LOADING FAILED.");
                 throw new RuntimeException(e);
             }
@@ -51,57 +49,49 @@ public class ConfigFiles {
     public void GenerateElementArray() {
         elementArray.clear();
         File[] files = new File(FabricLoader.getInstance().getConfigDir() + "/adaptivehud/elements").listFiles();
-
-        ObjectMapper mapper = new ObjectMapper();
-        File schemaFile = new File("../src/client/resources/premade/verify_schema.json");
-        JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012);
-        JsonSchema jsonSchema = factory.getSchema(schemaFile.toURI());
-
         int fails = 0;
         List<String> names = new ArrayList<>();
 
         List<List<String>> problems = new ArrayList<>();
 
-        for (File file : files) {
-            List<String> problemsFile = new ArrayList<>();
-            try {
-                FileReader fileReader = new FileReader(file);
-                JsonElement elm = JsonParser.parseReader(fileReader);
-                fileReader.close();
-                JsonNode jsonNode = mapper.readTree(file);
-                Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
-                if (errors.isEmpty()) {
-                    String name = elm.getAsJsonObject().get("name").getAsString();
-                    if (names.contains(name.toLowerCase())) {
-                        problemsFile.add(file.getName());
-                        problemsFile.add("Key name must be unique!");
-                        LOGGER.error("Failed to load element file " + file.getName() + "! The identifier (\"name\" key) must be unique!");
-                        fails += 1;
+        if (files != null) {
+            for (File file : files) {
+                List<String> problemsFile = new ArrayList<>();
+                try {
+                    FileReader fileReader = new FileReader(file);
+                    JsonElement elm = JsonParser.parseReader(fileReader);
+                    fileReader.close();
+
+                    String validated = new jsonValidator().validateElement(elm.getAsJsonObject());
+                    if (validated == null) {
+                        String name = elm.getAsJsonObject().get("name").getAsString();
+                        if (names.contains(name.toLowerCase())) {
+                            problemsFile.add(file.getName());
+                            problemsFile.add("Key name must be unique!");
+                            LOGGER.error("Failed to load element file " + file.getName() + "! The identifier (\"name\" key) must be unique!");
+                            fails += 1;
+                        } else {
+                            elementArray.add(elm);
+                            names.add(name.toLowerCase());
+                        }
                     } else {
-                        elementArray.add(elm);
-                        names.add(name.toLowerCase());
+                        LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error Code: 51");
+                        problemsFile.add(file.getName());
+                        problemsFile.add(validated);
+                        fails += 1;
                     }
-                } else {
-                    LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error Code: 51");
-                    problemsFile.add(file.getName());
-                    String errorMessage = "";
-                    problemsFile.add("Key name must be unique!");
-                    for (ValidationMessage error : errors) {
-                        LOGGER.error(error.getMessage());
-                        errorMessage += " " + error;
-                    }
-                    problemsFile.add(errorMessage);
+                } catch (Exception e) {
+                    LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! This might be caused by a missing comma or similar. This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error Code: 52");
                     fails += 1;
+                    problemsFile.add(file.getName());
+                    problemsFile.add("Invalid json format or similar!");
                 }
-            } catch (Exception e) {
-                LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! This might be caused by a missing comma or similar. This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error Code: 52");
-                fails += 1;
-                problemsFile.add(file.getName());
-                problemsFile.add("Invalid json format or similar!");
+                if (problemsFile.size() > 0) {
+                    problems.add(problemsFile);
+                }
             }
-            if (problemsFile.size() > 0) {
-                problems.add(problemsFile);
-            }
+        } else {
+            LOGGER.warn("No element files detected!");
         }
 
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
@@ -116,24 +106,15 @@ public class ConfigFiles {
     public void generateConfigArray() {
         Path configDir = FabricLoader.getInstance().getConfigDir();
 
-        ObjectMapper mapper = new ObjectMapper();
-        File schemaFile = new File("../src/client/resources/premade/config_schema.json");
-        JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012);
-        JsonSchema jsonSchema = factory.getSchema(schemaFile.toURI());
-
         try {
             File config = new File(configDir + "/adaptivehud/config.json");
             FileReader fileReader = new FileReader(config);
             JsonElement elm = JsonParser.parseReader(fileReader);
             fileReader.close();
-            JsonNode jsonNode = mapper.readTree(config);
-            Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
-
-            if (!errors.isEmpty()) {
+            String validated = new jsonValidator().validateConfig(elm.getAsJsonObject());
+            if (validated != null) {
                 LOGGER.error("[CRITICAL] - Configuration file could not be read properly. This is most likely because of a missing key or similar, the file does not follow the required format. For help, please seek help in adaptivehud discord server. Exiting minecraft.");
-                for (ValidationMessage error : errors) {
-                    LOGGER.error(error.getMessage());
-                }
+                LOGGER.error(validated);
                 MinecraftClient.getInstance().stop();
             }
             configFile = elm;
@@ -195,21 +176,6 @@ public class ConfigFiles {
             }
         }
         sendToast("§aChanges have been saved!", "§e" + fails + " errors encountered!");
-    }
-
-    public boolean validateJson(JsonElement elm) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            File schemaFile = new File("../src/client/resources/premade/verify_schema.json");
-            JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012);
-            JsonSchema jsonSchema = factory.getSchema(schemaFile.toURI());
-
-            JsonNode jsonNode = mapper.readTree(elm.toString());
-            Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
-            return errors.isEmpty();
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     // Should not be in this file

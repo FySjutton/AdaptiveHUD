@@ -1,5 +1,6 @@
 package ahud.adaptivehud.screens.elementscreen;
 
+import ahud.adaptivehud.jsonValidator;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import ahud.adaptivehud.ConfigFiles;
@@ -114,7 +115,8 @@ public class ElementScreen extends Screen {
                 }
             }
         }
-        if (new ConfigFiles().validateJson(elm)) {
+        String validated = new jsonValidator().validateElement(elm.getAsJsonObject());
+        if (validated == null) {
             List<JsonElement> deepCopyArray = new ArrayList<>();
             for (JsonElement elm : elementArray) {
                 deepCopyArray.add(elm.deepCopy());
@@ -132,7 +134,7 @@ public class ElementScreen extends Screen {
                 new ConfigFiles().sendToast("§cInvalid!", "§fThe name must be unique!");
             }
         } else {
-            new ConfigFiles().sendToast("§cInvalid!", "§fSomething is not following the required format.");
+            new ConfigFiles().sendToast("§cInvalid!", "§f" + validated);
         }
     }
 }

@@ -37,8 +37,8 @@ public class adaptivehudClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		new ConfigFiles().CheckDefaultConfigs();
-		new ConfigFiles().GenerateElementArray();
 		new ConfigFiles().generateConfigArray();
+		new ConfigFiles().GenerateElementArray();
 
 		HudRenderCallback.EVENT.register(new RenderHUD()::renderCustomHud);
 

@@ -1,6 +1,7 @@
 plugins {
 	id 'fabric-loom' version '1.6-SNAPSHOT'
 	id 'maven-publish'
+	id 'java'
 }
 
 version = project.mod_version
@@ -33,12 +34,10 @@ loom {
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "com.terraformersmc:modmenu:9.0.0"
-//	implementation 'com.networknt:json-schema-validator:1.4.0'
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-//	implementation 'org.everit:org.everit.json.schema:1.12.0'
-	include implementation("com.networknt:json-schema-validator:1.0.72")
+	modImplementation "com.terraformersmc:modmenu:9.0.0"
 }
 
 processResources {
