@@ -1,4 +1,4 @@
-package fy17.adaptivehud;
+package ahud.adaptivehud;
 
 import net.fabricmc.api.ModInitializer;
 

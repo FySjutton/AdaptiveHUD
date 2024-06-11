@@ -1,4 +1,4 @@
-package fy17.adaptivehud;
+package ahud.adaptivehud;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -25,7 +25,7 @@ import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 import org.apache.commons.io.FileUtils;
 
-import static fy17.adaptivehud.adaptivehud.LOGGER;
+import static ahud.adaptivehud.adaptivehud.LOGGER;
 
 public class ConfigFiles {
     public static List<JsonElement> elementArray = new ArrayList<>();

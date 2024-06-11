@@ -1,4 +1,4 @@
-package fy17.adaptivehud.renderhud;
+package ahud.adaptivehud.renderhud;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;

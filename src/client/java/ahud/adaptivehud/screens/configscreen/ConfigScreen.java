@@ -1,9 +1,9 @@
-package fy17.adaptivehud.screens.configscreen;
+package ahud.adaptivehud.screens.configscreen;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import fy17.adaptivehud.ConfigFiles;
+import ahud.adaptivehud.ConfigFiles;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static fy17.adaptivehud.ConfigFiles.elementArray;
-import static fy17.adaptivehud.adaptivehud.LOGGER;
+import static ahud.adaptivehud.ConfigFiles.elementArray;
+import static ahud.adaptivehud.adaptivehud.LOGGER;
 
 @Environment(EnvType.CLIENT)
 public class ConfigScreen extends Screen {

@@ -1,4 +1,4 @@
-package fy17.adaptivehud.screens.elementscreen;
+package ahud.adaptivehud.screens.elementscreen;
 
 import com.google.gson.JsonObject;
 import net.minecraft.client.MinecraftClient;

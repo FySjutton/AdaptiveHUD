@@ -15,13 +15,13 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"fy17.adaptivehud.adaptivehud"
+			"ahud.adaptivehud.adaptivehud"
 		],
 		"client": [
-			"fy17.adaptivehud.adaptivehudClient"
+			"ahud.adaptivehud.adaptivehudClient"
 		],
 		"modmenu": [
-			"fy17.adaptivehud.ModMenuIntegration"
+			"ahud.adaptivehud.ModMenuIntegration"
 		]
 	},
 	"mixins": [

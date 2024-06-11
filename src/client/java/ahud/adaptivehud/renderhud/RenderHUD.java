@@ -1,14 +1,14 @@
-package fy17.adaptivehud.renderhud;
+package ahud.adaptivehud.renderhud;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import fy17.adaptivehud.ConfigFiles;
+import ahud.adaptivehud.ConfigFiles;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
-import static fy17.adaptivehud.ConfigFiles.configFile;
-import static fy17.adaptivehud.adaptivehud.LOGGER;
+import static ahud.adaptivehud.ConfigFiles.configFile;
+import static ahud.adaptivehud.adaptivehud.LOGGER;
 
 public class RenderHUD {
     public void renderCustomHud(DrawContext drawContext, float tickDelta) {

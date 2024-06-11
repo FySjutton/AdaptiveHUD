@@ -1,8 +1,8 @@
-package fy17.adaptivehud;
+package ahud.adaptivehud;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import fy17.adaptivehud.screens.configscreen.ConfigScreen;
+import ahud.adaptivehud.screens.configscreen.ConfigScreen;
 
 public class ModMenuIntegration implements ModMenuApi {
     @Override
