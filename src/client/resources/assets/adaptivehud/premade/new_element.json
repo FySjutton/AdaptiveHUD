@@ -7,11 +7,16 @@
   "posX": 0,
   "posY": 0,
   "shadow": true,
-
   "background": {
     "enabled": true,
     "paddingX": 5,
     "paddingY": 5,
     "backgroundColor": "#0000004c"
+  },
+  "alignment": {
+    "anchorPointX": "left",
+    "anchorPointY": "top",
+    "textAlignX": "left",
+    "textAlignY": "top"
   }
 }

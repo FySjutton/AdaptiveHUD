@@ -7,6 +7,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
+import java.awt.*;
+
 import static ahud.adaptivehud.ConfigFiles.configFile;
 import static ahud.adaptivehud.adaptivehud.LOGGER;
 
@@ -28,6 +30,8 @@ public class RenderHUD {
 
                 int paddingY = 0;
                 int paddingX = 0;
+                int posX = getFromAnchorPoint(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText), "X");
+                int posY = getFromAnchorPoint(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9 + 1, "Y");
 
                 if (x.has("advanced")) {
                     Float decScale = x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
@@ -40,10 +44,10 @@ public class RenderHUD {
                     paddingY = x.get("background").getAsJsonObject().get("paddingY").getAsInt();
 
                     drawContext.fill(
-                            x.get("posX").getAsInt(),
-                            x.get("posY").getAsInt(),
-                            x.get("posX").getAsInt() + client.textRenderer.getWidth(parsedText) + 2 * paddingX,
-                            x.get("posY").getAsInt() + client.textRenderer.fontHeight + 2 * paddingY,
+                            posX,
+                            posY,
+                            posX + client.textRenderer.getWidth(parsedText) + 2 * paddingX,
+                            posY + client.textRenderer.fontHeight + 2 * paddingY,
                             parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
                     );
                 }
@@ -51,8 +55,8 @@ public class RenderHUD {
                 drawContext.drawText(
                         client.textRenderer,
                         parsedText,
-                        x.get("posX").getAsInt() + paddingX,
-                        x.get("posY").getAsInt() + paddingY + 1,
+                        posX + paddingX,
+                        posY + paddingY + 1,
                         parseColor(x.get("textColor").getAsString()),
                         x.get("shadow").getAsBoolean()
                 );
@@ -85,5 +89,24 @@ public class RenderHUD {
         } catch (Exception e) {
             return 0;
         }
+    }
+
+    private int getFromAnchorPoint(JsonObject elm, int value, int max, int length, String axis) {
+        String anchor = elm.get("alignment").getAsJsonObject().get("anchorPoint" + axis).getAsString();
+        String align = elm.get("alignment").getAsJsonObject().get("textAlign" + axis).getAsString();
+        int pos;
+        if (anchor.equals("center")) {
+            pos = max / 2 + value;
+        } else if (anchor.equals("bottom") || anchor.equals("right")) {
+            pos = max + value;
+        } else {
+            pos = value;
+        }
+        if (align.equals("center")) {
+            pos -= length / 2;
+        } else if (align.equals("bottom") || align.equals("right")) {
+            pos -= length;
+        }
+        return pos;
     }
 }

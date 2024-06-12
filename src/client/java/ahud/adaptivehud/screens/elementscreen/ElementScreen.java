@@ -111,7 +111,11 @@ public class ElementScreen extends Screen {
                     }
                 }
                 if (x.button != null) {
-                    specElm.addProperty(x.setting, x.button.getMessage().getString().equals("On"));
+                    if (x.setting.equals("shadow") || x.setting.equals("enabled")) {
+                        specElm.addProperty(x.setting, x.button.getMessage().getString().equals("On"));
+                    } else {
+                        specElm.addProperty(x.setting, x.button.getMessage().getString());
+                    }
                 }
             }
         }

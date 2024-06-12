@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
     private final ElementScreen parent;
-    public final ArrayList<String> titles = new ArrayList<>(Arrays.asList("MAIN", "name", "value", "textColor", "posX", "posY", "shadow", "BACKGROUND", "enabled", "paddingX", "paddingY", "backgroundColor"));
+    public final ArrayList<String> titles = new ArrayList<>(Arrays.asList("MAIN", "name", "value", "textColor", "posX", "posY", "shadow", "BACKGROUND", "enabled", "paddingX", "paddingY", "backgroundColor", "ALIGNMENT", "anchorPointX", "anchorPointY", "textAlignX", "textAlignY"));
     private final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
     public ScrollableArea(int height, int width, ElementScreen parent) {
@@ -51,19 +51,35 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
             JsonObject parentElm;
             if (item.equals("enabled") || item.equals("paddingX") || item.equals("paddingY") || item.equals("backgroundColor")) {
                 parentElm = parent.elm.get("background").getAsJsonObject();
+            } else if (item.equals("anchorPointX") || item.equals("anchorPointY") || item.equals("textAlignX") || item.equals("textAlignY")) {
+                parentElm = parent.elm.get("alignment").getAsJsonObject();
             } else {
                 parentElm = parent.elm;
             }
 
-            if (item.equals("MAIN") || item.equals("BACKGROUND")) {
+            if (item.equals("MAIN") || item.equals("BACKGROUND") || item.equals("ALIGNMENT")) {
                 this.title = item;
             } else if (item.equals("shadow") || item.equals("enabled")) {
                 this.button = ButtonWidget.builder(
                     Text.literal(parentElm.get(item).getAsBoolean() ? "On" : "Off"),
                     ScrollableArea.this::toggleOnOff
                 )
-                    .dimensions(0, 0, 100, 20)
-                    .build();
+                .dimensions(0, 0, 100, 20)
+                .build();
+            } else if (item.equals("anchorPointY") || item.equals("textAlignY")) {
+                this.button = ButtonWidget.builder(
+                    Text.literal(parentElm.get(item).getAsString()),
+                    ScrollableArea.this::alignY
+                )
+                .dimensions(0, 0, 100, 20)
+                .build();
+            } else if (item.equals("anchorPointX") || item.equals("textAlignX")) {
+                this.button = ButtonWidget.builder(
+                    Text.literal(parentElm.get(item).getAsString()),
+                    ScrollableArea.this::alignX
+                )
+                .dimensions(0, 0, 100, 20)
+                .build();
             } else {
                 this.textField = new TextFieldWidget(textRenderer, 0, 0, 100, 20, Text.literal(item));
                 if (item.equals("value")) {
@@ -145,6 +161,26 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
             btn.setMessage(Text.of("Off"));
         } else {
             btn.setMessage(Text.of("On"));
+        }
+    }
+
+    private void alignX(ButtonWidget btn) {
+        if (btn.getMessage().getString().equals("left")) {
+            btn.setMessage(Text.of("center"));
+        } else if (btn.getMessage().getString().equals("center")) {
+            btn.setMessage(Text.of("right"));
+        } else {
+            btn.setMessage(Text.of("left"));
+        }
+    }
+
+    private void alignY(ButtonWidget btn) {
+        if (btn.getMessage().getString().equals("top")) {
+            btn.setMessage(Text.of("center"));
+        } else if (btn.getMessage().getString().equals("center")) {
+            btn.setMessage(Text.of("bottom"));
+        } else {
+            btn.setMessage(Text.of("top"));
         }
     }
 }
