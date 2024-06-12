@@ -26,6 +26,34 @@ import static ahud.adaptivehud.adaptivehud.LOGGER;
 public class ConfigFiles {
     public static List<JsonElement> elementArray = new ArrayList<>();
     public static JsonElement configFile;
+
+    private void generateConfigFile() {
+        Path configDir = FabricLoader.getInstance().getConfigDir();
+        Path targetDir = Paths.get(configDir + "/adaptivehud");
+        try {
+            URL resource = ConfigFiles.class.getResource("/assets/premade/default_setup/config.json");
+            File resourceFile = Paths.get(resource.toURI()).toFile();
+            FileUtils.copyDirectory(resourceFile, targetDir.toFile());
+        } catch (Exception e) {
+            LOGGER.error("AdaptiveHUD - Could not generate a new config.json file, the program will now close. This error should not normally occur, and if you need help, please join our discord server. This error indicates that there's something wrong with the jar file, or the program doesn't have access to write files.");
+            LOGGER.error(e.getMessage());
+            MinecraftClient.getInstance().scheduleStop();
+        }
+    }
+    private void generateElementFolder() {
+        Path configDir = FabricLoader.getInstance().getConfigDir();
+        Path targetDir = Paths.get(configDir + "/adaptivehud");
+        try {
+            URL resource = ConfigFiles.class.getResource("/assets/premade/default_setup/elements");
+            File resourceFile = Paths.get(resource.toURI()).toFile();
+            FileUtils.copyDirectory(resourceFile, targetDir.toFile());
+        } catch (Exception e) {
+            LOGGER.error("AdaptiveHUD - Could not generate a new element folder, the program will now close. This error should not normally occur, and if you need help, please join our discord server. This error indicates that there's something wrong with the jar file, or the program doesn't have access to write files.");
+            LOGGER.error(e.getMessage());
+            MinecraftClient.getInstance().scheduleStop();
+        }
+    }
+
     public void CheckDefaultConfigs() {
         Path configDir = FabricLoader.getInstance().getConfigDir();
 
@@ -33,15 +61,16 @@ public class ConfigFiles {
             LOGGER.warn("Configuration folder not found - generating folder and example files.");
             new File(configDir + "/adaptivehud").mkdir();
 
-            Path targetDir = Paths.get(configDir + "/adaptivehud");
-
-            try {
-                URL resource = ConfigFiles.class.getResource("/assets/premade/default_setup");
-                File resourceFile = Paths.get(resource.toURI()).toFile();
-                FileUtils.copyDirectory(resourceFile, targetDir.toFile());
-            } catch (Exception e) {
-                LOGGER.error("[CRITICAL] - CONFIGURATION LOADING FAILED.");
-                throw new RuntimeException(e);
+            generateElementFolder();
+            generateConfigFile();
+        } else {
+            if (Files.notExists(configDir.resolve("adaptivehud/config.json"))) {
+                LOGGER.warn("Partial corrupted configuration setup found! Will now generate a new config file.");
+                generateConfigFile();
+            }
+            if (Files.notExists(configDir.resolve("adaptivehud/elements"))) {
+                LOGGER.warn("Partial corrupted configuration setup found! Will now generate a new element folder with default files.");
+                generateElementFolder();
             }
         }
     }
@@ -113,13 +142,16 @@ public class ConfigFiles {
             fileReader.close();
             String validated = new jsonValidator().validateConfig(elm.getAsJsonObject());
             if (validated != null) {
-                LOGGER.error("[CRITICAL] - Configuration file could not be read properly. This is most likely because of a missing key or similar, the file does not follow the required format. For help, please seek help in adaptivehud discord server. Exiting minecraft.");
+                LOGGER.error("[CRITICAL] - Configuration file could not be read properly. This is most likely because of a missing key or similar, the file does not follow the required format. For help, please seek help in adaptivehud discord server.");
                 LOGGER.error(validated);
-                MinecraftClient.getInstance().stop();
+                LOGGER.warn("Program will now generate a new configuration file, and restart validation process.");
+                generateConfigFile();
+                generateConfigArray();
+                return;
             }
             configFile = elm;
         } catch (Exception e) {
-            LOGGER.error("[CRITICAL] - CONFIGURATION LOADING FAILED.");
+            LOGGER.error("AdaptiveHUD - Error encountered while loading configuration file, program will now close, please contact developer for support. This is most likely a problem with the jar file.");
             throw new RuntimeException(e);
         }
     }
