@@ -66,14 +66,22 @@ public class RenderHUD {
     }
 
     public int parseColor(String colorString) {
-        String[] rgba = colorString.split(",");
         try {
-            return (
-                (((int) (Float.parseFloat(rgba[3]) * 255)) << 24) |
-                (Integer.parseInt(rgba[0]) << 16) |
-                (Integer.parseInt(rgba[1]) << 8) |
-                Integer.parseInt(rgba[2])
-            );
+            if (colorString.startsWith("#")) {
+                colorString = colorString.substring(1);
+            }
+
+            int alpha = 255;
+            if (colorString.length() == 8) {
+                alpha = Integer.parseInt(colorString.substring(0, 2), 16);
+                colorString = colorString.substring(2);
+            }
+
+            int red = Integer.parseInt(colorString.substring(0, 2), 16);
+            int green = Integer.parseInt(colorString.substring(2, 4), 16);
+            int blue = Integer.parseInt(colorString.substring(4, 6), 16);
+
+            return (alpha << 24) | (red << 16) | (green << 8) | blue;
         } catch (Exception e) {
             return 0;
         }
