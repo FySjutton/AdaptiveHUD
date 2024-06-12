@@ -6,18 +6,23 @@ import com.google.gson.JsonParser;
 import ahud.adaptivehud.ConfigFiles;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 
 import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.MalformedInputException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,10 +57,14 @@ public class ConfigScreen extends Screen {
             .dimensions(width / 16, 50, width / 8 * 3, 20)
             .build();
         addDrawableChild(newElm);
-        ButtonWidget reloadElements = ButtonWidget.builder(Text.literal("Reload element files"), btn -> reloadElements())
-                .dimensions(width / 16, 75, width / 8 * 3, 20)
+        ButtonWidget reloadElements = ButtonWidget.builder(Text.literal("Reload elements"), btn -> reloadElements())
+                .dimensions(width / 16, 75, (width / 8 * 3) / 3 * 2 - 5, 20)
                 .build();
         addDrawableChild(reloadElements);
+        ButtonWidget folderButton = ButtonWidget.builder(Text.literal("Folder"), btn -> openFolder())
+                .dimensions(width / 16 + (width / 8 * 3) / 3 * 2 - 5 + 5, 75, (width / 8 * 3) / 3, 20)
+                .build();
+        addDrawableChild(folderButton);
         ButtonWidget closeElm = ButtonWidget.builder(Text.literal("Cancel"), btn -> discardChanges())
                 .dimensions(width / 16, height - 50, width / 16 * 3 - 3, 20)
                 .build();
@@ -149,8 +158,8 @@ public class ConfigScreen extends Screen {
         fileChanged = !elementArray.equals(backupElementArr);
 
         ButtonWidget reloadElementsElm = (ButtonWidget) children().get(1);
-        ButtonWidget saveButtonElm = (ButtonWidget) children().get(3);
-        ButtonWidget cancelButtonElm = (ButtonWidget) children().get(2);
+        ButtonWidget saveButtonElm = (ButtonWidget) children().get(4);
+        ButtonWidget cancelButtonElm = (ButtonWidget) children().get(3);
 
         reloadElementsElm.active = !fileChanged;
         reloadElementsElm.setTooltip(fileChanged ? Tooltip.of(Text.of("You have unsaved changes!")) : null);
@@ -177,6 +186,12 @@ public class ConfigScreen extends Screen {
             LOGGER.error("Failed to open discord link! Link: https://discord.gg/tqn38v6w7k");
             LOGGER.error(String.valueOf(e));
         }
+    }
+
+    private void openFolder() {
+        Path configDir = FabricLoader.getInstance().getConfigDir();
+        File folder = new File(configDir + "/adaptivehud");
+        Util.getOperatingSystem().open(folder);
     }
 
     public void addDeletedFile(String oldFileName) {
