@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 
 import java.util.regex.Pattern;
 
+import static ahud.adaptivehud.adaptivehud.LOGGER;
+
 public class jsonValidator {
     public String validateElement(JsonObject elm) {
         Pattern colorReg = Pattern.compile("^(#)?([0-9A-Fa-f]{2})?([0-9A-Fa-f]{6})$");

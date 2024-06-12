@@ -103,7 +103,7 @@ public class ConfigFiles {
                             names.add(name.toLowerCase());
                         }
                     } else {
-                        LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error Code: 51");
+                        LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! Error message: " + validated);
                         problemsFile.add(file.getName());
                         problemsFile.add(validated);
                         fails += 1;
