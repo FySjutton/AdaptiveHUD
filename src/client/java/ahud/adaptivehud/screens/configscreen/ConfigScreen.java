@@ -12,17 +12,14 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.apache.commons.io.FileUtils;
 
 import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static ahud.adaptivehud.ConfigFiles.elementArray;
@@ -107,7 +104,7 @@ public class ConfigScreen extends Screen {
 
     private void createNewElement() {
         try {
-            URL resource = ConfigScreen.class.getResource("/assets/premade/new_element.json");
+            URL resource = ConfigScreen.class.getResource("/assets/adaptivehud/premade/new_element.json");
             File resourceFile = Paths.get(resource.toURI()).toFile();
             JsonElement newElement = JsonParser.parseReader(new FileReader(resourceFile));
             JsonObject newObject = newElement.getAsJsonObject();
