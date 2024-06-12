@@ -8,7 +8,7 @@ import static ahud.adaptivehud.adaptivehud.LOGGER;
 
 public class jsonValidator {
     public String validateElement(JsonObject elm) {
-        Pattern colorReg = Pattern.compile("^(#)?([0-9A-Fa-f]{2})?([0-9A-Fa-f]{6})$");
+        Pattern colorReg = Pattern.compile("^#?([0-9A-Fa-f]{6})([0-9A-Fa-f]{2})?$");
         try {
             JsonObject background = elm.get("background").getAsJsonObject();
             elm.get("enabled").getAsBoolean();

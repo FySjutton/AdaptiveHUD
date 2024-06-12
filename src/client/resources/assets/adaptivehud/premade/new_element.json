@@ -3,7 +3,7 @@
 
   "name": "",
   "value": "Empty",
-  "textColor": "255,255,255,1",
+  "textColor": "#FFFFFF",
   "posX": 0,
   "posY": 0,
   "shadow": true,
@@ -12,6 +12,6 @@
     "enabled": true,
     "paddingX": 5,
     "paddingY": 5,
-    "backgroundColor": "0,0,0,0.3"
+    "backgroundColor": "#0000004c"
   }
 }

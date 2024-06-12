@@ -73,8 +73,8 @@ public class RenderHUD {
 
             int alpha = 255;
             if (colorString.length() == 8) {
-                alpha = Integer.parseInt(colorString.substring(0, 2), 16);
-                colorString = colorString.substring(2);
+                alpha = Integer.parseInt(colorString.substring(6, 8), 16);
+                colorString = colorString.substring(0, 6);
             }
 
             int red = Integer.parseInt(colorString.substring(0, 2), 16);
