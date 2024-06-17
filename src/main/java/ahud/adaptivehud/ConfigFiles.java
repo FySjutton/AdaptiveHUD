@@ -9,15 +9,15 @@ import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import static ahud.adaptivehud.adaptivehud.LOGGER;
 
@@ -29,9 +29,8 @@ public class ConfigFiles {
         Path configDir = FabricLoader.getInstance().getConfigDir();
         Path targetPath = Paths.get(configDir + "/adaptivehud/config.json");
         try {
-            URL resource = ConfigFiles.class.getResource("/assets/adaptivehud/premade/default_setup/config.json");
-            Path resourceFile = Paths.get(resource.toURI());
-            Files.copy(resourceFile, targetPath);
+            InputStream resource = ConfigFiles.class.getResourceAsStream("/assets/adaptivehud/premade/default_setup/config.json");
+            FileUtils.copyInputStreamToFile(resource, targetPath.toFile());
         } catch (Exception e) {
             LOGGER.error("AdaptiveHUD - Could not generate a new config.json file, the program will now close. This error should not normally occur, and if you need help, please join our discord server. This error indicates that there's something wrong with the jar file, or the program doesn't have access to write files.");
             LOGGER.error("Shutting down minecraft..."); // Should just inactivate mod instead?
@@ -43,12 +42,22 @@ public class ConfigFiles {
         Path configDir = FabricLoader.getInstance().getConfigDir();
         Path targetDir = Paths.get(configDir + "/adaptivehud/elements");
         try {
-            URL resource = ConfigFiles.class.getResource("/assets/adaptivehud/premade/default_setup/elements");
-            File resourceFile = Paths.get(resource.toURI()).toFile();
-            FileUtils.copyDirectory(resourceFile, targetDir.toFile());
+            InputStream resource = ConfigFiles.class.getResourceAsStream("/assets/adaptivehud/premade/default_setup/elements.zip");
+            new File(targetDir.toUri()).mkdir();
+            InputStream zipStream = new BufferedInputStream(resource);
+            ZipInputStream zip = new ZipInputStream(zipStream);
+
+            ZipEntry entry;
+            while ((entry = zip.getNextEntry()) != null) {
+                String name = entry.getName();
+                Path targetPath = targetDir.resolve(name);
+
+                Files.copy(zip, targetPath);
+            }
         } catch (Exception e) {
             LOGGER.error("AdaptiveHUD - Could not generate a new element folder, the program will now close. This error should not normally occur, and if you need help, please join our discord server. This error indicates that there's something wrong with the jar file, or the program doesn't have access to write files.");
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Shutting down minecraft..."); // Should just inactivate mod instead?
+            LOGGER.error(e.toString());
             MinecraftClient.getInstance().stop();
         }
     }
