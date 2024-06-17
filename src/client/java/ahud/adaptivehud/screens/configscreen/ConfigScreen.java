@@ -40,8 +40,12 @@ public class ConfigScreen extends Screen {
     private int discordWidth;
     public final List<String> deletedFiles = new ArrayList<>();
 
+    private static final Text DEFAULTNAME = Text.translatable("adaptivehud.config.defaultName");
+    private static final Text TITLE = Text.translatable("adaptivehud.config.title");
+    private static final Text DISCORDTEXT = Text.translatable("adaptivehud.config.discordText");
+
     public ConfigScreen(Screen parent) {
-        super(Text.literal("AdaptiveHUD"));
+        super(TITLE);
         this.parent = parent;
 
         for (JsonElement elm : elementArray) {
@@ -51,25 +55,25 @@ public class ConfigScreen extends Screen {
 
     @Override
     protected void init() {
-        discordWidth = textRenderer.getWidth("Get help here!") + 16 + 5 + 3 + 5;
+        discordWidth = textRenderer.getWidth(DISCORDTEXT) + 16 + 5 + 3 + 5;
 
-        ButtonWidget newElm = ButtonWidget.builder(Text.literal("Create new element"), btn -> createNewElement())
+        ButtonWidget newElm = ButtonWidget.builder(Text.translatable("adaptivehud.config.createNewElement"), btn -> createNewElement())
             .dimensions(width / 16, 50, width / 8 * 3, 20)
             .build();
         addDrawableChild(newElm);
-        ButtonWidget reloadElements = ButtonWidget.builder(Text.literal("Reload elements"), btn -> reloadElements())
+        ButtonWidget reloadElements = ButtonWidget.builder(Text.translatable("adaptivehud.config.reloadElements"), btn -> reloadElements())
                 .dimensions(width / 16, 75, (width / 8 * 3) / 3 * 2 - 5, 20)
                 .build();
         addDrawableChild(reloadElements);
-        ButtonWidget folderButton = ButtonWidget.builder(Text.literal("Folder"), btn -> openFolder())
+        ButtonWidget folderButton = ButtonWidget.builder(Text.translatable("adaptivehud.config.folder"), btn -> openFolder())
                 .dimensions(width / 16 + (width / 8 * 3) / 3 * 2 - 5 + 5, 75, (width / 8 * 3) / 3, 20)
                 .build();
         addDrawableChild(folderButton);
-        ButtonWidget closeElm = ButtonWidget.builder(Text.literal("Cancel"), btn -> discardChanges())
+        ButtonWidget closeElm = ButtonWidget.builder(Text.translatable("adaptivehud.config.cancel"), btn -> discardChanges())
                 .dimensions(width / 16, height - 50, width / 16 * 3 - 3, 20)
                 .build();
         addDrawableChild(closeElm);
-        ButtonWidget saveAndExitElm = ButtonWidget.builder(Text.literal("Done"), btn -> saveAndExit())
+        ButtonWidget saveAndExitElm = ButtonWidget.builder(Text.translatable("adaptivehud.config.done"), btn -> saveAndExit())
                 .dimensions(width / 4 + 3, height - 50, width / 16 * 3 - 3, 20)
                 .build();
         addDrawableChild(saveAndExitElm);
@@ -88,10 +92,10 @@ public class ConfigScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredTextWithShadow(textRenderer, Text.literal("AdaptiveHUD"), width / 2, 20, 0xffffff);
+        context.drawCenteredTextWithShadow(textRenderer, TITLE, width / 2, 20, 0xffffff);
 
         context.drawTexture(discordTexture, width - discordWidth - 5, 23, 0, 0, 14, 14, 14, 14);
-        context.drawText(textRenderer, "Get help here!", width - discordWidth + 14, (int) (26.5), 0xFFFFFF, true);
+        context.drawText(textRenderer, DISCORDTEXT, width - discordWidth + 14, (int) (26.5), 0xFFFFFF, true);
     }
 
     @Override
@@ -117,10 +121,10 @@ public class ConfigScreen extends Screen {
             File resourceFile = Paths.get(resource.toURI()).toFile();
             JsonElement newElement = JsonParser.parseReader(new FileReader(resourceFile));
             JsonObject newObject = newElement.getAsJsonObject();
-            String newName = "NewElement";
+            String newName = DEFAULTNAME.getString();
             int counter = 1;
             while (elementArray.toString().contains("\"name\":\"" + newName + "\",")) {
-                newName = "NewElement" + counter;
+                newName = DEFAULTNAME.getString() + counter;
                 counter++;
             }
             newObject.addProperty("name", newName);
@@ -162,12 +166,12 @@ public class ConfigScreen extends Screen {
         ButtonWidget cancelButtonElm = (ButtonWidget) children().get(3);
 
         reloadElementsElm.active = !fileChanged;
-        reloadElementsElm.setTooltip(fileChanged ? Tooltip.of(Text.of("You have unsaved changes!")) : null);
+        reloadElementsElm.setTooltip(fileChanged ? Tooltip.of(Text.translatable("adaptivehud.config.unsavedChanges")) : null);
 
         cancelButtonElm.active = fileChanged;
-        cancelButtonElm.setTooltip(fileChanged ? Tooltip.of(Text.of("Your changes will not be saved!")) : null);
+        cancelButtonElm.setTooltip(fileChanged ? Tooltip.of(Text.translatable("adaptivehud.config.cancelWarning")) : null);
 
-        saveButtonElm.setMessage(Text.of(fileChanged ? "Save" : "Done"));
+        saveButtonElm.setMessage(Text.translatable("adaptivehud.config." + (fileChanged ? "save" : "done")));
     }
 
     public void deleteElement(JsonElement element, int width) {

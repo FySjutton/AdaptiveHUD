@@ -1,0 +1,36 @@
+{
+  "adaptivehud.variable.error": "#Error",
+  "adaptivehud.variable.noServerFound": "No Server",
+
+  "adaptivehud.config.title": "Elements",
+  "adaptivehud.config.cancel": "Cancel",
+  "adaptivehud.config.done": "Done",
+  "adaptivehud.config.save": "Save",
+  "adaptivehud.config.discordText": "Get help here!",
+  "adaptivehud.config.createNewElement": "Create new element",
+  "adaptivehud.config.reloadElements": "Reload Elements",
+  "adaptivehud.config.folder": "Folder",
+  "adaptivehud.config.defaultName": "NewElement",
+  "adaptivehud.config.unsavedChanges": "You have unsaved changes!",
+  "adaptivehud.config.cancelWarning": "Your changes will not be saved!",
+  "adaptivehud.config.editElement": "Edit element...",
+  "adaptivehud.config.toggleElement": "Toggle element...",
+  "adaptivehud.config.deleteElement": "Delete element...",
+
+  "adaptivehud.config.button.on": "On",
+  "adaptivehud.config.button.off": "Off",
+  "adaptivehud.config.button.center": "Center",
+  "adaptivehud.config.button.left": "Left",
+  "adaptivehud.config.button.right": "Right",
+  "adaptivehud.config.button.top": "Top",
+  "adaptivehud.config.button.bottom": "Bottom",
+
+  "adaptivehud.config.title.MAIN": "MAIN",
+  "adaptivehud.config.title.BACKGROUND": "BACKGROUND",
+  "adaptivehud.config.title.ALIGNMENT": "ALIGNMENT",
+
+  "adaptivehud.key.category": "AdaptiveHUD",
+  "adaptivehud.key.reloadElements": "Reload Elements",
+  "adaptivehud.key.reloadConfig": "Reload Config",
+  "adaptivehud.key.openConfig": "Open Config"
+}

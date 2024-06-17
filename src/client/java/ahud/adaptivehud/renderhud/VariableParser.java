@@ -1,7 +1,9 @@
 package ahud.adaptivehud.renderhud;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.Text;
 
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
@@ -50,7 +52,7 @@ public class VariableParser {
 
                 matcher.appendReplacement(result, replacement);
             } catch (Exception e) {
-                matcher.appendReplacement(result, "#Error!");
+                matcher.appendReplacement(result, Text.translatable("adaptivehud.variable.error").getString());
             }
         }
         matcher.appendTail(result);

@@ -3,6 +3,7 @@ package ahud.adaptivehud.renderhud;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.LightType;
 
@@ -41,7 +42,7 @@ public class Variables {
         if (player.getServer() != null) {
             return String.valueOf(player.getServer().getServerIp());
         } else {
-            return "No server";
+            return Text.translatable("adaptivehud.variable.noServerFound").getString();
         }
     }
 

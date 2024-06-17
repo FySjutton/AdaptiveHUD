@@ -9,22 +9,25 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ScrollableWidget;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static ahud.adaptivehud.ConfigFiles.elementArray;
-import static ahud.adaptivehud.adaptivehud.LOGGER;
 
 public class ScrollableList extends ScrollableWidget {
     private final List<ButtonWidget> buttonList = new ArrayList<>();
     private final int buttonHeight = 20;
     private final int buttonMargin = 5;
     private final ConfigScreen parent;
+    private final String ONTEXT = Text.translatable("adaptivehud.config.button.on").getString();
+    private final String OFFTEXT = Text.translatable("adaptivehud.config.button.off").getString();
+
 
     public ScrollableList(int height, int width, ConfigScreen parent) {
-        super(width / 2, 45, width / 2 - 10, height - 50, Text.literal("Elements"));
+        super(width / 2, 45, width / 2 - 10, height - 50, Text.translatable("adaptivehud.config.title"));
         this.parent = parent;
         updateElementList(width);
     }
@@ -38,17 +41,17 @@ public class ScrollableList extends ScrollableWidget {
         for (JsonElement element : elementArray) {
             ButtonWidget button = ButtonWidget.builder(Text.literal(element.getAsJsonObject().get("name").getAsString()), btn -> editElement(element))
                     .dimensions(boxPosX + 5, yPosition, (int) (0.6 * boxWidth - 12), buttonHeight)
-                    .tooltip(Tooltip.of(Text.of("Edit element...")))
+                    .tooltip(Tooltip.of(Text.translatable("adaptivehud.config.editElement")))
                     .build();
             buttonList.add(button);
-            ButtonWidget enableButton = ButtonWidget.builder(Text.literal((element.getAsJsonObject().get("enabled").getAsBoolean() ? "On" : "Off")), btn -> switchEnabled(btn, element))
+            ButtonWidget enableButton = ButtonWidget.builder(Text.literal((element.getAsJsonObject().get("enabled").getAsBoolean() ? ONTEXT : OFFTEXT)), btn -> switchEnabled(btn, element))
                     .dimensions((int) (boxPosX + 0.6 * boxWidth - 2), yPosition, (int) (0.25 * boxWidth - 5), buttonHeight)
-                    .tooltip(Tooltip.of(Text.of("Toggle element...")))
+                    .tooltip(Tooltip.of(Text.translatable("adaptivehud.config.toggleElement")))
                     .build();
             buttonList.add(enableButton);
             ButtonWidget deleteButton = ButtonWidget.builder(Text.literal("\uD83D\uDDD1"), btn -> this.parent.deleteElement(element, width))
                     .dimensions((int) (0.6 * boxPosX + 1.25 * boxWidth + 2), yPosition, (int) (0.15 * boxWidth - 3), buttonHeight)
-                    .tooltip(Tooltip.of(Text.of("Delete element...")))
+                    .tooltip(Tooltip.of(Text.translatable("adaptivehud.config.deleteElement")))
                     .build();
             buttonList.add(deleteButton);
             yPosition += buttonHeight + buttonMargin;
@@ -103,11 +106,11 @@ public class ScrollableList extends ScrollableWidget {
 
     private void switchEnabled(ButtonWidget button, JsonElement element) {
         JsonObject new_object = element.getAsJsonObject();
-        if (button.getMessage().getString().equals("On")) {
-            button.setMessage(Text.of("Off"));
+        if (button.getMessage().getString().equals(ONTEXT)) {
+            button.setMessage(Text.of(OFFTEXT));
             new_object.addProperty("enabled", false);
         } else {
-            button.setMessage(Text.of("On"));
+            button.setMessage(Text.of(ONTEXT));
             new_object.addProperty("enabled", true);
         }
         elementArray.set(elementArray.indexOf(element), new_object);

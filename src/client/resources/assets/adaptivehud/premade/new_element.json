@@ -14,9 +14,9 @@
     "backgroundColor": "#0000004c"
   },
   "alignment": {
-    "anchorPointX": "left",
-    "anchorPointY": "top",
-    "textAlignX": "left",
-    "textAlignY": "top"
+    "anchorPointX": 0,
+    "anchorPointY": 0,
+    "textAlignX": 0,
+    "textAlignY": 0
   }
 }

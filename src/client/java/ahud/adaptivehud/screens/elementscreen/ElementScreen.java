@@ -25,9 +25,14 @@ public class ElementScreen extends Screen {
     private ScrollableArea scrollableArea;
     private final JsonElement beforeEditing;
     public JsonObject elm;
+    private static final String CENTER = Text.translatable("adaptivehud.config.button.center").getString();
+    private static final String LEFT = Text.translatable("adaptivehud.config.button.left").getString();
+    private static final String RIGHT = Text.translatable("adaptivehud.config.button.right").getString();
+    private static final String TOP = Text.translatable("adaptivehud.config.button.top").getString();
+    private static final String BOTTOM = Text.translatable("adaptivehud.config.button.bottom").getString();
 
     public ElementScreen(Screen parent, JsonElement elm) {
-        super(Text.literal("AdaptiveHUD"));
+        super(Text.translatable("adaptivehud.config.title"));
         this.parent = parent;
         this.elm = elm.deepCopy().getAsJsonObject();
 
@@ -36,11 +41,11 @@ public class ElementScreen extends Screen {
 
     @Override
     protected void init() {
-        ButtonWidget cancelBtn = ButtonWidget.builder(Text.literal("Cancel"), btn -> close())
+        ButtonWidget cancelBtn = ButtonWidget.builder(Text.translatable("adaptivehud.config.cancel"), btn -> close())
             .dimensions(width / 2 - 105, height - 35, 100, 20)
             .build();
         addDrawableChild(cancelBtn);
-        ButtonWidget saveBtn = ButtonWidget.builder(Text.literal("Save"), btn -> saveChanges())
+        ButtonWidget saveBtn = ButtonWidget.builder(Text.translatable("adaptivehud.config.save"), btn -> saveChanges())
                 .dimensions(width / 2 + 5, height - 35, 100, 20)
                 .build();
         addDrawableChild(saveBtn);
@@ -117,9 +122,16 @@ public class ElementScreen extends Screen {
                 }
                 if (x.button != null) {
                     if (x.setting.equals("shadow") || x.setting.equals("enabled")) {
-                        specElm.addProperty(x.setting, x.button.getMessage().getString().equals("On"));
-                    } else {
-                        specElm.addProperty(x.setting, x.button.getMessage().getString());
+                        specElm.addProperty(x.setting, x.button.getMessage().getString().equals(Text.translatable("adaptivehud.config.button.on").getString()));
+                    } else if (x.setting.equals("anchorPointX") || x.setting.equals("anchorPointY") || x.setting.equals("textAlignX") || x.setting.equals("textAlignY")) {
+                        String value = x.button.getMessage().getString();
+                        int corN = 1;
+                        if (value.equals(LEFT) || value.equals(TOP)) {
+                            corN = 0;
+                        } else if (value.equals(RIGHT) || value.equals(BOTTOM)) {
+                            corN = 2;
+                        }
+                        specElm.addProperty(x.setting, corN);
                     }
                 }
             }

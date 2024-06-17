@@ -20,6 +20,14 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
     public final ArrayList<String> titles = new ArrayList<>(Arrays.asList("MAIN", "name", "value", "textColor", "posX", "posY", "shadow", "BACKGROUND", "enabled", "paddingX", "paddingY", "backgroundColor", "ALIGNMENT", "anchorPointX", "anchorPointY", "textAlignX", "textAlignY"));
     private final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
+    private static final String CENTER = Text.translatable("adaptivehud.config.button.center").getString();
+    private static final String LEFT = Text.translatable("adaptivehud.config.button.left").getString();
+    private static final String RIGHT = Text.translatable("adaptivehud.config.button.right").getString();
+    private static final String TOP = Text.translatable("adaptivehud.config.button.top").getString();
+    private static final String BOTTOM = Text.translatable("adaptivehud.config.button.bottom").getString();
+    private static final String ONTEXT = Text.translatable("adaptivehud.config.button.on").getString();
+    private static final String OFFTEXT = Text.translatable("adaptivehud.config.button.off").getString();
+
     public ScrollableArea(int height, int width, ElementScreen parent) {
         super(MinecraftClient.getInstance(), width, height - 100, 50, 25);
         this.parent = parent;
@@ -61,21 +69,21 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
                 this.title = item;
             } else if (item.equals("shadow") || item.equals("enabled")) {
                 this.button = ButtonWidget.builder(
-                    Text.literal(parentElm.get(item).getAsBoolean() ? "On" : "Off"),
+                    Text.literal(parentElm.get(item).getAsBoolean() ? ONTEXT : OFFTEXT),
                     ScrollableArea.this::toggleOnOff
                 )
                 .dimensions(0, 0, 100, 20)
                 .build();
             } else if (item.equals("anchorPointY") || item.equals("textAlignY")) {
                 this.button = ButtonWidget.builder(
-                    Text.literal(parentElm.get(item).getAsString()),
+                    Text.literal(getY(parentElm.get(item).getAsInt())),
                     ScrollableArea.this::alignY
                 )
                 .dimensions(0, 0, 100, 20)
                 .build();
             } else if (item.equals("anchorPointX") || item.equals("textAlignX")) {
                 this.button = ButtonWidget.builder(
-                    Text.literal(parentElm.get(item).getAsString()),
+                    Text.literal(getX(parentElm.get(item).getAsInt())),
                     ScrollableArea.this::alignX
                 )
                 .dimensions(0, 0, 100, 20)
@@ -131,7 +139,7 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
                 drawContext.drawText(textRenderer, titles.get(index), width / 2 - 150, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF, true);
             }
             if (this.title != null) {
-                drawContext.drawCenteredTextWithShadow(textRenderer, this.title, width / 2, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF);
+                drawContext.drawCenteredTextWithShadow(textRenderer, Text.translatable("adaptivehud.config.title." + this.title).getString(), width / 2, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF);
             }
         }
 
@@ -157,30 +165,49 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
     }
 
     private void toggleOnOff(ButtonWidget btn) {
-        if (btn.getMessage().getString().equals("On")) {
-            btn.setMessage(Text.of("Off"));
+        if (btn.getMessage().getString().equals(ONTEXT)) {
+            btn.setMessage(Text.of(OFFTEXT));
         } else {
-            btn.setMessage(Text.of("On"));
+            btn.setMessage(Text.of(ONTEXT));
         }
     }
 
     private void alignX(ButtonWidget btn) {
-        if (btn.getMessage().getString().equals("left")) {
-            btn.setMessage(Text.of("center"));
-        } else if (btn.getMessage().getString().equals("center")) {
-            btn.setMessage(Text.of("right"));
+        if (btn.getMessage().getString().equals(LEFT)) {
+            btn.setMessage(Text.of(CENTER));
+        } else if (btn.getMessage().getString().equals(CENTER)) {
+            btn.setMessage(Text.of(RIGHT));
         } else {
-            btn.setMessage(Text.of("left"));
+            btn.setMessage(Text.of(LEFT));
         }
     }
 
     private void alignY(ButtonWidget btn) {
-        if (btn.getMessage().getString().equals("top")) {
-            btn.setMessage(Text.of("center"));
-        } else if (btn.getMessage().getString().equals("center")) {
-            btn.setMessage(Text.of("bottom"));
+        if (btn.getMessage().getString().equals(TOP)) {
+            btn.setMessage(Text.of(CENTER));
+        } else if (btn.getMessage().getString().equals(CENTER)) {
+            btn.setMessage(Text.of(BOTTOM));
         } else {
-            btn.setMessage(Text.of("top"));
+            btn.setMessage(Text.of(TOP));
+        }
+    }
+
+    private String getX(int number) {
+        if (number == 0) {
+            return LEFT;
+        } else if (number == 1) {
+            return CENTER;
+        } else {
+            return RIGHT;
+        }
+    }
+    private String getY(int number) {
+        if (number == 0) {
+            return TOP;
+        } else if (number == 1) {
+            return CENTER;
+        } else {
+            return BOTTOM;
         }
     }
 }

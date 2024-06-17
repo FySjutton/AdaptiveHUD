@@ -11,11 +11,10 @@ import static ahud.adaptivehud.adaptivehud.LOGGER;
 public class jsonValidator {
     public String validateElement(JsonObject elm) {
         Pattern colorReg = Pattern.compile("^#?([0-9A-Fa-f]{6})([0-9A-Fa-f]{2})?$");
-        ArrayList<String> alignX = new ArrayList<>(Arrays.asList("left", "center", "right"));
-        ArrayList<String> alignY = new ArrayList<>(Arrays.asList("top", "center", "bottom"));
-//        "leftTop", "centerTop", "rightTop",
-//        "leftCenter", "center", "rightCenter",
-//        "leftBottom", "centerBottom", "RightBottom"
+        ArrayList<Integer> allowedPos = new ArrayList<>(Arrays.asList(0, 1, 2));
+//        0: LEFT, TOP
+//        1: CENTER
+//        2: RIGHT, BOTTOM
         try {
             JsonObject background = elm.get("background").getAsJsonObject();
             JsonObject alignment = elm.get("alignment").getAsJsonObject();
@@ -33,10 +32,10 @@ public class jsonValidator {
                 colorReg.matcher(background.get("backgroundColor").getAsString()).find()
             ) {
                 if (
-                    alignX.contains(alignment.get("anchorPointX").getAsString()) &&
-                    alignY.contains(alignment.get("anchorPointY").getAsString()) &&
-                    alignX.contains(alignment.get("textAlignX").getAsString()) &&
-                    alignY.contains(alignment.get("textAlignY").getAsString())
+                    allowedPos.contains(alignment.get("anchorPointX").getAsInt()) &&
+                    allowedPos.contains(alignment.get("anchorPointY").getAsInt()) &&
+                    allowedPos.contains(alignment.get("textAlignX").getAsInt()) &&
+                    allowedPos.contains(alignment.get("textAlignY").getAsInt())
                 ) {
                     return null;
                 } else {

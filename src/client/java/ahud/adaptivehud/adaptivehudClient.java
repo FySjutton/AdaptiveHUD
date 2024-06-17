@@ -7,31 +7,29 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 import static ahud.adaptivehud.adaptivehud.LOGGER;
 
 public class adaptivehudClient implements ClientModInitializer {
 	public static final KeyBinding reloadElementsKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-			// TRANSLATION KEYS SHOULD BE USED; RESOURCE FILES; CHANGE: https://fabricmc.net/wiki/tutorial:keybinds
-			"Reload Elements",
+			Text.translatable("adaptivehud.key.reloadElements").getString(),
 			InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_UNKNOWN,
-			"AdaptiveHUD"
+			Text.translatable("adaptivehud.key.category").getString()
 	));
 	public static final KeyBinding reloadConfigKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-			// TRANSLATION KEYS SHOULD BE USED; RESOURCE FILES; CHANGE: https://fabricmc.net/wiki/tutorial:keybinds
-			"Reload Config",
+			Text.translatable("adaptivehud.key.reloadConfig").getString(),
 			InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_UNKNOWN,
-			"AdaptiveHUD"
+			Text.translatable("adaptivehud.key.category").getString()
 	));
 	public static final KeyBinding openConfigKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-			// TRANSLATION KEYS SHOULD BE USED; RESOURCE FILES; CHANGE: https://fabricmc.net/wiki/tutorial:keybinds
-			"Open Config",
+			Text.translatable("adaptivehud.key.openConfig").getString(),
 			InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_C,
-			"AdaptiveHUD"
+			Text.translatable("adaptivehud.key.category").getString()
 	));
 
 	@Override
