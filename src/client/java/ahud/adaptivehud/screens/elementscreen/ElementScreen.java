@@ -8,6 +8,7 @@ import ahud.adaptivehud.screens.configscreen.ConfigScreen;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
@@ -51,9 +52,11 @@ public class ElementScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         renderBackgroundTexture(context);
-        super.render(context, mouseX, mouseY, delta);
         scrollableArea.render(context, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
     }
+    @Override
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {}
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
