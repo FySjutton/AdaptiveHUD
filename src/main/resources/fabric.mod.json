@@ -12,24 +12,15 @@
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/adaptivehud/icon.png",
-	"environment": "*",
+	"environment": "client",
 	"entrypoints": {
-		"main": [
-			"ahud.adaptivehud.adaptivehud"
-		],
-		"client": [
-			"ahud.adaptivehud.adaptivehudClient"
-		],
+		"main": ["ahud.adaptivehud.adaptivehud"],
 		"modmenu": [
 			"ahud.adaptivehud.ModMenuIntegration"
 		]
 	},
 	"mixins": [
-		"adaptivehud.mixins.json",
-		{
-			"config": "adaptivehud.client.mixins.json",
-			"environment": "client"
-		}
+		"adaptivehud.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.14.0",
