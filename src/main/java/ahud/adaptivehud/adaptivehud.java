@@ -1,6 +1,7 @@
 package ahud.adaptivehud;
 
 import ahud.adaptivehud.renderhud.RenderHUD;
+import ahud.adaptivehud.screens.configscreen.ConfigScreen;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
@@ -8,8 +9,10 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
@@ -33,7 +36,7 @@ public class adaptivehud implements ModInitializer {
 	public static final KeyBinding openConfigKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			Text.translatable("adaptivehud.key.openConfig").getString(),
 			InputUtil.Type.KEYSYM,
-			GLFW.GLFW_KEY_C,
+			GLFW.GLFW_KEY_F8,
 			Text.translatable("adaptivehud.key.category").getString()
 	));
 
@@ -53,7 +56,7 @@ public class adaptivehud implements ModInitializer {
 				new ConfigFiles().generateConfigArray();
 			}
 			if (openConfigKeyBind.wasPressed()) {
-				LOGGER.info("Loading?");
+				MinecraftClient.getInstance().setScreen(new ConfigScreen(null));
 			}
 		});
 	}
