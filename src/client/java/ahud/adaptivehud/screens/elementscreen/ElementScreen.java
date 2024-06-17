@@ -94,8 +94,10 @@ public class ElementScreen extends Screen {
                 JsonObject specElm;
                 if (x.setting.equals("enabled") || x.setting.equals("paddingX") || x.setting.equals("paddingY") || x.setting.equals("backgroundColor")) {
                     specElm = elm.get("background").getAsJsonObject();
+                } else if (x.setting.equals("anchorPointX") || x.setting.equals("anchorPointY") || x.setting.equals("textAlignX") || x.setting.equals("textAlignY")) {
+                    specElm = elm.get("alignment").getAsJsonObject();
                 } else {
-                   specElm = elm;
+                    specElm = elm;
                 }
                 if (x.textField != null) {
                     if (x.setting.equals("posX") || x.setting.equals("posY") || x.setting.equals("paddingX")  || x.setting.equals("paddingY")) {
