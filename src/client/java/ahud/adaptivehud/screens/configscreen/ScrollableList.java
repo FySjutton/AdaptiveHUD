@@ -1,15 +1,14 @@
 package ahud.adaptivehud.screens.configscreen;
 
+import ahud.adaptivehud.screens.elementscreen.ElementScreen;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import ahud.adaptivehud.screens.elementscreen.ElementScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ScrollableWidget;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;

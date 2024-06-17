@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import static ahud.adaptivehud.adaptivehud.LOGGER;
-
 public class jsonValidator {
     public String validateElement(JsonObject elm) {
         Pattern colorReg = Pattern.compile("^#?([0-9A-Fa-f]{6})([0-9A-Fa-f]{2})?$");

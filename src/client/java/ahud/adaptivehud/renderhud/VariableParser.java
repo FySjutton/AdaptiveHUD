@@ -1,8 +1,5 @@
 package ahud.adaptivehud.renderhud;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.resource.language.I18n;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 
 import java.lang.reflect.Method;
@@ -11,7 +8,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class VariableParser {
-    PlayerEntity player = MinecraftClient.getInstance().player;
     Class<?> variablesClass = Variables.class;
 
     public String parseVariable(String text) {

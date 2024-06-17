@@ -1,14 +1,13 @@
 package ahud.adaptivehud.screens.elementscreen;
 
+import ahud.adaptivehud.ConfigFiles;
 import ahud.adaptivehud.jsonValidator;
+import ahud.adaptivehud.screens.configscreen.ConfigScreen;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import ahud.adaptivehud.ConfigFiles;
-import ahud.adaptivehud.screens.configscreen.ConfigScreen;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
@@ -17,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ahud.adaptivehud.ConfigFiles.elementArray;
-import static ahud.adaptivehud.adaptivehud.LOGGER;
 
 @Environment(EnvType.CLIENT)
 public class ElementScreen extends Screen {
@@ -25,7 +23,6 @@ public class ElementScreen extends Screen {
     private ScrollableArea scrollableArea;
     private final JsonElement beforeEditing;
     public JsonObject elm;
-    private static final String CENTER = Text.translatable("adaptivehud.config.button.center").getString();
     private static final String LEFT = Text.translatable("adaptivehud.config.button.left").getString();
     private static final String RIGHT = Text.translatable("adaptivehud.config.button.right").getString();
     private static final String TOP = Text.translatable("adaptivehud.config.button.top").getString();

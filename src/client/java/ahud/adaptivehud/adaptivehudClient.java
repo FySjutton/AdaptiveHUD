@@ -49,14 +49,7 @@ public class adaptivehudClient implements ClientModInitializer {
 			}
 			if (openConfigKeyBind.wasPressed()) {
 				LOGGER.info("Loading?");
-//				new ConfigScreen().init();
-
-//				MinecraftClient.getInstance().player.openHandledScreen((NamedScreenHandlerFactory) new ConfigScreen());
 			}
 		});
 	}
-
-
-
-
 }

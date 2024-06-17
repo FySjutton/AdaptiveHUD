@@ -7,10 +7,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.LightType;
 
-import java.util.Date;
-
-import static net.minecraft.loot.LootDataType.stream;
-
 public class Variables {
     MinecraftClient client = MinecraftClient.getInstance();
     PlayerEntity player = MinecraftClient.getInstance().player;

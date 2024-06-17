@@ -1,13 +1,12 @@
 package ahud.adaptivehud.screens.configscreen;
 
+import ahud.adaptivehud.ConfigFiles;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import ahud.adaptivehud.ConfigFiles;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -21,7 +20,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.MalformedInputException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;

@@ -7,10 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
-import java.awt.*;
-
 import static ahud.adaptivehud.ConfigFiles.configFile;
-import static ahud.adaptivehud.adaptivehud.LOGGER;
 
 public class RenderHUD {
     public void renderCustomHud(DrawContext drawContext, float tickDelta) {
