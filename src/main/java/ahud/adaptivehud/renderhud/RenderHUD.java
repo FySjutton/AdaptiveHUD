@@ -151,7 +151,7 @@ public class RenderHUD {
                     matrices.pop();
                 }
 
-                Object[] sublist = {element, posX, posY, posX2, posY2};
+                Object[] sublist = {element, Math.round(posX * defaultScale), Math.round(posY * defaultScale), Math.round(posX2 * defaultScale), Math.round(posY2 * defaultScale)};
                 positionList.add(sublist);
             }
         }
