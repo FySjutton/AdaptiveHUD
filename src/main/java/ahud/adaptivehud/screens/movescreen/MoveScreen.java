@@ -50,12 +50,6 @@ public class MoveScreen extends Screen {
         super.render(context, mouseX, mouseY, delta);
         new RenderHUD().renderCustomHud(context, 0);
 
-        if (snapX != 0) {
-            context.fill((int) snapX, 0, (int) snapX + 1, client.currentScreen.height, 0xB2FFFFFF);
-        }
-        if (snapY != 0) {
-            context.fill(0, (int) snapY, client.currentScreen.width, (int) snapY + 1, 0xB2FFFFFF);
-        }
         if (dragged != null) {
             context.fill(
                     anchorX,
@@ -71,6 +65,12 @@ public class MoveScreen extends Screen {
                     dragged.get("posY").getAsInt() + alignY,
                     0xFFff0000
             );
+            if (snapX != 0) {
+                context.fill((int) snapX, 0, (int) snapX + 1, client.currentScreen.height, 0xB2FFFFFF);
+            }
+            if (snapY != 0) {
+                context.fill(0, (int) snapY, client.currentScreen.width, (int) snapY + 1, 0xB2FFFFFF);
+            }
         }
     }
 
@@ -199,9 +199,6 @@ public class MoveScreen extends Screen {
             dragInf[3] = dragged.get("posX").getAsInt() + width;
             dragInf[4] = dragged.get("posY").getAsInt() + height;
             dragged = null;
-
-            snapX = 0;
-            snapY = 0;
         }
         return super.mouseReleased(mouseX, mouseY, button);
     }
