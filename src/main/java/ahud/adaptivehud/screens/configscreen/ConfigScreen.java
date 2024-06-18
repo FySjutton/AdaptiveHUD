@@ -64,18 +64,18 @@ public class ConfigScreen extends Screen {
             .dimensions(width / 16, 50, width / 8 * 3, 20)
             .build();
         addDrawableChild(newElm);
+        ButtonWidget moveElements = ButtonWidget.builder(Text.translatable("adaptivehud.config.moveElements"), btn -> moveElements())
+                .dimensions(width / 16, 75, width / 8 * 3, 20)
+                .build();
+        addDrawableChild(moveElements);
         ButtonWidget reloadElements = ButtonWidget.builder(Text.translatable("adaptivehud.config.reloadElements"), btn -> reloadElements())
-                .dimensions(width / 16, 75, (width / 8 * 3) / 3 * 2 - 5, 20)
+                .dimensions(width / 16, 100, (width / 8 * 3) / 3 * 2 - 5, 20)
                 .build();
         addDrawableChild(reloadElements);
         ButtonWidget folderButton = ButtonWidget.builder(Text.translatable("adaptivehud.config.folder"), btn -> openFolder())
-                .dimensions(width / 16 + (width / 8 * 3) / 3 * 2 - 5 + 5, 75, (width / 8 * 3) / 3, 20)
+                .dimensions(width / 16 + (width / 8 * 3) / 3 * 2 - 5 + 5, 100, (width / 8 * 3) / 3, 20)
                 .build();
         addDrawableChild(folderButton);
-        ButtonWidget moveElements = ButtonWidget.builder(Text.translatable("adaptivehud.config.moveElements"), btn -> moveElements())
-                .dimensions(width / 16, 100, width / 8 * 3, 20)
-                .build();
-        addDrawableChild(moveElements);
         ButtonWidget closeElm = ButtonWidget.builder(Text.translatable("adaptivehud.config.cancel"), btn -> discardChanges())
                 .dimensions(width / 16, height - 50, width / 16 * 3 - 3, 20)
                 .build();
@@ -172,7 +172,7 @@ public class ConfigScreen extends Screen {
     public void changesMade() {
         fileChanged = !elementArray.equals(backupElementArr);
 
-        ButtonWidget reloadElementsElm = (ButtonWidget) children().get(1);
+        ButtonWidget reloadElementsElm = (ButtonWidget) children().get(2);
         ButtonWidget saveButtonElm = (ButtonWidget) children().get(5);
         ButtonWidget cancelButtonElm = (ButtonWidget) children().get(4);
 
