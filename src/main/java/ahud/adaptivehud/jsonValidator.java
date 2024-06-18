@@ -49,7 +49,7 @@ public class jsonValidator {
 
     public String validateConfig(JsonObject elm) {
         try {
-            int default_size = elm.get("default_size").getAsInt();
+            double default_size = elm.get("default_size").getAsDouble();
             if (default_size > 0.1 && default_size < 10) {
                 return null;
             } else {
