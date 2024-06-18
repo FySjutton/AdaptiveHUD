@@ -1,12 +1,14 @@
 package ahud.adaptivehud.screens.configscreen;
 
 import ahud.adaptivehud.ConfigFiles;
+import ahud.adaptivehud.screens.movescreen.MoveScreen;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -70,6 +72,10 @@ public class ConfigScreen extends Screen {
                 .dimensions(width / 16 + (width / 8 * 3) / 3 * 2 - 5 + 5, 75, (width / 8 * 3) / 3, 20)
                 .build();
         addDrawableChild(folderButton);
+        ButtonWidget moveElements = ButtonWidget.builder(Text.translatable("adaptivehud.config.moveElements"), btn -> moveElements())
+                .dimensions(width / 16, 100, width / 8 * 3, 20)
+                .build();
+        addDrawableChild(moveElements);
         ButtonWidget closeElm = ButtonWidget.builder(Text.translatable("adaptivehud.config.cancel"), btn -> discardChanges())
                 .dimensions(width / 16, height - 50, width / 16 * 3 - 3, 20)
                 .build();
@@ -159,12 +165,16 @@ public class ConfigScreen extends Screen {
         scrollableList.updateElementList(width);
     }
 
+    private void moveElements() {
+        MinecraftClient.getInstance().setScreen(new MoveScreen(this));
+    }
+
     public void changesMade() {
         fileChanged = !elementArray.equals(backupElementArr);
 
         ButtonWidget reloadElementsElm = (ButtonWidget) children().get(1);
-        ButtonWidget saveButtonElm = (ButtonWidget) children().get(4);
-        ButtonWidget cancelButtonElm = (ButtonWidget) children().get(3);
+        ButtonWidget saveButtonElm = (ButtonWidget) children().get(5);
+        ButtonWidget cancelButtonElm = (ButtonWidget) children().get(4);
 
         reloadElementsElm.active = !fileChanged;
         reloadElementsElm.setTooltip(fileChanged ? Tooltip.of(Text.translatable("adaptivehud.config.unsavedChanges")) : null);

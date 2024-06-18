@@ -52,7 +52,7 @@ public class VariableParser {
 
                 matcher.appendReplacement(result, replacement);
             } catch (Exception e) {
-                matcher.appendReplacement(result, "HEJSAN");
+                matcher.appendReplacement(result, Text.translatable("adaptivehud.variable.error").getString());
             }
         }
         matcher.appendTail(result);
@@ -67,7 +67,6 @@ public class VariableParser {
                 mathMatcher.appendReplacement(mathResult, String.valueOf(replacement));
             } catch (Exception e) {
                 mathMatcher.appendReplacement(mathResult, Text.translatable("adaptivehud.variable.error").getString());
-                LOGGER.info(e.toString());
             }
         }
         mathMatcher.appendTail(mathResult);

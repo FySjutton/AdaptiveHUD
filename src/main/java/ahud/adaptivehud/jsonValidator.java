@@ -18,8 +18,8 @@ public class jsonValidator {
             JsonObject alignment = elm.get("alignment").getAsJsonObject();
             elm.get("enabled").getAsBoolean();
             elm.get("name").getAsString();
-            elm.get("posX").getAsInt();
-            elm.get("posY").getAsInt();
+            elm.get("posX").getAsFloat();
+            elm.get("posY").getAsFloat();
             elm.get("shadow").getAsBoolean();
             background.get("enabled").getAsBoolean();
             background.get("paddingX").getAsInt();

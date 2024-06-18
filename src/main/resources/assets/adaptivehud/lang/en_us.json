@@ -9,6 +9,7 @@
   "adaptivehud.config.discordText": "Get help here!",
   "adaptivehud.config.createNewElement": "Create new element",
   "adaptivehud.config.reloadElements": "Reload Elements",
+  "adaptivehud.config.moveElements": "Move Elements",
   "adaptivehud.config.folder": "Folder",
   "adaptivehud.config.defaultName": "NewElement",
   "adaptivehud.config.unsavedChanges": "You have unsaved changes!",

@@ -7,9 +7,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static ahud.adaptivehud.ConfigFiles.configFile;
 
 public class RenderHUD {
+
     public void renderCustomHud(DrawContext drawContext, float tickDelta) {
         MinecraftClient client = MinecraftClient.getInstance();
         VariableParser parser = new VariableParser();
@@ -105,5 +109,53 @@ public class RenderHUD {
             pos -= length;
         }
         return pos;
+    }
+
+    public List<Object[]> generatePositions() {
+        List<Object[]> positionList = new ArrayList<>();
+        MinecraftClient client = MinecraftClient.getInstance();
+        VariableParser parser = new VariableParser();
+
+        Float defaultScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
+        MatrixStack matrices = new MatrixStack();
+
+        matrices.push();
+        matrices.scale(defaultScale, defaultScale, 1);
+
+        for (JsonElement element : ConfigFiles.elementArray) {
+            JsonObject x = element.getAsJsonObject();
+            if (x.get("enabled").getAsBoolean()) {
+                String parsedText = parser.parseVariable(x.get("value").getAsString());
+
+                int paddingY = 0;
+                int paddingX = 0;
+                int posX2;
+                int posY2;
+                int posX = getFromAnchorPoint(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText), "X");
+                int posY = getFromAnchorPoint(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9 + 1, "Y");
+
+                if (x.has("advanced")) {
+                    Float decScale = x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
+                    matrices.push();
+                    matrices.scale(decScale, decScale, 1);
+                }
+
+                if (x.get("background").getAsJsonObject().get("enabled").getAsBoolean()) {
+                    paddingX = x.get("background").getAsJsonObject().get("paddingX").getAsInt();
+                    paddingY = x.get("background").getAsJsonObject().get("paddingY").getAsInt();
+                }
+                posX2 = posX + client.textRenderer.getWidth(parsedText) + 2 * paddingX;
+                posY2 = posY + client.textRenderer.fontHeight + 2 * paddingY;
+
+                if (x.has("advanced")) {
+                    matrices.pop();
+                }
+
+                Object[] sublist = {element, (double) posX, (double) posY, (double) posX2, (double) posY2};
+                positionList.add(sublist);
+            }
+        }
+        matrices.pop();
+        return positionList;
     }
 }
