@@ -39,6 +39,9 @@ public class MoveScreen extends Screen {
     }
 
     @Override
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {}
+
+    @Override
     public void close() {
         client.setScreen(parent);
     }
