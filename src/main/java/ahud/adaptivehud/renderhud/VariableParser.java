@@ -15,6 +15,8 @@ public class VariableParser {
     Class<?> variablesClass = Variables.class;
 
     public String parseVariable(String text) {
+        text = text.replaceAll("&(?=[\\da-fA-Fk-oK-OrR])", "§");
+
         Pattern pattern = Pattern.compile("\\$\\{(\\w+)(?::(\\w{1,5}=\\w{1,7}(?:,\\w{1,5}=\\w{1,7})*))?}");
         Matcher matcher = pattern.matcher(text);
         StringBuffer result = new StringBuffer();
