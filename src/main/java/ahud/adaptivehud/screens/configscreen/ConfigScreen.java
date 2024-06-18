@@ -128,10 +128,10 @@ public class ConfigScreen extends Screen {
             String jsonContent = IOUtils.toString(resource, "UTF-8");
             JsonElement newElement = JsonParser.parseString(jsonContent);
             JsonObject newObject = newElement.getAsJsonObject();
-            String newName = DEFAULTNAME.getString();
+            String newName = DEFAULTNAME.getString().toLowerCase();
             int counter = 1;
             while (elementArray.toString().contains("\"name\":\"" + newName + "\",")) {
-                newName = DEFAULTNAME.getString() + counter;
+                newName = DEFAULTNAME.getString().toLowerCase() + counter;
                 counter++;
             }
             newObject.addProperty("name", newName);
