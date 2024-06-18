@@ -1,11 +1,15 @@
 package ahud.adaptivehud.renderhud;
 
 import net.minecraft.text.Text;
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
 
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static ahud.adaptivehud.adaptivehud.LOGGER;
 
 public class VariableParser {
     Class<?> variablesClass = Variables.class;
@@ -48,10 +52,25 @@ public class VariableParser {
 
                 matcher.appendReplacement(result, replacement);
             } catch (Exception e) {
-                matcher.appendReplacement(result, Text.translatable("adaptivehud.variable.error").getString());
+                matcher.appendReplacement(result, "HEJSAN");
             }
         }
         matcher.appendTail(result);
-        return String.valueOf(result);
+
+        Pattern mathPattern = Pattern.compile("%([\\d+\\-*\\/^ a-z]*)%");
+        Matcher mathMatcher = mathPattern.matcher(String.valueOf(result));
+        StringBuffer mathResult = new StringBuffer();
+        while (mathMatcher.find()) {
+            try {
+                Expression expression = new ExpressionBuilder(mathMatcher.group(1)).build();
+                double replacement = expression.evaluate();
+                mathMatcher.appendReplacement(mathResult, String.valueOf(replacement));
+            } catch (Exception e) {
+                mathMatcher.appendReplacement(mathResult, Text.translatable("adaptivehud.variable.error").getString());
+                LOGGER.info(e.toString());
+            }
+        }
+        mathMatcher.appendTail(mathResult);
+        return String.valueOf(mathResult);
     }
 }
