@@ -58,24 +58,12 @@ public class MoveScreen extends Screen {
         new RenderHUD(false).renderCustomHud(context, 0);
 
         if (dragged != null) {
-            context.fill(
-                    anchorX,
-                    anchorY,
-//                    (int) (dragged.get("posX").getAsInt() * default_size + alignX),
-                    dragged.get("posX").getAsInt() + alignX,
-                    anchorY + 2,
-                    0xFFff0000
-            );
-            context.fill(
-//                    (int) (dragged.get("posX").getAsInt() * default_size + alignX),
-                    dragged.get("posX").getAsInt() + alignX,
-                    anchorY,
-//                    (int) (dragged.get("posX").getAsInt() * default_size + alignX + 2),
-                    dragged.get("posX").getAsInt() + alignX + 2,
-//                    (int) (dragged.get("posY").getAsInt() * default_size + alignY),
-                    dragged.get("posY").getAsInt() + alignY,
-                    0xFFff0000
-            );
+            int xPos = new coordCalculators().getActualCords(dragged, dragged.get("posX").getAsInt() + alignX, client.getWindow().getScaledWidth(), width, 0, "X");
+            int yPos = new coordCalculators().getActualCords(dragged, dragged.get("posY").getAsInt() + alignY, client.getWindow().getScaledHeight(), height, 0, "Y");
+
+            context.fill(anchorX, anchorY, xPos, anchorY + 2, 0xFFff0000);
+            context.fill(xPos, anchorY, xPos + 2, yPos, 0xFFff0000);
+
             if (snapX != 0) {
                 context.fill((int) snapX, 0, (int) snapX + 1, client.currentScreen.height, 0xB2FFFFFF);
             }
