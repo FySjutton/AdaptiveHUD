@@ -47,7 +47,7 @@ public class RenderHUD {
                 int posY;
 
                 if (x.has("advanced")) {
-                    defaultScale *= x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
+                    defaultScale = x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
                     matrices.push();
                     matrices.scale(defaultScale, defaultScale, 1);
                 }
@@ -85,6 +85,7 @@ public class RenderHUD {
                 }
             }
         }
+        matrices.pop();
     }
 
     public int parseColor(String colorString) {
