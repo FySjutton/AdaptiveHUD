@@ -24,17 +24,14 @@ public class RenderHUD {
         MinecraftClient client = MinecraftClient.getInstance();
         VariableParser parser = new VariableParser();
 
-        float defaultScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
         MatrixStack matrices = drawContext.getMatrices();
 
-        matrices.push();
-        matrices.scale(defaultScale, defaultScale, 1);
-
         for (JsonElement element : ConfigFiles.elementArray) {
-            defaultScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
             JsonObject x = element.getAsJsonObject();
             if (x.get("enabled").getAsBoolean()) {
+                float defaultScale;
                 String parsedText;
+
                 if (this.useLong) {
                     parsedText = parser.parseVariable(x.get("value").getAsString());
                 } else {
@@ -46,9 +43,12 @@ public class RenderHUD {
                 int posX;
                 int posY;
 
+                matrices.push();
                 if (x.has("advanced")) {
                     defaultScale = x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
-                    matrices.push();
+                    matrices.scale(defaultScale, defaultScale, 1);
+                } else {
+                    defaultScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
                     matrices.scale(defaultScale, defaultScale, 1);
                 }
 
@@ -80,12 +80,9 @@ public class RenderHUD {
                         x.get("shadow").getAsBoolean()
                 );
 
-                if (x.has("advanced")) {
-                    matrices.pop();
-                }
+                matrices.pop();
             }
         }
-        matrices.pop();
     }
 
     public int parseColor(String colorString) {
@@ -115,7 +112,6 @@ public class RenderHUD {
     public List<Object[]> generatePositions() {
         List<Object[]> positionList = new ArrayList<>();
         MinecraftClient client = MinecraftClient.getInstance();
-        VariableParser parser = new VariableParser();
 
         for (JsonElement element : ConfigFiles.elementArray) {
             float defaultScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
@@ -127,7 +123,7 @@ public class RenderHUD {
                 int paddingX = 0;
 
                 if (x.has("advanced")) {
-                    defaultScale *= x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
+                    defaultScale = x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
                 }
 
                 if (x.get("background").getAsJsonObject().get("enabled").getAsBoolean()) {
