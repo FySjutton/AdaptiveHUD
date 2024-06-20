@@ -12,11 +12,7 @@ import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import static ahud.adaptivehud.ConfigFiles.configFile;
-import static ahud.adaptivehud.adaptivehud.LOGGER;
 
 @Environment(EnvType.CLIENT)
 public class MoveScreen extends Screen {
@@ -29,8 +25,8 @@ public class MoveScreen extends Screen {
     private int width;
     private Object[] dragInf;
     private JsonObject dragged;
-    private ArrayList<Integer> snapPointsX;
-    private ArrayList<Integer> snapPointsY;
+    private final ArrayList<Integer> snapPointsX;
+    private final ArrayList<Integer> snapPointsY;
     private boolean shiftPressed = false;
     private double snapX = 0;
     private double snapY = 0;
@@ -39,8 +35,6 @@ public class MoveScreen extends Screen {
     private int anchorY = 0;
     private int alignX = 0;
     private int alignY = 0;
-
-    private double default_size = 1;
 
     public MoveScreen(Screen parent) {
         super(Text.translatable("adaptivehud.config.title"));
@@ -87,56 +81,46 @@ public class MoveScreen extends Screen {
             boolean foundX = false;
             boolean foundY = false;
             if (!shiftPressed) {
-//                for (int x : this.snapPointsX) {
-//                    if (Math.abs(mouseX - offsetX - x) < 5) {
-//                        dragged.addProperty("posX", (int) (x * (1 + 1 - default_size)));
-//                        snapX = x;
-//                        foundX = true;
-//                    } else if (Math.abs(mouseX - offsetX + width - x) < 5) {
-//                        dragged.addProperty("posX", (int) ((x - width) * (1 + 1 - default_size)));
-//                        snapX = x;
-//                        foundX = true;
-//                    }
-//                }
-//                for (int y : this.snapPointsY) {
-//                    if (Math.abs(mouseY - offsetY - y) < 5) {
-//                        dragged.addProperty("posY", (int) (y * (1 + 1 - default_size)));
-//                        snapY = y;
-//                        foundY = true;
-//                    } else if (Math.abs(mouseY - offsetY + height - y) < 5) {
-//                        dragged.addProperty("posY", (int) ((y - height) * (1 + 1 - default_size)));
-//                        snapY = y;
-//                        foundY = true;
-//                    }
-//                }
+                for (int x : this.snapPointsX) {
+                    if (Math.abs(mouseX - offsetX - x) < 5) {
+                        dragged.addProperty("posX", new coordCalculators().getRelativeCords(dragged, x, client.getWindow().getScaledWidth(), width, "X"));
+                        snapX = x;
+                        foundX = true;
+                    } else if (Math.abs(mouseX - offsetX + width - x) < 5) {
+                        dragged.addProperty("posX", new coordCalculators().getRelativeCords(dragged, x - width, client.getWindow().getScaledWidth(), width, "X"));
+                        snapX = x;
+                        foundX = true;
+                    }
+                }
+                for (int y : this.snapPointsY) {
+                    if (Math.abs(mouseY - offsetY - y) < 5) {
+                        dragged.addProperty("posY", new coordCalculators().getRelativeCords(dragged, y, client.getWindow().getScaledHeight(), height, "Y"));
+                        snapY = y;
+                        foundY = true;
+                    } else if (Math.abs(mouseY - offsetY + height - y) < 5) {
+                        dragged.addProperty("posY", new coordCalculators().getRelativeCords(dragged, y - height, client.getWindow().getScaledHeight(), height, "Y"));
+                        snapY = y;
+                        foundY = true;
+                    }
+                }
             }
 
             if (!foundX) {
-//                LOGGER.info(String.valueOf(mouseX - offsetX));
-                LOGGER.info(String.valueOf(new coordCalculators().getRelativeCords(dragged, (int) ((mouseX - offsetX)), client.getWindow().getScaledWidth(), width, "X")));
-                dragged.addProperty("posX", new coordCalculators().getRelativeCords(dragged, (int) ((mouseX - offsetX)), client.getWindow().getScaledWidth(), width, "X"));
-//                LOGGER.info(String.valueOf(new RenderHUD().getFromAnchorPoint(dragged, (int) ((mouseX - offsetX) / default_size), client.currentScreen.width, width, (float) default_size, "X")));
-//                dragged.addProperty("posX", new RenderHUD().getFromAnchorPoint(dragged, (int) ((mouseX - offsetX) / default_size), client.currentScreen.width, width, (float) default_size, "X"));
-
                 snapX = 0;
+                dragged.addProperty("posX", new coordCalculators().getRelativeCords(dragged, (int) ((mouseX - offsetX)), client.getWindow().getScaledWidth(), width, "X"));
             }
             if (!foundY) {
                 snapY = 0;
                 dragged.addProperty("posY", new coordCalculators().getRelativeCords(dragged, (int) ((mouseY - offsetY)), client.getWindow().getScaledHeight(), height, "Y"));
-
-//                dragged.addProperty("posY", 0); // GET RELATIVE LATER
             }
         }
         return true;
     }
 
-
-
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
             for (Object[] x : posList) {
-                LOGGER.info(Arrays.toString(x));
                 if ((mouseX >= (int) x[1] && mouseX <= (int) x[3]) && (mouseY >= (int) x[2] && mouseY <= (int) x[4])) {
                     dragged = ((JsonElement) x[0]).getAsJsonObject();
                     offsetX = mouseX - (int) x[1];
@@ -153,11 +137,11 @@ public class MoveScreen extends Screen {
                     this.snapPointsY.add(client.currentScreen.height);
                     for (Object[] y : this.posList) {
                         if (y != x) {
-//                            this.snapPointsX.add((int) ((double) y[1]));
-//                            this.snapPointsX.add((int) ((double) y[3]));
-//
-//                            this.snapPointsY.add((int) ((double) y[2]));
-//                            this.snapPointsY.add((int) ((double) y[4]));
+                            this.snapPointsX.add((int) y[1]);
+                            this.snapPointsX.add((int) y[3]);
+
+                            this.snapPointsY.add((int) y[2]);
+                            this.snapPointsY.add((int) y[4]);
                         }
                     }
 
@@ -194,16 +178,8 @@ public class MoveScreen extends Screen {
                     } else {
                         alignY = height;
                     }
-
-                    default_size = configFile.getAsJsonObject().get("default_size").getAsDouble();
-                    if (dragged.has("advanced")) {
-                        default_size *= dragged.get("advanced").getAsJsonObject().get("scale").getAsDouble();
-                    }
                 }
             }
-
-            LOGGER.info(String.valueOf(mouseX));
-            LOGGER.info(String.valueOf(mouseY));
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }
@@ -211,10 +187,8 @@ public class MoveScreen extends Screen {
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (button == 0 && dragged != null) {
-            LOGGER.info("HERE");
             int actX = new coordCalculators().getActualCords(dragged, dragged.get("posX").getAsInt(), client.getWindow().getScaledWidth(), width, 0, "X");
             int actY = new coordCalculators().getActualCords(dragged, dragged.get("posY").getAsInt(), client.getWindow().getScaledHeight(), height, 0, "Y");
-//            LOGGER.info(String.valueOf(actX);
             dragInf[1] = actX;
             dragInf[2] = actY;
             dragInf[3] = actX + width;
