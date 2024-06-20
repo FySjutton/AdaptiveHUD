@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -212,5 +213,23 @@ public class MoveScreen extends Screen {
             shiftPressed = false;
         }
         return super.keyReleased(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public void resize(MinecraftClient client, int width, int height) {
+        // Reloads the position of all elements in case the window is resized, the elements will still move, but you can atleast now click on them.
+        super.resize(client, width, height);
+        for (Object[] x : posList) {
+            JsonObject elm = (JsonObject) x[0];
+            int lengthX = (int) x[3] - (int) x[1];
+            int lengthY = (int) x[4] - (int) x[2];
+            int posX = new coordCalculators().getActualCords(elm, elm.get("posX").getAsInt(), width, lengthX, 0, "X");
+            int posY = new coordCalculators().getActualCords(elm, elm.get("posY").getAsInt(), height, lengthY, 0, "Y");
+
+            x[1] = posX;
+            x[2] = posY;
+            x[3] = posX + lengthX;
+            x[4] = posY + lengthY;
+        }
     }
 }
