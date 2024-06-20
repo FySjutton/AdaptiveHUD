@@ -9,6 +9,7 @@ import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import static ahud.adaptivehud.adaptivehud.LOGGER;
 
 import static ahud.adaptivehud.ConfigFiles.configFile;
 
@@ -119,13 +120,10 @@ public class RenderHUD {
             float defaultScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
             JsonObject x = element.getAsJsonObject();
             if (x.get("enabled").getAsBoolean()) {
-//                String parsedText = parser.parseVariable(x.get("value").getAsString());
                 String parsedText = x.get("name").getAsString();
 
                 int paddingY = 0;
                 int paddingX = 0;
-//                int posX2;
-//                int posY2;
 
                 if (x.has("advanced")) {
                     defaultScale *= x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
@@ -136,16 +134,16 @@ public class RenderHUD {
                     paddingY = x.get("background").getAsJsonObject().get("paddingY").getAsInt();
                 }
 
-                int boxWidth = client.textRenderer.getWidth(parsedText) + paddingX * 2;
-                int boxHeight = 9 + paddingY * 2;
+                int boxWidth = Math.round((client.textRenderer.getWidth(parsedText) + paddingX * 2) * defaultScale);
+                int boxHeight = Math.round((9 + paddingY * 2) * defaultScale);
+
+                LOGGER.info(String.valueOf(boxWidth));
+                LOGGER.info(String.valueOf(client.getWindow().getScaledWidth()));
 
                 int posX = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), boxWidth, 0, "X");
                 int posY = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), boxHeight, 0, "Y");
 
-//                posX2 = posX + boxWidth;
-//                posY2 = posY + boxHeight;
-
-                Object[] sublist = {element, posX, posY, posX + Math.round(boxWidth * defaultScale), posY + Math.round(boxHeight * defaultScale)};
+                Object[] sublist = {element, posX, posY, posX + boxWidth, posY + boxHeight};
                 positionList.add(sublist);
             }
         }
