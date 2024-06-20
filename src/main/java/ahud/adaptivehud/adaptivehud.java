@@ -46,7 +46,7 @@ public class adaptivehud implements ModInitializer {
 		new ConfigFiles().generateConfigArray();
 		new ConfigFiles().GenerateElementArray();
 
-		HudRenderCallback.EVENT.register(new RenderHUD()::renderCustomHud);
+		HudRenderCallback.EVENT.register(new RenderHUD(true)::renderCustomHud);
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (reloadElementsKeyBind.wasPressed()) {

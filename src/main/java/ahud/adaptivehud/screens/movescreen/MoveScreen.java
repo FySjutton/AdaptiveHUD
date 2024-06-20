@@ -1,6 +1,7 @@
 package ahud.adaptivehud.screens.movescreen;
 
 import ahud.adaptivehud.renderhud.RenderHUD;
+import ahud.adaptivehud.renderhud.coordCalculators;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.fabricmc.api.EnvType;
@@ -11,7 +12,11 @@ import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static ahud.adaptivehud.ConfigFiles.configFile;
+import static ahud.adaptivehud.adaptivehud.LOGGER;
 
 @Environment(EnvType.CLIENT)
 public class MoveScreen extends Screen {
@@ -35,10 +40,12 @@ public class MoveScreen extends Screen {
     private int alignX = 0;
     private int alignY = 0;
 
+    private double default_size = 1;
+
     public MoveScreen(Screen parent) {
         super(Text.translatable("adaptivehud.config.title"));
         this.parent = parent;
-        this.posList = new RenderHUD().generatePositions();
+        this.posList = new RenderHUD(true).generatePositions();
         this.snapPointsX = new ArrayList<>();
         this.snapPointsY = new ArrayList<>();
 
@@ -48,20 +55,24 @@ public class MoveScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         renderBackgroundTexture(context);
         super.render(context, mouseX, mouseY, delta);
-        new RenderHUD().renderCustomHud(context, 0);
+        new RenderHUD(false).renderCustomHud(context, 0);
 
         if (dragged != null) {
             context.fill(
                     anchorX,
                     anchorY,
+//                    (int) (dragged.get("posX").getAsInt() * default_size + alignX),
                     dragged.get("posX").getAsInt() + alignX,
                     anchorY + 2,
                     0xFFff0000
             );
             context.fill(
+//                    (int) (dragged.get("posX").getAsInt() * default_size + alignX),
                     dragged.get("posX").getAsInt() + alignX,
                     anchorY,
+//                    (int) (dragged.get("posX").getAsInt() * default_size + alignX + 2),
                     dragged.get("posX").getAsInt() + alignX + 2,
+//                    (int) (dragged.get("posY").getAsInt() * default_size + alignY),
                     dragged.get("posY").getAsInt() + alignY,
                     0xFFff0000
             );
@@ -88,46 +99,56 @@ public class MoveScreen extends Screen {
             boolean foundX = false;
             boolean foundY = false;
             if (!shiftPressed) {
-                for (int x : this.snapPointsX) {
-                    if (Math.abs(mouseX - offsetX - x) < 5) {
-                        dragged.addProperty("posX", x);
-                        snapX = x;
-                        foundX = true;
-                    } else if (Math.abs(mouseX - offsetX + width - x) < 5) {
-                        dragged.addProperty("posX", x - width);
-                        snapX = x;
-                        foundX = true;
-                    }
-                }
-                for (int y : this.snapPointsY) {
-                    if (Math.abs(mouseY - offsetY - y) < 5) {
-                        dragged.addProperty("posY", y);
-                        snapY = y;
-                        foundY = true;
-                    } else if (Math.abs(mouseY - offsetY + height - y) < 5) {
-                        dragged.addProperty("posY", y - height);
-                        snapY = y;
-                        foundY = true;
-                    }
-                }
+//                for (int x : this.snapPointsX) {
+//                    if (Math.abs(mouseX - offsetX - x) < 5) {
+//                        dragged.addProperty("posX", (int) (x * (1 + 1 - default_size)));
+//                        snapX = x;
+//                        foundX = true;
+//                    } else if (Math.abs(mouseX - offsetX + width - x) < 5) {
+//                        dragged.addProperty("posX", (int) ((x - width) * (1 + 1 - default_size)));
+//                        snapX = x;
+//                        foundX = true;
+//                    }
+//                }
+//                for (int y : this.snapPointsY) {
+//                    if (Math.abs(mouseY - offsetY - y) < 5) {
+//                        dragged.addProperty("posY", (int) (y * (1 + 1 - default_size)));
+//                        snapY = y;
+//                        foundY = true;
+//                    } else if (Math.abs(mouseY - offsetY + height - y) < 5) {
+//                        dragged.addProperty("posY", (int) ((y - height) * (1 + 1 - default_size)));
+//                        snapY = y;
+//                        foundY = true;
+//                    }
+//                }
             }
 
             if (!foundX) {
-                dragged.addProperty("posX", (int) (mouseX - offsetX));
+//                LOGGER.info(String.valueOf(mouseX - offsetX));
+                LOGGER.info(String.valueOf(new coordCalculators().getRelativeCords(dragged, (int) ((mouseX - offsetX)), client.getWindow().getScaledWidth(), width, "X")));
+                dragged.addProperty("posX", new coordCalculators().getRelativeCords(dragged, (int) ((mouseX - offsetX)), client.getWindow().getScaledWidth(), width, "X"));
+//                LOGGER.info(String.valueOf(new RenderHUD().getFromAnchorPoint(dragged, (int) ((mouseX - offsetX) / default_size), client.currentScreen.width, width, (float) default_size, "X")));
+//                dragged.addProperty("posX", new RenderHUD().getFromAnchorPoint(dragged, (int) ((mouseX - offsetX) / default_size), client.currentScreen.width, width, (float) default_size, "X"));
+
                 snapX = 0;
             }
             if (!foundY) {
                 snapY = 0;
-                dragged.addProperty("posY", (int) (mouseY - offsetY));
+                dragged.addProperty("posY", new coordCalculators().getRelativeCords(dragged, (int) ((mouseY - offsetY)), client.getWindow().getScaledHeight(), height, "Y"));
+
+//                dragged.addProperty("posY", 0); // GET RELATIVE LATER
             }
         }
         return true;
     }
 
+
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
             for (Object[] x : posList) {
+                LOGGER.info(Arrays.toString(x));
                 if ((mouseX >= (int) x[1] && mouseX <= (int) x[3]) && (mouseY >= (int) x[2] && mouseY <= (int) x[4])) {
                     dragged = ((JsonElement) x[0]).getAsJsonObject();
                     offsetX = mouseX - (int) x[1];
@@ -144,11 +165,11 @@ public class MoveScreen extends Screen {
                     this.snapPointsY.add(client.currentScreen.height);
                     for (Object[] y : this.posList) {
                         if (y != x) {
-                            this.snapPointsX.add((int) y[1]);
-                            this.snapPointsX.add((int) y[3]);
-
-                            this.snapPointsY.add((int) y[2]);
-                            this.snapPointsY.add((int) y[4]);
+//                            this.snapPointsX.add((int) ((double) y[1]));
+//                            this.snapPointsX.add((int) ((double) y[3]));
+//
+//                            this.snapPointsY.add((int) ((double) y[2]));
+//                            this.snapPointsY.add((int) ((double) y[4]));
                         }
                     }
 
@@ -185,8 +206,16 @@ public class MoveScreen extends Screen {
                     } else {
                         alignY = height;
                     }
+
+                    default_size = configFile.getAsJsonObject().get("default_size").getAsDouble();
+                    if (dragged.has("advanced")) {
+                        default_size *= dragged.get("advanced").getAsJsonObject().get("scale").getAsDouble();
+                    }
                 }
             }
+
+            LOGGER.info(String.valueOf(mouseX));
+            LOGGER.info(String.valueOf(mouseY));
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }
@@ -194,10 +223,14 @@ public class MoveScreen extends Screen {
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (button == 0 && dragged != null) {
-            dragInf[1] = dragged.get("posX").getAsInt();
-            dragInf[2] = dragged.get("posY").getAsInt();
-            dragInf[3] = dragged.get("posX").getAsInt() + width;
-            dragInf[4] = dragged.get("posY").getAsInt() + height;
+            LOGGER.info("HERE");
+            int actX = new coordCalculators().getActualCords(dragged, dragged.get("posX").getAsInt(), client.getWindow().getScaledWidth(), width, 0, "X");
+            int actY = new coordCalculators().getActualCords(dragged, dragged.get("posY").getAsInt(), client.getWindow().getScaledHeight(), height, 0, "Y");
+//            LOGGER.info(String.valueOf(actX);
+            dragInf[1] = actX;
+            dragInf[2] = actY;
+            dragInf[3] = actX + width;
+            dragInf[4] = actY + height;
             dragged = null;
         }
         return super.mouseReleased(mouseX, mouseY, button);

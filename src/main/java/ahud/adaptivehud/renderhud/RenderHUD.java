@@ -13,36 +13,50 @@ import java.util.List;
 import static ahud.adaptivehud.ConfigFiles.configFile;
 
 public class RenderHUD {
+    private boolean useLong;
+
+    public RenderHUD(boolean useLong) {
+        this.useLong = useLong;
+    }
 
     public void renderCustomHud(DrawContext drawContext, float tickDelta) {
         MinecraftClient client = MinecraftClient.getInstance();
         VariableParser parser = new VariableParser();
 
-        Float defaultScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
+        float defaultScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
         MatrixStack matrices = drawContext.getMatrices();
 
         matrices.push();
         matrices.scale(defaultScale, defaultScale, 1);
 
         for (JsonElement element : ConfigFiles.elementArray) {
+            defaultScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
             JsonObject x = element.getAsJsonObject();
             if (x.get("enabled").getAsBoolean()) {
-                String parsedText = parser.parseVariable(x.get("value").getAsString());
+                String parsedText;
+                if (this.useLong) {
+                    parsedText = parser.parseVariable(x.get("value").getAsString());
+                } else {
+                    parsedText = x.get("name").getAsString();
+                }
 
                 int paddingY = 0;
                 int paddingX = 0;
-                int posX = getFromAnchorPoint(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText), "X");
-                int posY = getFromAnchorPoint(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9 + 1, "Y");
+                int posX;
+                int posY;
 
                 if (x.has("advanced")) {
-                    Float decScale = x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
+                    defaultScale *= x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
                     matrices.push();
-                    matrices.scale(decScale, decScale, 1);
+                    matrices.scale(defaultScale, defaultScale, 1);
                 }
 
                 if (x.get("background").getAsJsonObject().get("enabled").getAsBoolean()) {
                     paddingX = x.get("background").getAsJsonObject().get("paddingX").getAsInt();
                     paddingY = x.get("background").getAsJsonObject().get("paddingY").getAsInt();
+
+                    posX = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText) + paddingX * 2, defaultScale, "X");
+                    posY = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9 + 1 + paddingY * 2, defaultScale, "Y");
 
                     drawContext.fill(
                             posX,
@@ -51,6 +65,9 @@ public class RenderHUD {
                             posY + client.textRenderer.fontHeight + 2 * paddingY,
                             parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
                     );
+                } else {
+                    posX = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText), defaultScale,"X");
+                    posY = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9 + 1, defaultScale,"Y");
                 }
 
                 drawContext.drawText(
@@ -67,7 +84,6 @@ public class RenderHUD {
                 }
             }
         }
-        matrices.pop();
     }
 
     public int parseColor(String colorString) {
@@ -92,70 +108,47 @@ public class RenderHUD {
         }
     }
 
-    private int getFromAnchorPoint(JsonObject elm, int value, int max, int length, String axis) {
-        String anchor = elm.get("alignment").getAsJsonObject().get("anchorPoint" + axis).getAsString();
-        String align = elm.get("alignment").getAsJsonObject().get("textAlign" + axis).getAsString();
-        int pos;
-        if (anchor.equals("center")) {
-            pos = max / 2 + value;
-        } else if (anchor.equals("bottom") || anchor.equals("right")) {
-            pos = max + value;
-        } else {
-            pos = value;
-        }
-        if (align.equals("center")) {
-            pos -= length / 2;
-        } else if (align.equals("bottom") || align.equals("right")) {
-            pos -= length;
-        }
-        return pos;
-    }
+
 
     public List<Object[]> generatePositions() {
         List<Object[]> positionList = new ArrayList<>();
         MinecraftClient client = MinecraftClient.getInstance();
         VariableParser parser = new VariableParser();
 
-        Float defaultScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
-        MatrixStack matrices = new MatrixStack();
-
-        matrices.push();
-        matrices.scale(defaultScale, defaultScale, 1);
-
         for (JsonElement element : ConfigFiles.elementArray) {
+            float defaultScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
             JsonObject x = element.getAsJsonObject();
             if (x.get("enabled").getAsBoolean()) {
-                String parsedText = parser.parseVariable(x.get("value").getAsString());
+//                String parsedText = parser.parseVariable(x.get("value").getAsString());
+                String parsedText = x.get("name").getAsString();
 
                 int paddingY = 0;
                 int paddingX = 0;
-                int posX2;
-                int posY2;
-                int posX = getFromAnchorPoint(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText), "X");
-                int posY = getFromAnchorPoint(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9 + 1, "Y");
+//                int posX2;
+//                int posY2;
 
                 if (x.has("advanced")) {
-                    Float decScale = x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
-                    matrices.push();
-                    matrices.scale(decScale, decScale, 1);
+                    defaultScale *= x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
                 }
 
                 if (x.get("background").getAsJsonObject().get("enabled").getAsBoolean()) {
                     paddingX = x.get("background").getAsJsonObject().get("paddingX").getAsInt();
                     paddingY = x.get("background").getAsJsonObject().get("paddingY").getAsInt();
                 }
-                posX2 = posX + client.textRenderer.getWidth(parsedText) + 2 * paddingX;
-                posY2 = posY + client.textRenderer.fontHeight + 2 * paddingY;
 
-                if (x.has("advanced")) {
-                    matrices.pop();
-                }
+                int boxWidth = client.textRenderer.getWidth(parsedText) + paddingX * 2;
+                int boxHeight = 9 + paddingY * 2;
 
-                Object[] sublist = {element, Math.round(posX * defaultScale), Math.round(posY * defaultScale), Math.round(posX2 * defaultScale), Math.round(posY2 * defaultScale)};
+                int posX = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), boxWidth, 0, "X");
+                int posY = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), boxHeight, 0, "Y");
+
+//                posX2 = posX + boxWidth;
+//                posY2 = posY + boxHeight;
+
+                Object[] sublist = {element, posX, posY, posX + Math.round(boxWidth * defaultScale), posY + Math.round(boxHeight * defaultScale)};
                 positionList.add(sublist);
             }
         }
-        matrices.pop();
         return positionList;
     }
 }
