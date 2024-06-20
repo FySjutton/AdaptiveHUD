@@ -27,7 +27,7 @@ public class coordCalculators {
         return pos;
     }
 
-    public int getRelativeCords(JsonObject elm, int left, int max, int width, String axis) {
+    public int getRelativeCords(JsonObject elm, int left, int max, int length, String axis) {
         // Calculate relative cords to alignment
         int pos;
         int specWidth = 0;
@@ -36,9 +36,9 @@ public class coordCalculators {
         int align = elm.get("alignment").getAsJsonObject().get("textAlign" + axis).getAsInt();
 
         if (align == 1) {
-            specWidth += width / 2;
+            specWidth += length / 2;
         } else if (align == 2) {
-            specWidth += width;
+            specWidth += length;
         }
 
         if (anchor == 1) {
