@@ -23,6 +23,7 @@ import static ahud.adaptivehud.adaptivehud.LOGGER;
 
 public class ConfigFiles {
     public static List<JsonElement> elementArray = new ArrayList<>();
+
     public static JsonElement configFile;
 
     private void generateConfigFile() {
@@ -89,55 +90,52 @@ public class ConfigFiles {
         int fails = 0;
         List<String> names = new ArrayList<>();
 
-        List<List<String>> problems = new ArrayList<>();
-
         if (files != null) {
             for (File file : files) {
-                List<String> problemsFile = new ArrayList<>();
                 try {
                     FileReader fileReader = new FileReader(file);
                     JsonElement elm = JsonParser.parseReader(fileReader);
                     fileReader.close();
 
-                    String validated = new jsonValidator().validateElement(elm.getAsJsonObject());
+                    JsonElement repairedElm = new jsonValidator().repairElement(elm);
+                    if (!repairedElm.equals(elm)){
+                        sendToast("§6Element Repaired!", "§f" + file.getName() + " was repaired!");
+                        LOGGER.warn("Element " + file.getName() + " was partially corrupted, the element has now been repaired!");
+                    }
+                    String validated = new jsonValidator().validateElement(repairedElm.getAsJsonObject());
+
                     if (validated == null) {
-                        String name = elm.getAsJsonObject().get("name").getAsString();
+                        String name = repairedElm.getAsJsonObject().get("name").getAsString();
                         if (names.contains(name.toLowerCase())) {
-                            problemsFile.add(file.getName());
-                            problemsFile.add("Key name must be unique!");
+                            sendToast("§c" + file.getName(), "§fKey name must be unique!");
                             LOGGER.error("Failed to load element file " + file.getName() + "! The identifier (\"name\" key) must be unique!");
                             fails += 1;
                         } else {
-                            elementArray.add(elm);
+                            elementArray.add(repairedElm);
                             names.add(name.toLowerCase());
                         }
                     } else {
                         LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! Error message: " + validated);
-                        problemsFile.add(file.getName());
-                        problemsFile.add(validated);
+                        sendToast("§c" + file.getName(), "§f" + validated);
                         fails += 1;
                     }
                 } catch (Exception e) {
-                    LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! This might be caused by a missing comma or similar. This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error Code: 52");
-                    fails += 1;
-                    problemsFile.add(file.getName());
-                    problemsFile.add("Invalid json format or similar!");
-                }
-                if (problemsFile.size() > 0) {
-                    problems.add(problemsFile);
+                    LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! This might be caused by a missing comma or similar. This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error:");
+                    LOGGER.error(String.valueOf(e));
+                    try {
+                        throw e;
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+//                    fails += 1;
+//                    sendToast("§c" + file.getName(), "§fInvalid json format or similar!");
                 }
             }
         } else {
             LOGGER.warn("No element files detected!");
         }
 
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        if (textRenderer != null) {
-            for (List<String> problem : problems) {
-                sendToast("§c" + problem.get(0), "§f" + problem.get(1));
-            }
-            sendToast("§aElements Reloaded!", "§e" + (files.length - fails) + "/" + files.length + " elements have successfully been reloaded.");
-        }
+        sendToast("§aElements Reloaded!", "§e" + (files.length - fails) + "/" + files.length + " elements have successfully been reloaded.");
     }
 
     public void generateConfigArray() {
@@ -202,12 +200,11 @@ public class ConfigFiles {
                     }
                 } else {
                     Files.createDirectories(elmFile.getParentFile().toPath());
-                    try (FileWriter writer = new FileWriter(elmFile)) {
-                        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                        JsonWriter jsonWriter = gson.newJsonWriter(writer);
-                        gson.toJson(obj, jsonWriter);
-                        jsonWriter.flush();
-                    }
+                    FileWriter writer = new FileWriter(elmFile);
+                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                    JsonWriter jsonWriter = gson.newJsonWriter(writer);
+                    gson.toJson(obj, jsonWriter);
+                    jsonWriter.flush();
                 }
             } catch (Exception e) {
                 LOGGER.error("Error saving element file: " + e.getMessage());
@@ -221,12 +218,15 @@ public class ConfigFiles {
     // Should not be in this file
     public void sendToast(String title, String description) {
         try {
-            MinecraftClient.getInstance().getToastManager().add(
+            MinecraftClient client = MinecraftClient.getInstance();
+            if (client.textRenderer != null) {
+                client.getToastManager().add(
                     new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
-                            Text.literal(title),
-                            Text.literal(description)
+                        Text.literal(title),
+                        Text.literal(description)
                     )
-            );
+                );
+            }
         } catch (Exception e) {
             LOGGER.warn("Failed to display toast! Error:");
             LOGGER.error(String.valueOf(e));

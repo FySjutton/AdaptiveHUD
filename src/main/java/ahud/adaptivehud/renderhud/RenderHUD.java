@@ -44,8 +44,9 @@ public class RenderHUD {
                 int posY;
 
                 matrices.push();
-                if (x.has("advanced")) {
-                    defaultScale = x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
+                float setScale = x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
+                if (setScale != 0) {
+                    defaultScale = setScale;
                     matrices.scale(defaultScale, defaultScale, 1);
                 } else {
                     defaultScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
@@ -122,8 +123,9 @@ public class RenderHUD {
                 int paddingY = 0;
                 int paddingX = 0;
 
-                if (x.has("advanced")) {
-                    defaultScale = x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
+                float setScale = x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
+                if (setScale != 0) {
+                    defaultScale = setScale;
                 }
 
                 if (x.get("background").getAsJsonObject().get("enabled").getAsBoolean()) {
