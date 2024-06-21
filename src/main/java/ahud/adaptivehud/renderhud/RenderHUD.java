@@ -63,7 +63,7 @@ public class RenderHUD {
                             posX,
                             posY,
                             posX + client.textRenderer.getWidth(parsedText) + 2 * paddingX,
-                            posY + client.textRenderer.fontHeight + 2 * paddingY,
+                            posY + 9 + 1 + 2 * paddingY,
                             parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
                     );
                 } else {
@@ -132,10 +132,7 @@ public class RenderHUD {
                 }
 
                 int boxWidth = Math.round((client.textRenderer.getWidth(parsedText) + paddingX * 2) * defaultScale);
-                int boxHeight = Math.round((9 + paddingY * 2) * defaultScale);
-
-                LOGGER.info(String.valueOf(boxWidth));
-                LOGGER.info(String.valueOf(client.getWindow().getScaledWidth()));
+                int boxHeight = Math.round((9 + 1 + paddingY * 2) * defaultScale);
 
                 int posX = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), boxWidth, 0, "X");
                 int posY = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), boxHeight, 0, "Y");
