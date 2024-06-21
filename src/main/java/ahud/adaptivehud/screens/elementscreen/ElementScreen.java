@@ -101,6 +101,8 @@ public class ElementScreen extends Screen {
                     specElm = elm.get("background").getAsJsonObject();
                 } else if (x.setting.equals("anchorPointX") || x.setting.equals("anchorPointY") || x.setting.equals("textAlignX") || x.setting.equals("textAlignY")) {
                     specElm = elm.get("alignment").getAsJsonObject();
+                } else if (x.setting.equals("scale")) {
+                    specElm = elm.get("advanced").getAsJsonObject();
                 } else {
                     specElm = elm;
                 }
@@ -108,6 +110,12 @@ public class ElementScreen extends Screen {
                     if (x.setting.equals("posX") || x.setting.equals("posY") || x.setting.equals("paddingX")  || x.setting.equals("paddingY")) {
                         try {
                             specElm.addProperty(x.setting, Integer.parseInt(x.textField.getText()));
+                        } catch (Exception e) {
+                            specElm.addProperty(x.setting, x.textField.getText());
+                        }
+                    } else if (x.setting.equals("scale")) {
+                        try {
+                            specElm.addProperty(x.setting, Float.valueOf(x.textField.getText()));
                         } catch (Exception e) {
                             specElm.addProperty(x.setting, x.textField.getText());
                         }

@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
     private final ElementScreen parent;
-    public final ArrayList<String> titles = new ArrayList<>(Arrays.asList("MAIN", "name", "value", "textColor", "posX", "posY", "shadow", "BACKGROUND", "enabled", "paddingX", "paddingY", "backgroundColor", "ALIGNMENT", "anchorPointX", "anchorPointY", "textAlignX", "textAlignY"));
+    public final ArrayList<String> titles = new ArrayList<>(Arrays.asList("MAIN", "name", "value", "textColor", "posX", "posY", "shadow", "BACKGROUND", "enabled", "paddingX", "paddingY", "backgroundColor", "ALIGNMENT", "anchorPointX", "anchorPointY", "textAlignX", "textAlignY", "ADVANCED", "scale"));
     private final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
     private static final String CENTER = Text.translatable("adaptivehud.config.button.center").getString();
@@ -61,11 +61,13 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
                 parentElm = parent.elm.get("background").getAsJsonObject();
             } else if (item.equals("anchorPointX") || item.equals("anchorPointY") || item.equals("textAlignX") || item.equals("textAlignY")) {
                 parentElm = parent.elm.get("alignment").getAsJsonObject();
+            } else if (item.equals("scale")) {
+                parentElm = parent.elm.get("advanced").getAsJsonObject();
             } else {
                 parentElm = parent.elm;
             }
 
-            if (item.equals("MAIN") || item.equals("BACKGROUND") || item.equals("ALIGNMENT")) {
+            if (item.equals("MAIN") || item.equals("BACKGROUND") || item.equals("ALIGNMENT") || item.equals("ADVANCED")) {
                 this.title = item;
             } else if (item.equals("shadow") || item.equals("enabled")) {
                 this.button = ButtonWidget.builder(

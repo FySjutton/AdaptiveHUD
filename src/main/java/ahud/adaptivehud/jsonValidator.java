@@ -16,6 +16,8 @@ public class jsonValidator {
         try {
             JsonObject background = elm.get("background").getAsJsonObject();
             JsonObject alignment = elm.get("alignment").getAsJsonObject();
+            JsonObject advanced = elm.get("advanced").getAsJsonObject();
+
             elm.get("enabled").getAsBoolean();
             elm.get("name").getAsString();
             elm.get("posX").getAsInt();
@@ -27,7 +29,9 @@ public class jsonValidator {
 
             if (
                 colorReg.matcher(elm.get("textColor").getAsString()).find() &&
-                colorReg.matcher(background.get("backgroundColor").getAsString()).find()
+                colorReg.matcher(background.get("backgroundColor").getAsString()).find() &&
+                advanced.get("scale").getAsFloat() > 0 &&
+                advanced.get("scale").getAsFloat() < 10
             ) {
                 if (
                     allowedPos.contains(alignment.get("anchorPointX").getAsInt()) &&

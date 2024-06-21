@@ -29,6 +29,7 @@
   "adaptivehud.config.title.MAIN": "MAIN",
   "adaptivehud.config.title.BACKGROUND": "BACKGROUND",
   "adaptivehud.config.title.ALIGNMENT": "ALIGNMENT",
+  "adaptivehud.config.title.ADVANCED": "ADVANCED",
 
   "adaptivehud.key.category": "AdaptiveHUD",
   "adaptivehud.key.reloadElements": "Reload Elements",
