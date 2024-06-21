@@ -18,5 +18,8 @@
     "anchorPointY": 0,
     "textAlignX": 0,
     "textAlignY": 0
+  },
+  "advanced": {
+    "scale": 0
   }
 }
