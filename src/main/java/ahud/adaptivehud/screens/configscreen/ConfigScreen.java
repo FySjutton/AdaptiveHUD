@@ -166,7 +166,7 @@ public class ConfigScreen extends Screen {
     }
 
     private void moveElements() {
-        MinecraftClient.getInstance().setScreen(new MoveScreen(this));
+        MinecraftClient.getInstance().setScreen(new MoveScreen(this, false));
     }
 
     public void changesMade() {

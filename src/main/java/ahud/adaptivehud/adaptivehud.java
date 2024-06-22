@@ -2,6 +2,7 @@ package ahud.adaptivehud;
 
 import ahud.adaptivehud.renderhud.RenderHUD;
 import ahud.adaptivehud.screens.configscreen.ConfigScreen;
+import ahud.adaptivehud.screens.movescreen.MoveScreen;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
@@ -39,6 +40,12 @@ public class adaptivehud implements ModInitializer {
 			GLFW.GLFW_KEY_F8,
 			Text.translatable("adaptivehud.key.category").getString()
 	));
+	public static final KeyBinding openMoveScreenKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+			Text.translatable("adaptivehud.key.moveElements").getString(),
+			InputUtil.Type.KEYSYM,
+			GLFW.GLFW_KEY_RIGHT_SHIFT,
+			Text.translatable("adaptivehud.key.category").getString()
+	));
 
 	@Override
 	public void onInitialize() {
@@ -57,6 +64,9 @@ public class adaptivehud implements ModInitializer {
 			}
 			if (openConfigKeyBind.wasPressed()) {
 				MinecraftClient.getInstance().setScreen(new ConfigScreen(null));
+			}
+			if (openMoveScreenKeyBind.wasPressed()) {
+				MinecraftClient.getInstance().setScreen(new MoveScreen(null, true));
 			}
 		});
 	}

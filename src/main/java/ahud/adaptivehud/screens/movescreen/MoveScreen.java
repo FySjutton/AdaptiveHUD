@@ -1,5 +1,6 @@
 package ahud.adaptivehud.screens.movescreen;
 
+import ahud.adaptivehud.ConfigFiles;
 import ahud.adaptivehud.renderhud.RenderHUD;
 import ahud.adaptivehud.renderhud.coordCalculators;
 import com.google.gson.JsonElement;
@@ -14,6 +15,8 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static ahud.adaptivehud.ConfigFiles.elementArray;
 
 @Environment(EnvType.CLIENT)
 public class MoveScreen extends Screen {
@@ -37,13 +40,15 @@ public class MoveScreen extends Screen {
     private int alignX = 0;
     private int alignY = 0;
 
-    public MoveScreen(Screen parent) {
+    private boolean autoSave;
+
+    public MoveScreen(Screen parent, boolean autoSave) {
         super(Text.translatable("adaptivehud.config.title"));
         this.parent = parent;
         this.posList = new RenderHUD(true).generatePositions();
         this.snapPointsX = new ArrayList<>();
         this.snapPointsY = new ArrayList<>();
-
+        this.autoSave = autoSave;
     }
 
     @Override
@@ -73,6 +78,9 @@ public class MoveScreen extends Screen {
 
     @Override
     public void close() {
+        if (this.autoSave) {
+            new ConfigFiles().saveElementFiles(elementArray, new ArrayList<>());
+        }
         client.setScreen(parent);
     }
 

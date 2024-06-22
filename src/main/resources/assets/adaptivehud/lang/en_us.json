@@ -34,5 +34,6 @@
   "adaptivehud.key.category": "AdaptiveHUD",
   "adaptivehud.key.reloadElements": "Reload Elements",
   "adaptivehud.key.reloadConfig": "Reload Config",
-  "adaptivehud.key.openConfig": "Open Config"
+  "adaptivehud.key.openConfig": "Open Config",
+  "adaptivehud.key.moveElements": "Move Elements"
 }
