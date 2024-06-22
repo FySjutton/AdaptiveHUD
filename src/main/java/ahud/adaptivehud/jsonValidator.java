@@ -58,24 +58,26 @@ public class jsonValidator {
             background.get("paddingY").getAsInt();
 
             if (
-                colorReg.matcher(elm.get("textColor").getAsString()).find() &&
-                colorReg.matcher(background.get("backgroundColor").getAsString()).find() &&
-                advanced.get("scale").getAsFloat() > 0 && // MOVE FROM COLOR??? CHECK ELSE
-                advanced.get("scale").getAsFloat() < 10
+                !(colorReg.matcher(elm.get("textColor").getAsString()).find() &&
+                colorReg.matcher(background.get("backgroundColor").getAsString()).find())
             ) {
-                if (
-                    allowedPos.contains(alignment.get("anchorPointX").getAsInt()) &&
-                    allowedPos.contains(alignment.get("anchorPointY").getAsInt()) &&
-                    allowedPos.contains(alignment.get("textAlignX").getAsInt()) &&
-                    allowedPos.contains(alignment.get("textAlignY").getAsInt())
-                ) {
-                    return null;
-                } else {
-                    return "Invalid alignment!";
-                }
-            } else {
-                return "Invalid Color!";
+                return "Invalid color!";
             }
+            if (
+                !(allowedPos.contains(alignment.get("anchorPointX").getAsInt()) &&
+                allowedPos.contains(alignment.get("anchorPointY").getAsInt()) &&
+                allowedPos.contains(alignment.get("textAlignX").getAsInt()) &&
+                allowedPos.contains(alignment.get("textAlignY").getAsInt()))
+            ) {
+                return "Invalid alignment!";
+            }
+            if (
+                !(advanced.get("scale").getAsFloat() >= 0 &&
+                advanced.get("scale").getAsFloat() < 10)
+            ) {
+                return "Invalid scale!";
+            }
+            return null;
         } catch (Exception e) {
             return e.getMessage();
         }

@@ -91,16 +91,18 @@ public class ConfigFiles {
         List<String> names = new ArrayList<>();
 
         if (files != null) {
+            boolean saveRepaired = false;
             for (File file : files) {
                 try {
                     FileReader fileReader = new FileReader(file);
                     JsonElement elm = JsonParser.parseReader(fileReader);
                     fileReader.close();
 
-                    JsonElement repairedElm = new jsonValidator().repairElement(elm);
+                    JsonElement repairedElm = new jsonValidator().repairElement(elm.deepCopy());
                     if (!repairedElm.equals(elm)){
                         sendToast("§6Element Repaired!", "§f" + file.getName() + " was repaired!");
                         LOGGER.warn("Element " + file.getName() + " was partially corrupted, the element has now been repaired!");
+                        saveRepaired = true;
                     }
                     String validated = new jsonValidator().validateElement(repairedElm.getAsJsonObject());
 
@@ -122,17 +124,16 @@ public class ConfigFiles {
                 } catch (Exception e) {
                     LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! This might be caused by a missing comma or similar. This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error:");
                     LOGGER.error(String.valueOf(e));
-                    try {
-                        throw e;
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-//                    fails += 1;
-//                    sendToast("§c" + file.getName(), "§fInvalid json format or similar!");
+                    fails += 1;
+                    sendToast("§c" + file.getName(), "§fInvalid json format or similar!");
                 }
+            }
+            if (saveRepaired) {
+                saveElementFiles(elementArray, new ArrayList<>());
             }
         } else {
             LOGGER.warn("No element files detected!");
+            sendToast("§cNo elements detected!", "§fNo elements were found.");
         }
 
         sendToast("§aElements Reloaded!", "§e" + (files.length - fails) + "/" + files.length + " elements have successfully been reloaded.");
