@@ -1,10 +1,9 @@
 package ahud.adaptivehud;
 
 import ahud.adaptivehud.renderhud.RenderHUD;
+import ahud.adaptivehud.renderhud.variables.VariableRegisterer;
 import ahud.adaptivehud.screens.configscreen.ConfigScreen;
 import ahud.adaptivehud.screens.movescreen.MoveScreen;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -13,7 +12,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
@@ -46,6 +44,12 @@ public class adaptivehud implements ModInitializer {
 			GLFW.GLFW_KEY_RIGHT_SHIFT,
 			Text.translatable("adaptivehud.key.category").getString()
 	));
+	public static final KeyBinding reloadDefaultVariables = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+			"Reload Default Variables",
+			InputUtil.Type.KEYSYM,
+			GLFW.GLFW_KEY_KP_3,
+			Text.translatable("adaptivehud.key.category").getString()
+	));
 
 	@Override
 	public void onInitialize() {
@@ -68,6 +72,12 @@ public class adaptivehud implements ModInitializer {
 			if (openMoveScreenKeyBind.wasPressed()) {
 				MinecraftClient.getInstance().setScreen(new MoveScreen(null, true));
 			}
+			if (reloadDefaultVariables.wasPressed()) {
+				new VariableRegisterer().deleteVariables();
+				new VariableRegisterer().registerDefaults();
+			}
 		});
+
+		new VariableRegisterer().registerDefaults();
 	}
 }

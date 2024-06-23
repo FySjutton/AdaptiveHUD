@@ -1,5 +1,6 @@
 package ahud.adaptivehud.renderhud;
 
+import ahud.adaptivehud.renderhud.variables.ValueParser;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import ahud.adaptivehud.ConfigFiles;
@@ -9,7 +10,6 @@ import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import static ahud.adaptivehud.adaptivehud.LOGGER;
 
 import static ahud.adaptivehud.ConfigFiles.configFile;
 
@@ -22,7 +22,7 @@ public class RenderHUD {
 
     public void renderCustomHud(DrawContext drawContext, float tickDelta) {
         MinecraftClient client = MinecraftClient.getInstance();
-        VariableParser parser = new VariableParser();
+        ValueParser parser = new ValueParser();
 
         MatrixStack matrices = drawContext.getMatrices();
 
