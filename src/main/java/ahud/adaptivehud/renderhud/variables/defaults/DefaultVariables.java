@@ -27,12 +27,25 @@ public class DefaultVariables {
         return String.valueOf(xVal);
     }
 
-    public String y() {
-        return String.valueOf(player.getY());
+    public String y(@AttributeName("R") String round) {
+        String yVal = String.valueOf(player.getY());
+        if (round == null) {round = "0";}
+        yVal = tools.roundNum(Float.parseFloat(yVal), Integer.parseInt(round));
+        return String.valueOf(yVal);
     }
 
-    public String z() {
-        return String.valueOf(player.getZ());
+    public String z(@AttributeName("R") String round) {
+        String zVal = String.valueOf(player.getZ());
+        if (round == null) {round = "0";}
+        zVal = tools.roundNum(Float.parseFloat(zVal), Integer.parseInt(round));
+        return String.valueOf(zVal);
+    }
+
+    public String ping() {
+        if (client.getNetworkHandler() != null) {
+            return String.valueOf(client.getNetworkHandler().getPlayerListEntry(client.player.getUuid()).getLatency());
+        }
+        return "-1";
     }
 
     public String biome() {
