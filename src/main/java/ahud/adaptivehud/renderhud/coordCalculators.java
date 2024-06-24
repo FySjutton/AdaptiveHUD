@@ -1,7 +1,6 @@
 package ahud.adaptivehud.renderhud;
 
 import com.google.gson.JsonObject;
-import static ahud.adaptivehud.adaptivehud.LOGGER;
 
 public class coordCalculators {
     public int getActualCords(JsonObject elm, int value, int max, int length, float scale, String axis) {
