@@ -15,7 +15,7 @@ public class ValueParser {
     public String parseVariable(String text) {
         text = text.replaceAll("&(?=[\\da-fA-Fk-oK-OrR])", "§");
 
-        Pattern pattern = Pattern.compile("\\$\\{(\\w+)(?::(\\w{1,5}=\\w{1,7}(?:,\\w{1,5}=\\w{1,7})*))?(?:::([A-Z]+))?}");
+        Pattern pattern = Pattern.compile("\\$\\{(\\w+)(?::(\\w{1,5}=\\w{1,7}(?:,\\w{1,5}=\\w{1,7})*))?((?: *-[a-z]+)*)}");
         Matcher matcher = pattern.matcher(text);
         StringBuffer result = new StringBuffer();
 
@@ -27,7 +27,7 @@ public class ValueParser {
 
                 if (method != null) {
                     String attributeString = matcher.group(2);
-                    String flagString = matcher.group(3); // Implement later
+                    String flagString = matcher.group(3);
 
                     Parameter[] params = method.getParameters();
                     Object[] parameters = new Object[params.length];
@@ -50,6 +50,9 @@ public class ValueParser {
                     }
 
                     String varValue = String.valueOf(method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), parameters));
+
+                    varValue = new FlagParser().parseFlags(varValue, flagString);
+
                     matcher.appendReplacement(result, varValue);
                 }
 
