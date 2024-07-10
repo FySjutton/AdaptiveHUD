@@ -33,7 +33,7 @@ public class RenderHUD {
                 String parsedText;
 
                 if (this.useLong) {
-                    parsedText = parser.parseVariable(x.get("value").getAsString());
+                    parsedText = parser.parseValue(x.get("value").getAsString());
                 } else {
                     parsedText = x.get("name").getAsString();
                 }
