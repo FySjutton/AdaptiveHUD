@@ -1,5 +1,6 @@
 {
-  "adaptivehud.variable.error": "#Error",
+  "adaptivehud.variable.variable_error": "#VarError",
+  "adaptivehud.variable.math_error": "#MathError",
   "adaptivehud.variable.noServerFound": "No Server",
 
   "adaptivehud.config.title": "Elements",

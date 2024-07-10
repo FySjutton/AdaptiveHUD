@@ -1,20 +1,68 @@
 package ahud.adaptivehud.renderhud.variables;
 
+import com.udojava.evalex.Expression;
 import net.minecraft.text.Text;
-import net.objecthunter.exp4j.Expression;
-import net.objecthunter.exp4j.ExpressionBuilder;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ValueParser {
     VariableRegisterer register = new VariableRegisterer();
 
-    public String parseVariable(String text) {
+    public String parseValue(String text) {
         text = text.replaceAll("&(?=[\\da-fA-Fk-oK-OrR])", "§");
 
+        text = parseVariables(text);
+        text = parseConditions(text);
+        text = parseMath(text);
+
+        return text;
+    }
+
+    private String parseConditions(String text) {
+        Pattern pattern = Pattern.compile("\\[([^,:\\[\\]]+):((?:\\\\[,:\\[\\]]|[^,:\\[\\]])+)((?:,[^,:\\[\\]]+:(?:\\\\[,:\\[\\]]|[^,:\\[\\]])+)*)(?:,((?:\\\\[,:\\[\\]]|[^,:\\[\\]])+))?]");
+        Matcher matcher = pattern.matcher(text);
+        StringBuffer result = new StringBuffer();
+
+        while (matcher.find()) {
+            String ifCondition = matcher.group(1);
+            String ifValue = matcher.group(2);
+            String elseIfs = matcher.group(3);
+            String elseValue = matcher.group(4);
+
+            if (elseValue == null) {
+                elseValue = "";
+            }
+
+            Expression expression = new Expression(ifCondition);
+            if (expression.eval().intValue() != 0) {
+                matcher.appendReplacement(result, ifValue.replaceAll("\\\\(?=[\\[\\]:,])", ""));
+            } else {
+                boolean found = false;
+                if (!elseIfs.isEmpty()) {
+                    for (String x : elseIfs.substring(1).split("(?<!\\\\),")) {
+                        String[] conVal = x.split("(?<!\\\\):");
+                        Expression exp = new Expression(conVal[0]);
+                        if (exp.eval().intValue() != 0) {
+                            matcher.appendReplacement(result, conVal[1].replaceAll("\\\\(?=[\\[\\]:,])", ""));
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!found) {
+                    matcher.appendReplacement(result, elseValue.replaceAll("\\\\(?=[\\[\\]:,])", ""));
+                }
+            }
+        }
+        matcher.appendTail(result);
+        return result.toString();
+    }
+
+    private String parseVariables(String text) {
         Pattern pattern = Pattern.compile("\\$\\{(\\w+)(?::(\\w{1,5}=\\w{1,7}(?:,\\w{1,5}=\\w{1,7})*))?((?: *-[a-z]+)*)}");
         Matcher matcher = pattern.matcher(text);
         StringBuffer result = new StringBuffer();
@@ -45,62 +93,35 @@ public class ValueParser {
                                 }
                             }
                         }
-
                         parameters[i] = paramValue;
                     }
 
                     String varValue = String.valueOf(method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), parameters));
-
                     varValue = new FlagParser().parseFlags(varValue, flagString);
-
                     matcher.appendReplacement(result, varValue);
                 }
-
-
-//                Method method = variablesClass.getMethod("get_" + varName);
-//                DefaultVariables defaultVariables = new DefaultVariables();
-//
-//                String replacement = String.valueOf(method.invoke(defaultVariables));
-//                if (varName.equals("x") || varName.equals("y") || varName.equals("z")) {
-//                    if (!attributes.contains("R=")) {
-//                        attributes = attributes + ",R=3";
-//                    }
-//                }
-//                for (String x : attributes.split("(?<!:),")) {
-//                    String[] settValues = x.split("=");
-//                    if (settValues[0].equals("R")) {
-//                        DecimalFormat decimalFormat = new DecimalFormat();
-//                        decimalFormat.setMinimumFractionDigits(Integer.parseInt(settValues[1]));
-//                        decimalFormat.setMaximumFractionDigits(Integer.parseInt(settValues[1]));
-//                        decimalFormat.setGroupingUsed(false); // Removes spacing in format: 1 000 -> 1000
-//                        replacement = decimalFormat.format(Float.parseFloat(replacement));
-//                    } else if (settValues[0].equals("S")) {
-//                        if (Boolean.parseBoolean(settValues[1])) {
-//                            replacement = replacement.split(":")[1];
-//                        }
-//                    }
-//                }
-//
-//                matcher.appendReplacement(result, replacement);
             } catch (Exception e) {
-                matcher.appendReplacement(result, Text.translatable("adaptivehud.variable.error").getString());
+                matcher.appendReplacement(result, Text.translatable("adaptivehud.variable.variable_error").getString());
             }
         }
         matcher.appendTail(result);
+        return result.toString();
+    }
 
+    private String parseMath(String text) {
         Pattern mathPattern = Pattern.compile("%([\\d+\\-*/^ a-z]*)%");
-        Matcher mathMatcher = mathPattern.matcher(String.valueOf(result));
+        Matcher mathMatcher = mathPattern.matcher(text);
         StringBuffer mathResult = new StringBuffer();
         while (mathMatcher.find()) {
             try {
-                Expression expression = new ExpressionBuilder(mathMatcher.group(1)).build();
-                double replacement = expression.evaluate();
+                Expression exp = new Expression(mathMatcher.group(1));
+                BigDecimal replacement = exp.eval();
                 mathMatcher.appendReplacement(mathResult, String.valueOf(replacement));
             } catch (Exception e) {
-                mathMatcher.appendReplacement(mathResult, Text.translatable("adaptivehud.variable.error").getString());
+                mathMatcher.appendReplacement(mathResult, Text.translatable("adaptivehud.variable.math_error").getString());
             }
         }
         mathMatcher.appendTail(mathResult);
-        return String.valueOf(mathResult);
+        return mathResult.toString();
     }
 }
