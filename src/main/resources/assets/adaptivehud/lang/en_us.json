@@ -1,5 +1,6 @@
 {
   "adaptivehud.variable.variable_error": "#VarError",
+  "adaptivehud.variable.condition_error": "#CondError",
   "adaptivehud.variable.math_error": "#MathError",
   "adaptivehud.variable.noServerFound": "No Server",
 

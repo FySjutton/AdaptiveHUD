@@ -27,35 +27,39 @@ public class ValueParser {
         StringBuffer result = new StringBuffer();
 
         while (matcher.find()) {
-            String ifCondition = matcher.group(1);
-            String ifValue = matcher.group(2);
-            String elseIfs = matcher.group(3);
-            String elseValue = matcher.group(4);
+            try {
+                String ifCondition = matcher.group(1);
+                String ifValue = matcher.group(2);
+                String elseIfs = matcher.group(3);
+                String elseValue = matcher.group(4);
 
-            if (elseValue == null) {
-                elseValue = "";
-            }
+                if (elseValue == null) {
+                    elseValue = "";
+                }
 
-            Expression expression = new Expression(ifCondition);
-            if (expression.eval().intValue() != 0) {
-                matcher.appendReplacement(result, ifValue.replaceAll("\\\\(?=[\\[\\]:,])", ""));
-            } else {
-                boolean found = false;
-                if (!elseIfs.isEmpty()) {
-                    for (String x : elseIfs.substring(1).split("(?<!\\\\),")) {
-                        String[] conVal = x.split("(?<!\\\\):");
-                        Expression exp = new Expression(conVal[0]);
-                        if (exp.eval().intValue() != 0) {
-                            matcher.appendReplacement(result, conVal[1].replaceAll("\\\\(?=[\\[\\]:,])", ""));
-                            found = true;
-                            break;
+                Expression expression = new Expression(ifCondition);
+                if (expression.eval().intValue() != 0) {
+                    matcher.appendReplacement(result, ifValue.replaceAll("\\\\(?=[\\[\\]:,])", ""));
+                } else {
+                    boolean found = false;
+                    if (!elseIfs.isEmpty()) {
+                        for (String x : elseIfs.substring(1).split("(?<!\\\\),")) {
+                            String[] conVal = x.split("(?<!\\\\):");
+                            Expression exp = new Expression(conVal[0]);
+                            if (exp.eval().intValue() != 0) {
+                                matcher.appendReplacement(result, conVal[1].replaceAll("\\\\(?=[\\[\\]:,])", ""));
+                                found = true;
+                                break;
+                            }
                         }
                     }
-                }
 
-                if (!found) {
-                    matcher.appendReplacement(result, elseValue.replaceAll("\\\\(?=[\\[\\]:,])", ""));
+                    if (!found) {
+                        matcher.appendReplacement(result, elseValue.replaceAll("\\\\(?=[\\[\\]:,])", ""));
+                    }
                 }
+            } catch (Exception e) {
+            matcher.appendReplacement(result, Text.translatable("adaptivehud.variable.condition_error").getString());
             }
         }
         matcher.appendTail(result);
@@ -63,7 +67,7 @@ public class ValueParser {
     }
 
     private String parseVariables(String text) {
-        Pattern pattern = Pattern.compile("\\$\\{(\\w+)(?::(\\w{1,5}=\\w{1,7}(?:,\\w{1,5}=\\w{1,7})*))?((?: *-[a-z]+)*)}");
+        Pattern pattern = Pattern.compile("\\{(\\w+)?((?: *-[a-z]+)*)((?: *--[a-zA-Z]+=[a-zA-Z0-9.]+)*)}");
         Matcher matcher = pattern.matcher(text);
         StringBuffer result = new StringBuffer();
 
@@ -74,8 +78,8 @@ public class ValueParser {
                 Method method = register.loadVariable(varName);
 
                 if (method != null) {
-                    String attributeString = matcher.group(2);
-                    String flagString = matcher.group(3);
+                    String flagString = matcher.group(2);
+                    String attributeString = matcher.group(3);
 
                     Parameter[] params = method.getParameters();
                     Object[] parameters = new Object[params.length];
@@ -85,7 +89,7 @@ public class ValueParser {
                         Object paramValue = null;
 
                         if (attributeString != null) {
-                            for (String x : attributeString.split(",")) {
+                            for (String x : attributeString.split("--")) {
                                 String[] vals = x.split("=");
                                 if (paramName.equals(vals[0])) {
                                     paramValue = vals[1];
