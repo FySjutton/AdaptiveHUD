@@ -4,7 +4,6 @@
   "adaptivehud.variable.math_error": "#MathError",
   "adaptivehud.variable.noServerFound": "No Server",
 
-  "adaptivehud.config.title": "Elements",
   "adaptivehud.config.cancel": "Cancel",
   "adaptivehud.config.done": "Done",
   "adaptivehud.config.save": "Save",
@@ -37,5 +36,21 @@
   "adaptivehud.key.reloadElements": "Reload Elements",
   "adaptivehud.key.reloadConfig": "Reload Config",
   "adaptivehud.key.openConfig": "Open Config",
-  "adaptivehud.key.moveElements": "Move Elements"
+  "adaptivehud.key.moveElements": "Move Elements",
+
+  "adaptivehud.config.setting.name": "Name",
+  "adaptivehud.config.setting.value": "Value",
+  "adaptivehud.config.setting.textColor": "Text Color",
+  "adaptivehud.config.setting.posX": "Position X",
+  "adaptivehud.config.setting.posY": "Position Y",
+  "adaptivehud.config.setting.shadow": "Shadow",
+  "adaptivehud.config.setting.enabled": "Enabled",
+  "adaptivehud.config.setting.paddingX": "Padding X",
+  "adaptivehud.config.setting.paddingY": "Padding Y",
+  "adaptivehud.config.setting.backgroundColor": "Background Color",
+  "adaptivehud.config.setting.anchorPointX": "Anchorpoint X",
+  "adaptivehud.config.setting.anchorPointY": "Anchorpoint Y",
+  "adaptivehud.config.setting.textAlignX": "Text Align X",
+  "adaptivehud.config.setting.textAlignY": "Text Align Y",
+  "adaptivehud.config.setting.scale": "Scale"
 }

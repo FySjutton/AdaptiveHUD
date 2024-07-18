@@ -40,11 +40,10 @@ public class ConfigScreen extends Screen {
     public final List<String> deletedFiles = new ArrayList<>();
 
     private static final Text DEFAULTNAME = Text.translatable("adaptivehud.config.defaultName");
-    private static final Text TITLE = Text.translatable("adaptivehud.config.title");
     private static final Text DISCORDTEXT = Text.translatable("adaptivehud.config.discordText");
 
     public ConfigScreen(Screen parent) {
-        super(TITLE);
+        super(Text.of("AdaptiveHUD"));
         this.parent = parent;
 
         for (JsonElement elm : elementArray) {
@@ -95,7 +94,7 @@ public class ConfigScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredTextWithShadow(textRenderer, TITLE, width / 2, 20, 0xffffff);
+        context.drawCenteredTextWithShadow(textRenderer, "AdaptiveHUD", width / 2, 20, 0xffffff);
 
         context.drawTexture(discordTexture, width - discordWidth - 5, 23, 0, 0, 14, 14, 14, 14);
         context.drawText(textRenderer, DISCORDTEXT, width - discordWidth + 14, (int) (26.5), 0xFFFFFF, true);

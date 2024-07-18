@@ -132,13 +132,13 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
                 this.textField.setX(width / 2 + 50);
                 this.textField.setY(y);
                 this.textField.render(drawContext, mouseX, mouseY, tickDelta);
-                drawContext.drawText(textRenderer, titles.get(index), width / 2 - 150, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF, true);
+                drawContext.drawText(textRenderer, Text.translatable("adaptivehud.config.setting." + titles.get(index)).getString(), width / 2 - 150, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF, true);
             }
             if (this.button != null) {
                 this.button.setX(width / 2 + 50);
                 this.button.setY(y);
                 this.button.render(drawContext, mouseX, mouseY, tickDelta);
-                drawContext.drawText(textRenderer, titles.get(index), width / 2 - 150, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF, true);
+                drawContext.drawText(textRenderer, Text.translatable("adaptivehud.config.setting." + titles.get(index)).getString(), width / 2 - 150, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF, true);
             }
             if (this.title != null) {
                 drawContext.drawCenteredTextWithShadow(textRenderer, Text.translatable("adaptivehud.config.title." + this.title).getString(), width / 2, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF);
