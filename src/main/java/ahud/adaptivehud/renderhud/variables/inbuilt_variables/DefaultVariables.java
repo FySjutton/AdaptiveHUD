@@ -2,10 +2,14 @@ package ahud.adaptivehud.renderhud.variables.inbuilt_variables;
 
 import ahud.adaptivehud.renderhud.variables.AttributeName;
 import ahud.adaptivehud.renderhud.variables.AttributeTools;
+import net.minecraft.SharedConstants;
+import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
+import net.minecraft.client.option.CloudRenderMode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -19,14 +23,83 @@ public class DefaultVariables {
     AttributeTools tools = new AttributeTools();
 
     public String test() { // For testing purposes, so I don't have to restart my game as often
-        double value = 0;
-//        player.getServer().getDefaultGameMode();
-        value = Math.abs(player.getVelocity().x * 20);
-        value += Math.abs(player.getVelocity().z * 20);
-//        value = Math.abs(player.getVelocity().y) * 20;
-
+        String value = "";
 
         return String.valueOf(value);
+    }
+
+    // -----
+
+    public String tx() {
+        return String.valueOf(client.getNetworkHandler().getConnection().getAveragePacketsSent());
+    }
+
+    public String rx() {
+        return String.valueOf(client.getNetworkHandler().getConnection().getAveragePacketsReceived());
+    }
+
+    public String tps() {
+        IntegratedServer server = client.getServer();
+        if (server != null) {
+            float tps = server.getAverageTickTime();
+            return String.valueOf(tps < 50 ? 20 : 1000 / tps);
+        } else {
+            return "-";
+        }
+    }
+
+    public String mtps(@AttributeName("R") String round) {
+        IntegratedServer server = client.getServer();
+        if (server != null) {
+            float value = server.getAverageTickTime();
+            if (round == null) {round = "0";}
+            return tools.roundNum(value, Integer.parseInt(round));
+        } else {
+            return "-";
+        }
+    }
+
+    public String gpu(@AttributeName("R") String round) {
+        float gpuPercent = (float) client.getGpuUtilizationPercentage();
+        if (round == null) {round = "0";}
+        return tools.roundNum(gpuPercent, Integer.parseInt(round));
+    }
+
+    public String biome_blend() {
+        return String.valueOf(client.options.getBiomeBlendRadius().getValue());
+    }
+
+    public String clouds() {
+        return client.options.getCloudRenderMode().getValue() == CloudRenderMode.OFF ? "off" : (client.options.getCloudRenderMode().getValue() == CloudRenderMode.FAST ? "fast" : "fancy");
+    }
+
+    public String graphics_quality() {
+        return String.valueOf(client.options.getGraphicsMode().getValue());
+    }
+
+    public String vsync() {
+        return String.valueOf(client.options.getEnableVsync().getValue());
+    }
+
+    public String max_fps() {
+        int maxfps = client.options.getMaxFps().getValue();
+        return maxfps == 260 ? "unlimited" : String.valueOf(maxfps);
+    }
+
+    public String client_version_type() {
+        return "release".equalsIgnoreCase(this.client.getVersionType()) ? "" : this.client.getVersionType(); // "Fabric"
+    }
+
+    public String client_mod_name() {
+        return ClientBrandRetriever.getClientModName(); // "fabric"
+    }
+
+    public String game_version() {
+        return client.getGameVersion(); // "Fabric"
+    }
+
+    public String version() {
+        return SharedConstants.getGameVersion().getName();
     }
 
     public String gamemode() {
@@ -83,6 +156,10 @@ public class DefaultVariables {
 
     public String fps() {
         return String.valueOf(client.getCurrentFps());
+    }
+
+    public String mfps() {
+        return String.valueOf(1000 / client.getCurrentFps());
     }
 
     public String x(@AttributeName("R") String round) {
@@ -144,9 +221,9 @@ public class DefaultVariables {
         return client.player.getUuidAsString();
     } // The player's uuid
 
-    public String velocity_XZ() {
-        return String.valueOf(Math.abs(client.player.getVelocity().x) * 20 + Math.abs(client.player.getVelocity().z) * 20);
-    } // Idk if it works
+//    public String velocity_XZ() {
+//        return String.valueOf(Math.abs(client.player.getVelocity().x) * 20 + Math.abs(client.player.getVelocity().z) * 20);
+//    } // Idk if it works
 
     public String fall_distance() {
         return String.valueOf(player.fallDistance);
