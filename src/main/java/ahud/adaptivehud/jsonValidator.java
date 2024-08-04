@@ -86,11 +86,21 @@ public class jsonValidator {
     public String validateConfig(JsonObject elm) {
         try {
             double default_size = elm.get("default_size").getAsDouble();
-            if (default_size > 0.1 && default_size < 10) {
-                return null;
-            } else {
+            if (!(default_size > 0.1 && default_size < 10)) {
                 return "Default size must be \"0.1 > default size < 10\".";
             }
+
+            elm.get("render_on_debug").getAsString();
+            elm.get("render_get_help_button").getAsString();
+
+            if (
+                new tools().parseColor(elm.get("snapping_lines_color").getAsString()) == 0 ||
+                new tools().parseColor(elm.get("anchor_point_lines_color").getAsString()) == 0
+            ) {
+                return "Invalid color in config file!";
+            }
+
+            return null;
         } catch (Exception e) {
             return e.getMessage();
         }

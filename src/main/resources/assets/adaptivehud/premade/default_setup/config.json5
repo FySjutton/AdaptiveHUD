@@ -1,0 +1,15 @@
+{
+  // --- STYLING ---
+// The default scaling of all elements, this can also be overwritten individually.
+  "default_size": 1,
+
+  // --- SETTINGS ---
+// If elements should be rendered while the debug screen is enabled. (F3)
+  "render_on_debug": false,
+  "render_get_help_button": true,
+
+  // --- COLORS ---
+// All colors should be written in hex format, "#RRGGBBAA".
+  "snapping_lines_color": "#FFFFFFB2",
+  "anchor_point_lines_color": "#FF0000FF"
+}

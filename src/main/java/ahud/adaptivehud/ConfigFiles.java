@@ -26,17 +26,18 @@ public class ConfigFiles {
 
     private void generateConfigFile() {
         Path configDir = FabricLoader.getInstance().getConfigDir();
-        Path targetPath = Paths.get(configDir + "/adaptivehud/config.json");
+        Path targetPath = Paths.get(configDir + "/adaptivehud/config.json5");
         try {
-            InputStream resource = ConfigFiles.class.getResourceAsStream("/assets/adaptivehud/premade/default_setup/config.json");
+            InputStream resource = ConfigFiles.class.getResourceAsStream("/assets/adaptivehud/premade/default_setup/config.json5");
             FileUtils.copyInputStreamToFile(resource, targetPath.toFile());
         } catch (Exception e) {
-            LOGGER.error("AdaptiveHUD - Could not generate a new config.json file, the program will now close. This error should not normally occur, and if you need help, please join our discord server. This error indicates that there's something wrong with the jar file, or the program doesn't have access to write files.");
+            LOGGER.error("AdaptiveHUD - Could not generate a new config.json5 file, the program will now close. This error should not normally occur, and if you need help, please join our discord server. This error indicates that there's something wrong with the jar file, or the program doesn't have access to write files.");
             LOGGER.error("Shutting down minecraft..."); // Should just inactivate mod instead?
             LOGGER.error(e.toString());
             MinecraftClient.getInstance().stop();
         }
     }
+
     private void generateElementFolder() {
         Path configDir = FabricLoader.getInstance().getConfigDir();
         Path targetDir = Paths.get(configDir + "/adaptivehud/elements");
@@ -71,12 +72,12 @@ public class ConfigFiles {
             generateElementFolder();
             generateConfigFile();
         } else {
-            if (Files.notExists(configDir.resolve("adaptivehud/config.json"))) {
-                LOGGER.warn("Partial corrupted configuration setup found! Will now generate a new config file.");
+            if (Files.notExists(configDir.resolve("adaptivehud/config.json5"))) {
+                LOGGER.warn("Partially corrupted configuration setup found! Will now generate a new config file.");
                 generateConfigFile();
             }
             if (Files.notExists(configDir.resolve("adaptivehud/elements"))) {
-                LOGGER.warn("Partial corrupted configuration setup found! Will now generate a new element folder with default files.");
+                LOGGER.warn("Partially corrupted configuration setup found! Will now generate a new element folder with default files.");
                 generateElementFolder();
             }
         }
@@ -98,7 +99,7 @@ public class ConfigFiles {
 
                     JsonElement repairedElm = new jsonValidator().repairElement(elm.deepCopy());
                     if (!repairedElm.equals(elm)){
-                        sendToast("§6Element Repaired!", "§f" + file.getName() + " was repaired!");
+                        new tools().sendToast("§6Element Repaired!", "§f" + file.getName() + " was repaired!");
                         LOGGER.warn("Element " + file.getName() + " was partially corrupted, the element has now been repaired!");
                         saveRepaired = true;
                     }
@@ -107,7 +108,7 @@ public class ConfigFiles {
                     if (validated == null) {
                         String name = repairedElm.getAsJsonObject().get("name").getAsString();
                         if (names.contains(name.toLowerCase())) {
-                            sendToast("§c" + file.getName(), "§fKey name must be unique!");
+                            new tools().sendToast("§c" + file.getName(), "§fKey name must be unique!");
                             LOGGER.error("Failed to load element file " + file.getName() + "! The identifier (\"name\" key) must be unique!");
                             fails += 1;
                         } else {
@@ -116,14 +117,14 @@ public class ConfigFiles {
                         }
                     } else {
                         LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! Error message: " + validated);
-                        sendToast("§c" + file.getName(), "§f" + validated);
+                        new tools().sendToast("§c" + file.getName(), "§f" + validated);
                         fails += 1;
                     }
                 } catch (Exception e) {
                     LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! This might be caused by a missing comma or similar. This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error:");
                     LOGGER.error(String.valueOf(e));
                     fails += 1;
-                    sendToast("§c" + file.getName(), "§fInvalid json format or similar!");
+                    new tools().sendToast("§c" + file.getName(), "§fInvalid json format or similar!");
                 }
             }
             if (saveRepaired) {
@@ -131,17 +132,17 @@ public class ConfigFiles {
             }
         } else {
             LOGGER.warn("No element files detected!");
-            sendToast("§cNo elements detected!", "§fNo elements were found.");
+            new tools().sendToast("§cNo elements detected!", "§fNo elements were found.");
         }
 
-        sendToast("§aElements Reloaded!", "§e" + (files.length - fails) + "/" + files.length + " elements have successfully been reloaded.");
+        new tools().sendToast("§aElements Reloaded!", "§e" + (files.length - fails) + "/" + files.length + " elements have successfully been reloaded.");
     }
 
     public void generateConfigArray() {
         Path configDir = FabricLoader.getInstance().getConfigDir();
 
         try {
-            File config = new File(configDir + "/adaptivehud/config.json");
+            File config = new File(configDir + "/adaptivehud/config.json5");
             FileReader fileReader = new FileReader(config);
             JsonElement elm = JsonParser.parseReader(fileReader);
             fileReader.close();
@@ -176,7 +177,7 @@ public class ConfigFiles {
             } catch (Exception e) {
                 LOGGER.error("Failed to delete element file " + fileName + ".json! For help, please join our discord. Error:");
                 LOGGER.error(String.valueOf(e));
-                sendToast("§cFailed to delete file!", "§fCheck console for further information");
+                new tools().sendToast("§cFailed to delete file!", "§fCheck console for further information");
                 fails++;
             }
         }
@@ -207,28 +208,10 @@ public class ConfigFiles {
                 }
             } catch (Exception e) {
                 LOGGER.error("Error saving element file: " + e.getMessage());
-                sendToast("§cFailed to save file!", "§f" + e.getMessage());
+                new tools().sendToast("§cFailed to save file!", "§f" + e.getMessage());
                 fails++;
             }
         }
-        sendToast("§aChanges have been saved!", "§e" + fails + " errors encountered!");
-    }
-
-    // Should not be in this file
-    public void sendToast(String title, String description) {
-        try {
-            MinecraftClient client = MinecraftClient.getInstance();
-            if (client.textRenderer != null) {
-                client.getToastManager().add(
-                    new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION,
-                        Text.literal(title),
-                        Text.literal(description)
-                    )
-                );
-            }
-        } catch (Exception e) {
-            LOGGER.warn("Failed to display toast! Error:");
-            LOGGER.error(String.valueOf(e));
-        }
+        new tools().sendToast("§aChanges have been saved!", "§e" + fails + " errors encountered!");
     }
 }

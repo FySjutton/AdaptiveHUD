@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ahud.adaptivehud.ConfigFiles.configFile;
 import static ahud.adaptivehud.ConfigFiles.elementArray;
 import static ahud.adaptivehud.adaptivehud.LOGGER;
 
@@ -41,6 +42,8 @@ public class ConfigScreen extends Screen {
 
     private static final Text DEFAULTNAME = Text.translatable("adaptivehud.config.defaultName");
     private static final Text DISCORDTEXT = Text.translatable("adaptivehud.config.discordText");
+
+    private final boolean renderDiscordButton = configFile.getAsJsonObject().get("render_get_help_button").getAsBoolean();
 
     public ConfigScreen(Screen parent) {
         super(Text.of("AdaptiveHUD"));
@@ -80,10 +83,12 @@ public class ConfigScreen extends Screen {
                 .build();
         addDrawableChild(saveAndExitElm);
 
-        ButtonWidget discordButton = ButtonWidget.builder(Text.literal(""), btn -> openDiscord())
-                .dimensions(width - discordWidth - 10, 20, discordWidth, 20)
-                .build();
-        addDrawableChild(discordButton);
+        if (renderDiscordButton) {
+            ButtonWidget discordButton = ButtonWidget.builder(Text.literal(""), btn -> openDiscord())
+                    .dimensions(width - discordWidth - 10, 20, discordWidth, 20)
+                    .build();
+            addDrawableChild(discordButton);
+        }
 
         scrollableList = new ScrollableList(height, width, this);
         addDrawableChild(scrollableList);
@@ -96,8 +101,10 @@ public class ConfigScreen extends Screen {
         super.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(textRenderer, "AdaptiveHUD", width / 2, 20, 0xffffff);
 
-        context.drawTexture(discordTexture, width - discordWidth - 5, 23, 0, 0, 14, 14, 14, 14);
-        context.drawText(textRenderer, DISCORDTEXT, width - discordWidth + 14, (int) (26.5), 0xFFFFFF, true);
+        if (renderDiscordButton) {
+            context.drawTexture(discordTexture, width - discordWidth - 5, 23, 0, 0, 14, 14, 14, 14);
+            context.drawText(textRenderer, DISCORDTEXT, width - discordWidth + 14, (int) (26.5), 0xFFFFFF, true);
+        }
     }
 
     @Override

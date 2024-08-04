@@ -3,6 +3,7 @@ package ahud.adaptivehud.screens.movescreen;
 import ahud.adaptivehud.ConfigFiles;
 import ahud.adaptivehud.renderhud.RenderHUD;
 import ahud.adaptivehud.renderhud.coordCalculators;
+import ahud.adaptivehud.tools;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.fabricmc.api.EnvType;
@@ -16,6 +17,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ahud.adaptivehud.ConfigFiles.configFile;
 import static ahud.adaptivehud.ConfigFiles.elementArray;
 
 @Environment(EnvType.CLIENT)
@@ -42,8 +44,11 @@ public class MoveScreen extends Screen {
 
     private boolean autoSave;
 
+    private final int anchorLineColor = new tools().parseColor(configFile.getAsJsonObject().get("anchor_point_lines_color").getAsString());
+    private final int snappingLineColor = new tools().parseColor(configFile.getAsJsonObject().get("snapping_lines_color").getAsString());
+
     public MoveScreen(Screen parent, boolean autoSave) {
-        super(Text.translatable("adaptivehud.config.title"));
+        super(Text.of("AdaptiveHUD"));
         this.parent = parent;
         this.posList = new RenderHUD(true).generatePositions();
         this.snapPointsX = new ArrayList<>();
@@ -61,14 +66,14 @@ public class MoveScreen extends Screen {
             int xPos = new coordCalculators().getActualCords(dragged, dragged.get("posX").getAsInt() + alignX, client.getWindow().getScaledWidth(), width, 0, "X");
             int yPos = new coordCalculators().getActualCords(dragged, dragged.get("posY").getAsInt() + alignY, client.getWindow().getScaledHeight(), height, 0, "Y");
 
-            context.fill(anchorX, anchorY, xPos, anchorY + 2, 0xFFff0000);
-            context.fill(xPos, anchorY, xPos + 2, yPos, 0xFFff0000);
+            context.fill(anchorX, anchorY, xPos, anchorY + 2, anchorLineColor);
+            context.fill(xPos, anchorY, xPos + 2, yPos, anchorLineColor);
 
             if (snapX != 0) {
-                context.fill((int) snapX, 0, (int) snapX + 1, client.currentScreen.height, 0xB2FFFFFF);
+                context.fill((int) snapX, 0, (int) snapX + 1, client.currentScreen.height, snappingLineColor);
             }
             if (snapY != 0) {
-                context.fill(0, (int) snapY, client.currentScreen.width, (int) snapY + 1, 0xB2FFFFFF);
+                context.fill(0, (int) snapY, client.currentScreen.width, (int) snapY + 1, snappingLineColor);
             }
         }
     }

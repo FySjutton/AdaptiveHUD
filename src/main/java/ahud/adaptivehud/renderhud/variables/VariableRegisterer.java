@@ -1,6 +1,6 @@
 package ahud.adaptivehud.renderhud.variables;
 
-import ahud.adaptivehud.renderhud.variables.defaults.DefaultVariables;
+import ahud.adaptivehud.renderhud.variables.inbuilt_variables.DefaultVariables;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

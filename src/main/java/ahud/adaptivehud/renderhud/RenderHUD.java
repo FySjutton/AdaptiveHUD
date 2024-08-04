@@ -1,6 +1,7 @@
 package ahud.adaptivehud.renderhud;
 
 import ahud.adaptivehud.renderhud.variables.ValueParser;
+import ahud.adaptivehud.tools;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import ahud.adaptivehud.ConfigFiles;
@@ -22,8 +23,14 @@ public class RenderHUD {
 
     public void renderCustomHud(DrawContext drawContext, float tickDelta) {
         MinecraftClient client = MinecraftClient.getInstance();
-        ValueParser parser = new ValueParser();
 
+        if (!configFile.getAsJsonObject().get("render_on_debug").getAsBoolean()) {
+            if (client.inGameHud.getDebugHud().shouldShowDebugHud()) {
+                return;
+            }
+        }
+
+        ValueParser parser = new ValueParser();
         MatrixStack matrices = drawContext.getMatrices();
 
         for (JsonElement element : ConfigFiles.elementArray) {
@@ -65,7 +72,7 @@ public class RenderHUD {
                             posY,
                             posX + client.textRenderer.getWidth(parsedText) + 2 * paddingX,
                             posY + 9 + 1 + 2 * paddingY,
-                            parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
+                            new tools().parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
                     );
                 } else {
                     posX = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText), defaultScale,"X");
@@ -77,7 +84,7 @@ public class RenderHUD {
                         parsedText,
                         posX + paddingX,
                         posY + paddingY + 1,
-                        parseColor(x.get("textColor").getAsString()),
+                        new tools().parseColor(x.get("textColor").getAsString()),
                         x.get("shadow").getAsBoolean()
                 );
 
@@ -85,30 +92,6 @@ public class RenderHUD {
             }
         }
     }
-
-    public int parseColor(String colorString) {
-        try {
-            if (colorString.startsWith("#")) {
-                colorString = colorString.substring(1);
-            }
-
-            int alpha = 255;
-            if (colorString.length() == 8) {
-                alpha = Integer.parseInt(colorString.substring(6, 8), 16);
-                colorString = colorString.substring(0, 6);
-            }
-
-            int red = Integer.parseInt(colorString.substring(0, 2), 16);
-            int green = Integer.parseInt(colorString.substring(2, 4), 16);
-            int blue = Integer.parseInt(colorString.substring(4, 6), 16);
-
-            return (alpha << 24) | (red << 16) | (green << 8) | blue;
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
-
 
     public List<Object[]> generatePositions() {
         List<Object[]> positionList = new ArrayList<>();
