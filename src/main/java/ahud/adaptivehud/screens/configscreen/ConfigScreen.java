@@ -28,35 +28,34 @@ import java.util.List;
 
 import static ahud.adaptivehud.ConfigFiles.configFile;
 import static ahud.adaptivehud.ConfigFiles.elementArray;
-import static ahud.adaptivehud.adaptivehud.LOGGER;
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 @Environment(EnvType.CLIENT)
 public class ConfigScreen extends Screen {
-    private ScrollableList scrollableList;
-    private final Screen parent;
-    private final List<JsonElement> backupElementArr = new ArrayList<>();
-    private Boolean fileChanged = false;
-    private final Identifier discordTexture = new Identifier("adaptivehud", "textures/gui/discord_logo.png");
-    private int discordWidth;
-    public final List<String> deletedFiles = new ArrayList<>();
-
-    private static final Text DEFAULTNAME = Text.translatable("adaptivehud.config.defaultName");
-    private static final Text DISCORDTEXT = Text.translatable("adaptivehud.config.discordText");
-
+    private final Screen PARENT;
+    private final List<JsonElement> BACKUP_ELEMENT_ARR = new ArrayList<>();
+    private final List<String> DELETED_FILES = new ArrayList<>();
+    private final Identifier DISCORD_TEXTURE = new Identifier("adaptivehud", "textures/gui/discord_logo.png");
+    private static final Text DISCORD_TEXT = Text.translatable("adaptivehud.config.discordText");
+    private static final Text DEFAULT_NAME = Text.translatable("adaptivehud.config.defaultName");
     private final boolean renderDiscordButton = configFile.getAsJsonObject().get("render_get_help_button").getAsBoolean();
+
+    private ScrollableList scrollableList;
+    private Boolean fileChanged = false;
+    private int discordWidth;
 
     public ConfigScreen(Screen parent) {
         super(Text.of("AdaptiveHUD"));
-        this.parent = parent;
+        this.PARENT = parent;
 
         for (JsonElement elm : elementArray) {
-            backupElementArr.add(elm.deepCopy());
+            BACKUP_ELEMENT_ARR.add(elm.deepCopy());
         }
     }
 
     @Override
     protected void init() {
-        discordWidth = textRenderer.getWidth(DISCORDTEXT) + 16 + 5 + 3 + 5;
+        discordWidth = textRenderer.getWidth(DISCORD_TEXT) + 16 + 5 + 3 + 5;
 
         ButtonWidget newElm = ButtonWidget.builder(Text.translatable("adaptivehud.config.createNewElement"), btn -> createNewElement())
             .dimensions(width / 16, 50, width / 8 * 3, 20)
@@ -102,8 +101,8 @@ public class ConfigScreen extends Screen {
         context.drawCenteredTextWithShadow(textRenderer, "AdaptiveHUD", width / 2, 20, 0xffffff);
 
         if (renderDiscordButton) {
-            context.drawTexture(discordTexture, width - discordWidth - 5, 23, 0, 0, 14, 14, 14, 14);
-            context.drawText(textRenderer, DISCORDTEXT, width - discordWidth + 14, (int) (26.5), 0xFFFFFF, true);
+            context.drawTexture(DISCORD_TEXTURE, width - discordWidth - 5, 23, 0, 0, 14, 14, 14, 14);
+            context.drawText(textRenderer, DISCORD_TEXT, width - discordWidth + 14, (int) (26.5), 0xFFFFFF, true);
         }
     }
 
@@ -116,7 +115,7 @@ public class ConfigScreen extends Screen {
 
     @Override
     public void close() {
-        client.setScreen(parent);
+        client.setScreen(PARENT);
     }
 
     @Override
@@ -130,10 +129,10 @@ public class ConfigScreen extends Screen {
             String jsonContent = IOUtils.toString(resource, "UTF-8");
             JsonElement newElement = JsonParser.parseString(jsonContent);
             JsonObject newObject = newElement.getAsJsonObject();
-            String newName = DEFAULTNAME.getString().toLowerCase();
+            String newName = DEFAULT_NAME.getString().toLowerCase();
             int counter = 1;
             while (elementArray.toString().contains("\"name\":\"" + newName + "\",")) {
-                newName = DEFAULTNAME.getString().toLowerCase() + counter;
+                newName = DEFAULT_NAME.getString().toLowerCase() + counter;
                 counter++;
             }
             newObject.addProperty("name", newName);
@@ -147,22 +146,22 @@ public class ConfigScreen extends Screen {
     }
 
     private void discardChanges() {
-        elementArray = backupElementArr;
+        elementArray = BACKUP_ELEMENT_ARR;
         close();
     }
 
     private void saveAndExit() {
         if (fileChanged) {
-            new ConfigFiles().saveElementFiles(elementArray, deletedFiles);
+            new ConfigFiles().saveElementFiles(elementArray, DELETED_FILES);
         }
         close();
     }
 
     private void reloadElements() {
         new ConfigFiles().GenerateElementArray();
-        backupElementArr.clear();
+        BACKUP_ELEMENT_ARR.clear();
         for (JsonElement elm : elementArray) {
-            backupElementArr.add(elm.deepCopy());
+            BACKUP_ELEMENT_ARR.add(elm.deepCopy());
         }
         scrollableList.updateElementList(width);
     }
@@ -172,7 +171,7 @@ public class ConfigScreen extends Screen {
     }
 
     public void changesMade() {
-        fileChanged = !elementArray.equals(backupElementArr);
+        fileChanged = !elementArray.equals(BACKUP_ELEMENT_ARR);
 
         ButtonWidget reloadElementsElm = (ButtonWidget) children().get(2);
         ButtonWidget saveButtonElm = (ButtonWidget) children().get(5);
@@ -212,9 +211,9 @@ public class ConfigScreen extends Screen {
     }
 
     public void addDeletedFile(String oldFileName) {
-        if (!deletedFiles.contains(oldFileName)) {
-            if (backupElementArr.toString().contains("\"name\":\"" + oldFileName + "\",")) {
-                deletedFiles.add(oldFileName);
+        if (!DELETED_FILES.contains(oldFileName)) {
+            if (BACKUP_ELEMENT_ARR.toString().contains("\"name\":\"" + oldFileName + "\",")) {
+                DELETED_FILES.add(oldFileName);
             }
         }
     }

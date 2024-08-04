@@ -4,9 +4,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 
-import static ahud.adaptivehud.adaptivehud.LOGGER;
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
-public class tools {
+public class Tools {
     public int parseColor(String colorString) {
         try {
             if (colorString.startsWith("#")) {

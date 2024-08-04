@@ -17,7 +17,7 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class adaptivehud implements ModInitializer {
+public class AdaptiveHUD implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("adaptivehud");
 
 	public static final KeyBinding reloadElementsKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(

@@ -1,9 +1,8 @@
 package ahud.adaptivehud.screens.elementscreen;
 
-import ahud.adaptivehud.ConfigFiles;
-import ahud.adaptivehud.jsonValidator;
+import ahud.adaptivehud.JsonValidator;
 import ahud.adaptivehud.screens.configscreen.ConfigScreen;
-import ahud.adaptivehud.tools;
+import ahud.adaptivehud.Tools;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.fabricmc.api.EnvType;
@@ -20,21 +19,23 @@ import static ahud.adaptivehud.ConfigFiles.elementArray;
 
 @Environment(EnvType.CLIENT)
 public class ElementScreen extends Screen {
-    private final Screen parent;
-    private ScrollableArea scrollableArea;
-    private final JsonElement beforeEditing;
-    public JsonObject elm;
+    private final Screen PARENT;
+    private final JsonElement BEFORE_EDITING;
     private static final String LEFT = Text.translatable("adaptivehud.config.button.left").getString();
     private static final String RIGHT = Text.translatable("adaptivehud.config.button.right").getString();
     private static final String TOP = Text.translatable("adaptivehud.config.button.top").getString();
     private static final String BOTTOM = Text.translatable("adaptivehud.config.button.bottom").getString();
 
+    private ScrollableArea scrollableArea;
+    public JsonObject elm;
+
+
     public ElementScreen(Screen parent, JsonElement elm) {
         super(Text.translatable("adaptivehud.config.title"));
-        this.parent = parent;
+        this.PARENT = parent;
         this.elm = elm.deepCopy().getAsJsonObject();
 
-        beforeEditing = elm.deepCopy();
+        BEFORE_EDITING = elm.deepCopy();
     }
 
     @Override
@@ -70,7 +71,7 @@ public class ElementScreen extends Screen {
 
     @Override
     public void close() {
-        client.setScreen(parent);
+        client.setScreen(PARENT);
     }
 
     @Override
@@ -142,26 +143,26 @@ public class ElementScreen extends Screen {
                 }
             }
         }
-        String validated = new jsonValidator().validateElement(elm.getAsJsonObject());
+        String validated = new JsonValidator().validateElement(elm.getAsJsonObject());
         if (validated == null) {
             List<JsonElement> deepCopyArray = new ArrayList<>();
             for (JsonElement elm : elementArray) {
                 deepCopyArray.add(elm.deepCopy());
             }
-            deepCopyArray.remove(beforeEditing);
+            deepCopyArray.remove(BEFORE_EDITING);
             if (!deepCopyArray.toString().toLowerCase().contains("\"name\":\"" + elm.get("name").getAsString().toLowerCase() + "\",")) {
-                String old_file_name = beforeEditing.getAsJsonObject().get("name").getAsString();
+                String old_file_name = BEFORE_EDITING.getAsJsonObject().get("name").getAsString();
                 if (!old_file_name.equals(elm.getAsJsonObject().get("name").getAsString())) {
-                    ((ConfigScreen) parent).addDeletedFile(old_file_name);
+                    ((ConfigScreen) PARENT).addDeletedFile(old_file_name);
                 }
 
-                elementArray.set(elementArray.indexOf(beforeEditing.getAsJsonObject()), elm);
+                elementArray.set(elementArray.indexOf(BEFORE_EDITING.getAsJsonObject()), elm);
                 close();
             } else {
-                new tools().sendToast("§cInvalid!", "§fThe name must be unique!");
+                new Tools().sendToast("§cInvalid!", "§fThe name must be unique!");
             }
         } else {
-            new tools().sendToast("§cInvalid!", "§f" + validated);
+            new Tools().sendToast("§cInvalid!", "§f" + validated);
         }
     }
 }

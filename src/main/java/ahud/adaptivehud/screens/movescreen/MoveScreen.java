@@ -1,9 +1,9 @@
 package ahud.adaptivehud.screens.movescreen;
 
 import ahud.adaptivehud.ConfigFiles;
+import ahud.adaptivehud.renderhud.CoordCalculators;
 import ahud.adaptivehud.renderhud.RenderHUD;
-import ahud.adaptivehud.renderhud.coordCalculators;
-import ahud.adaptivehud.tools;
+import ahud.adaptivehud.Tools;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.fabricmc.api.EnvType;
@@ -44,8 +44,8 @@ public class MoveScreen extends Screen {
 
     private boolean autoSave;
 
-    private final int anchorLineColor = new tools().parseColor(configFile.getAsJsonObject().get("anchor_point_lines_color").getAsString());
-    private final int snappingLineColor = new tools().parseColor(configFile.getAsJsonObject().get("snapping_lines_color").getAsString());
+    private final int anchorLineColor = new Tools().parseColor(configFile.getAsJsonObject().get("anchor_point_lines_color").getAsString());
+    private final int snappingLineColor = new Tools().parseColor(configFile.getAsJsonObject().get("snapping_lines_color").getAsString());
 
     public MoveScreen(Screen parent, boolean autoSave) {
         super(Text.of("AdaptiveHUD"));
@@ -63,8 +63,8 @@ public class MoveScreen extends Screen {
         new RenderHUD(false).renderCustomHud(context, 0);
 
         if (dragged != null) {
-            int xPos = new coordCalculators().getActualCords(dragged, dragged.get("posX").getAsInt() + alignX, client.getWindow().getScaledWidth(), width, 0, "X");
-            int yPos = new coordCalculators().getActualCords(dragged, dragged.get("posY").getAsInt() + alignY, client.getWindow().getScaledHeight(), height, 0, "Y");
+            int xPos = new CoordCalculators().getActualCords(dragged, dragged.get("posX").getAsInt() + alignX, client.getWindow().getScaledWidth(), width, 0, "X");
+            int yPos = new CoordCalculators().getActualCords(dragged, dragged.get("posY").getAsInt() + alignY, client.getWindow().getScaledHeight(), height, 0, "Y");
 
             context.fill(anchorX, anchorY, xPos, anchorY + 2, anchorLineColor);
             context.fill(xPos, anchorY, xPos + 2, yPos, anchorLineColor);
@@ -97,22 +97,22 @@ public class MoveScreen extends Screen {
             if (!shiftPressed) {
                 for (int x : this.snapPointsX) {
                     if (Math.abs(mouseX - offsetX - x) < 5) {
-                        dragged.addProperty("posX", new coordCalculators().getRelativeCords(dragged, x, client.getWindow().getScaledWidth(), width, "X"));
+                        dragged.addProperty("posX", new CoordCalculators().getRelativeCords(dragged, x, client.getWindow().getScaledWidth(), width, "X"));
                         snapX = x;
                         foundX = true;
                     } else if (Math.abs(mouseX - offsetX + width - x) < 5) {
-                        dragged.addProperty("posX", new coordCalculators().getRelativeCords(dragged, x - width, client.getWindow().getScaledWidth(), width, "X"));
+                        dragged.addProperty("posX", new CoordCalculators().getRelativeCords(dragged, x - width, client.getWindow().getScaledWidth(), width, "X"));
                         snapX = x;
                         foundX = true;
                     }
                 }
                 for (int y : this.snapPointsY) {
                     if (Math.abs(mouseY - offsetY - y) < 5) {
-                        dragged.addProperty("posY", new coordCalculators().getRelativeCords(dragged, y, client.getWindow().getScaledHeight(), height, "Y"));
+                        dragged.addProperty("posY", new CoordCalculators().getRelativeCords(dragged, y, client.getWindow().getScaledHeight(), height, "Y"));
                         snapY = y;
                         foundY = true;
                     } else if (Math.abs(mouseY - offsetY + height - y) < 5) {
-                        dragged.addProperty("posY", new coordCalculators().getRelativeCords(dragged, y - height, client.getWindow().getScaledHeight(), height, "Y"));
+                        dragged.addProperty("posY", new CoordCalculators().getRelativeCords(dragged, y - height, client.getWindow().getScaledHeight(), height, "Y"));
                         snapY = y;
                         foundY = true;
                     }
@@ -121,11 +121,11 @@ public class MoveScreen extends Screen {
 
             if (!foundX) {
                 snapX = 0;
-                dragged.addProperty("posX", new coordCalculators().getRelativeCords(dragged, (int) ((mouseX - offsetX)), client.getWindow().getScaledWidth(), width, "X"));
+                dragged.addProperty("posX", new CoordCalculators().getRelativeCords(dragged, (int) ((mouseX - offsetX)), client.getWindow().getScaledWidth(), width, "X"));
             }
             if (!foundY) {
                 snapY = 0;
-                dragged.addProperty("posY", new coordCalculators().getRelativeCords(dragged, (int) ((mouseY - offsetY)), client.getWindow().getScaledHeight(), height, "Y"));
+                dragged.addProperty("posY", new CoordCalculators().getRelativeCords(dragged, (int) ((mouseY - offsetY)), client.getWindow().getScaledHeight(), height, "Y"));
             }
         }
         return true;
@@ -201,8 +201,8 @@ public class MoveScreen extends Screen {
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (button == 0 && dragged != null) {
-            int actX = new coordCalculators().getActualCords(dragged, dragged.get("posX").getAsInt(), client.getWindow().getScaledWidth(), width, 0, "X");
-            int actY = new coordCalculators().getActualCords(dragged, dragged.get("posY").getAsInt(), client.getWindow().getScaledHeight(), height, 0, "Y");
+            int actX = new CoordCalculators().getActualCords(dragged, dragged.get("posX").getAsInt(), client.getWindow().getScaledWidth(), width, 0, "X");
+            int actY = new CoordCalculators().getActualCords(dragged, dragged.get("posY").getAsInt(), client.getWindow().getScaledHeight(), height, 0, "Y");
             dragInf[1] = actX;
             dragInf[2] = actY;
             dragInf[3] = actX + width;
@@ -236,8 +236,8 @@ public class MoveScreen extends Screen {
             JsonObject elm = (JsonObject) x[0];
             int lengthX = (int) x[3] - (int) x[1];
             int lengthY = (int) x[4] - (int) x[2];
-            int posX = new coordCalculators().getActualCords(elm, elm.get("posX").getAsInt(), width, lengthX, 0, "X");
-            int posY = new coordCalculators().getActualCords(elm, elm.get("posY").getAsInt(), height, lengthY, 0, "Y");
+            int posX = new CoordCalculators().getActualCords(elm, elm.get("posX").getAsInt(), width, lengthX, 0, "X");
+            int posY = new CoordCalculators().getActualCords(elm, elm.get("posY").getAsInt(), height, lengthY, 0, "Y");
 
             x[1] = posX;
             x[2] = posY;

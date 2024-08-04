@@ -4,8 +4,6 @@ import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.toast.SystemToast;
-import net.minecraft.text.Text;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
@@ -17,7 +15,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static ahud.adaptivehud.adaptivehud.LOGGER;
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class ConfigFiles {
     public static List<JsonElement> elementArray = new ArrayList<>();
@@ -97,18 +95,18 @@ public class ConfigFiles {
                     JsonElement elm = JsonParser.parseReader(fileReader);
                     fileReader.close();
 
-                    JsonElement repairedElm = new jsonValidator().repairElement(elm.deepCopy());
+                    JsonElement repairedElm = new JsonValidator().repairElement(elm.deepCopy());
                     if (!repairedElm.equals(elm)){
-                        new tools().sendToast("§6Element Repaired!", "§f" + file.getName() + " was repaired!");
+                        new Tools().sendToast("§6Element Repaired!", "§f" + file.getName() + " was repaired!");
                         LOGGER.warn("Element " + file.getName() + " was partially corrupted, the element has now been repaired!");
                         saveRepaired = true;
                     }
-                    String validated = new jsonValidator().validateElement(repairedElm.getAsJsonObject());
+                    String validated = new JsonValidator().validateElement(repairedElm.getAsJsonObject());
 
                     if (validated == null) {
                         String name = repairedElm.getAsJsonObject().get("name").getAsString();
                         if (names.contains(name.toLowerCase())) {
-                            new tools().sendToast("§c" + file.getName(), "§fKey name must be unique!");
+                            new Tools().sendToast("§c" + file.getName(), "§fKey name must be unique!");
                             LOGGER.error("Failed to load element file " + file.getName() + "! The identifier (\"name\" key) must be unique!");
                             fails += 1;
                         } else {
@@ -117,14 +115,14 @@ public class ConfigFiles {
                         }
                     } else {
                         LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! Error message: " + validated);
-                        new tools().sendToast("§c" + file.getName(), "§f" + validated);
+                        new Tools().sendToast("§c" + file.getName(), "§f" + validated);
                         fails += 1;
                     }
                 } catch (Exception e) {
                     LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! This might be caused by a missing comma or similar. This is most likely because of you having manually edited the file. Please use the in game editor if you don't know what you're doing. Error:");
                     LOGGER.error(String.valueOf(e));
                     fails += 1;
-                    new tools().sendToast("§c" + file.getName(), "§fInvalid json format or similar!");
+                    new Tools().sendToast("§c" + file.getName(), "§fInvalid json format or similar!");
                 }
             }
             if (saveRepaired) {
@@ -132,10 +130,10 @@ public class ConfigFiles {
             }
         } else {
             LOGGER.warn("No element files detected!");
-            new tools().sendToast("§cNo elements detected!", "§fNo elements were found.");
+            new Tools().sendToast("§cNo elements detected!", "§fNo elements were found.");
         }
 
-        new tools().sendToast("§aElements Reloaded!", "§e" + (files.length - fails) + "/" + files.length + " elements have successfully been reloaded.");
+        new Tools().sendToast("§aElements Reloaded!", "§e" + (files.length - fails) + "/" + files.length + " elements have successfully been reloaded.");
     }
 
     public void generateConfigArray() {
@@ -146,7 +144,7 @@ public class ConfigFiles {
             FileReader fileReader = new FileReader(config);
             JsonElement elm = JsonParser.parseReader(fileReader);
             fileReader.close();
-            String validated = new jsonValidator().validateConfig(elm.getAsJsonObject());
+            String validated = new JsonValidator().validateConfig(elm.getAsJsonObject());
             if (validated != null) {
                 LOGGER.error(validated);
                 LOGGER.error("[CRITICAL] - Configuration file could not be read properly. This is most likely because of a missing key or similar, the file does not follow the required format. For help, please seek help in adaptivehud discord server.");
@@ -177,7 +175,7 @@ public class ConfigFiles {
             } catch (Exception e) {
                 LOGGER.error("Failed to delete element file " + fileName + ".json! For help, please join our discord. Error:");
                 LOGGER.error(String.valueOf(e));
-                new tools().sendToast("§cFailed to delete file!", "§fCheck console for further information");
+                new Tools().sendToast("§cFailed to delete file!", "§fCheck console for further information");
                 fails++;
             }
         }
@@ -208,10 +206,10 @@ public class ConfigFiles {
                 }
             } catch (Exception e) {
                 LOGGER.error("Error saving element file: " + e.getMessage());
-                new tools().sendToast("§cFailed to save file!", "§f" + e.getMessage());
+                new Tools().sendToast("§cFailed to save file!", "§f" + e.getMessage());
                 fails++;
             }
         }
-        new tools().sendToast("§aChanges have been saved!", "§e" + fails + " errors encountered!");
+        new Tools().sendToast("§aChanges have been saved!", "§e" + fails + " errors encountered!");
     }
 }

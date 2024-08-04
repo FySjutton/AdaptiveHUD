@@ -2,7 +2,7 @@ package ahud.adaptivehud.renderhud;
 
 import com.google.gson.JsonObject;
 
-public class coordCalculators {
+public class CoordCalculators {
     public int getActualCords(JsonObject elm, int value, int max, int length, float scale, String axis) {
         // Calculate actual cords from alignments
         int anchor = elm.get("alignment").getAsJsonObject().get("anchorPoint" + axis).getAsInt();

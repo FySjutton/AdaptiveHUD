@@ -14,7 +14,9 @@
 	"icon": "assets/adaptivehud/mod_icon.png",
 	"environment": "client",
 	"entrypoints": {
-		"main": ["ahud.adaptivehud.adaptivehud"],
+		"main": [
+          "ahud.adaptivehud.AdaptiveHUD"
+        ],
 		"modmenu": [
 			"ahud.adaptivehud.ModMenuIntegration"
 		]

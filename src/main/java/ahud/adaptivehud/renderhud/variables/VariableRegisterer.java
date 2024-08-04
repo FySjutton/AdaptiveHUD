@@ -6,16 +6,16 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ahud.adaptivehud.adaptivehud.LOGGER;
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class VariableRegisterer {
-    private static final Map<String, Method> variableList = new HashMap<>();
+    private static final Map<String, Method> VARIABLE_LIST = new HashMap<>();
 
     public void registerVariable(String name, Method method) {
 //        Class<?>[] parameters = method.getParameterTypes();
 //        if (parameters.co)
 //        if (parameters == 2) {
-        variableList.put(name, method);
+        VARIABLE_LIST.put(name, method);
 //        } else {
 //            LOGGER.error("Variable {} could not be registered because it doesn't have the right parameters.", name);
 //        }
@@ -23,7 +23,7 @@ public class VariableRegisterer {
 
     public Method loadVariable(String name) {
         try {
-            return variableList.get(name);
+            return VARIABLE_LIST.get(name);
         } catch (Exception e) {
             return null;
         }
@@ -41,6 +41,6 @@ public class VariableRegisterer {
     }
 
     public void deleteVariables() {
-        variableList.clear();
+        VARIABLE_LIST.clear();
     }
 }

@@ -1,7 +1,7 @@
 package ahud.adaptivehud.renderhud;
 
 import ahud.adaptivehud.renderhud.variables.ValueParser;
-import ahud.adaptivehud.tools;
+import ahud.adaptivehud.Tools;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import ahud.adaptivehud.ConfigFiles;
@@ -15,10 +15,10 @@ import java.util.List;
 import static ahud.adaptivehud.ConfigFiles.configFile;
 
 public class RenderHUD {
-    private boolean useLong;
+    private final boolean USE_LONG;
 
     public RenderHUD(boolean useLong) {
-        this.useLong = useLong;
+        this.USE_LONG = useLong;
     }
 
     public void renderCustomHud(DrawContext drawContext, float tickDelta) {
@@ -39,7 +39,7 @@ public class RenderHUD {
                 float defaultScale;
                 String parsedText;
 
-                if (this.useLong) {
+                if (this.USE_LONG) {
                     parsedText = parser.parseValue(x.get("value").getAsString());
                 } else {
                     parsedText = x.get("name").getAsString();
@@ -64,19 +64,19 @@ public class RenderHUD {
                     paddingX = x.get("background").getAsJsonObject().get("paddingX").getAsInt();
                     paddingY = x.get("background").getAsJsonObject().get("paddingY").getAsInt();
 
-                    posX = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText) + paddingX * 2, defaultScale, "X");
-                    posY = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9 + 1 + paddingY * 2, defaultScale, "Y");
+                    posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText) + paddingX * 2, defaultScale, "X");
+                    posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9 + 1 + paddingY * 2, defaultScale, "Y");
 
                     drawContext.fill(
                             posX,
                             posY,
                             posX + client.textRenderer.getWidth(parsedText) + 2 * paddingX,
                             posY + 9 + 1 + 2 * paddingY,
-                            new tools().parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
+                            new Tools().parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
                     );
                 } else {
-                    posX = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText), defaultScale,"X");
-                    posY = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9 + 1, defaultScale,"Y");
+                    posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText), defaultScale,"X");
+                    posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9 + 1, defaultScale,"Y");
                 }
 
                 drawContext.drawText(
@@ -84,7 +84,7 @@ public class RenderHUD {
                         parsedText,
                         posX + paddingX,
                         posY + paddingY + 1,
-                        new tools().parseColor(x.get("textColor").getAsString()),
+                        new Tools().parseColor(x.get("textColor").getAsString()),
                         x.get("shadow").getAsBoolean()
                 );
 
@@ -119,8 +119,8 @@ public class RenderHUD {
                 int boxWidth = Math.round((client.textRenderer.getWidth(parsedText) + paddingX * 2) * defaultScale);
                 int boxHeight = Math.round((9 + 1 + paddingY * 2) * defaultScale);
 
-                int posX = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), boxWidth, 0, "X");
-                int posY = new coordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), boxHeight, 0, "Y");
+                int posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), boxWidth, 0, "X");
+                int posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), boxHeight, 0, "Y");
 
                 Object[] sublist = {element, posX, posY, posX + boxWidth, posY + boxHeight};
                 positionList.add(sublist);

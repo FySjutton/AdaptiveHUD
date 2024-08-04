@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-public class jsonValidator {
+public class JsonValidator {
     public JsonElement repairElement(JsonElement elm) {
         JsonObject obj = elm.getAsJsonObject();
         if (!obj.has("enabled")) {obj.addProperty("enabled", true);}
@@ -94,8 +94,8 @@ public class jsonValidator {
             elm.get("render_get_help_button").getAsString();
 
             if (
-                new tools().parseColor(elm.get("snapping_lines_color").getAsString()) == 0 ||
-                new tools().parseColor(elm.get("anchor_point_lines_color").getAsString()) == 0
+                new Tools().parseColor(elm.get("snapping_lines_color").getAsString()) == 0 ||
+                new Tools().parseColor(elm.get("anchor_point_lines_color").getAsString()) == 0
             ) {
                 return "Invalid color in config file!";
             }
