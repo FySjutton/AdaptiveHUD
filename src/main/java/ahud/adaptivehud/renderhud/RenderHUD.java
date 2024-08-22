@@ -12,6 +12,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 import static ahud.adaptivehud.ConfigFiles.configFile;
 
 public class RenderHUD {
@@ -52,9 +53,14 @@ public class RenderHUD {
 
                 matrices.push();
                 float setScale = x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
+                float trueScale = 1;
                 if (setScale != 0) {
                     defaultScale = setScale;
-                    matrices.scale(defaultScale, defaultScale, 1);
+                    // KNOWN BUG SOMEWHERE; SCALING ISN'T PERFECT, AND WHEN ELEMENTS ARE NEXT TO EACHOTHER, THEY SOMETIMES OVERLAPS. (when different scales)
+                    float itemHeight = 9 + x.get("background").getAsJsonObject().get("paddingY").getAsInt() * 2;
+                    int wantedHeight = Math.round(itemHeight * defaultScale);
+                    trueScale = wantedHeight / itemHeight;
+                    matrices.scale(trueScale, trueScale, 1);
                 } else {
                     defaultScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
                     matrices.scale(defaultScale, defaultScale, 1);
@@ -64,26 +70,28 @@ public class RenderHUD {
                     paddingX = x.get("background").getAsJsonObject().get("paddingX").getAsInt();
                     paddingY = x.get("background").getAsJsonObject().get("paddingY").getAsInt();
 
-                    posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText) + paddingX * 2, defaultScale, "X");
-                    posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9 + 1 + paddingY * 2, defaultScale, "Y");
+                    posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText) + paddingX * 2, trueScale, "X");
+                    posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9 + Math.round(paddingY * 2), trueScale, "Y");
+//                    LOGGER.info(String.valueOf(posY));
+//                    LOGGER.info(String.valueOf(posY + 9 + Math.round(2 * paddingY)) + "   2");
 
                     drawContext.fill(
                             posX,
                             posY,
                             posX + client.textRenderer.getWidth(parsedText) + 2 * paddingX,
-                            posY + 9 + 1 + 2 * paddingY,
+                            posY + 9 + Math.round(2 * paddingY),
                             new Tools().parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
                     );
                 } else {
                     posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText), defaultScale,"X");
-                    posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9 + 1, defaultScale,"Y");
+                    posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9, defaultScale,"Y");
                 }
 
                 drawContext.drawText(
                         client.textRenderer,
                         parsedText,
                         posX + paddingX,
-                        posY + paddingY + 1,
+                        posY + paddingY + 1, // + 1, looks wrong otherwise?
                         new Tools().parseColor(x.get("textColor").getAsString()),
                         x.get("shadow").getAsBoolean()
                 );
@@ -117,7 +125,7 @@ public class RenderHUD {
                 }
 
                 int boxWidth = Math.round((client.textRenderer.getWidth(parsedText) + paddingX * 2) * defaultScale);
-                int boxHeight = Math.round((9 + 1 + paddingY * 2) * defaultScale);
+                int boxHeight = Math.round((9 + paddingY * 2) * defaultScale);
 
                 int posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), boxWidth, 0, "X");
                 int posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), boxHeight, 0, "Y");

@@ -16,7 +16,7 @@ public class CoordCalculators {
             pos = value;
         }
         if (scale > 0) { // To allow calculating without scaling, set scale to 0
-            pos = (int) (pos / scale); // Scales coords to their normal size, first time I made an informative comment
+            pos = Math.round(pos / scale); // Scales coords to their normal size, first time I made an informative comment
         }
         if (align == 1) {
             pos -= length / 2;
