@@ -18,9 +18,11 @@ import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
+import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.ApiStatus;
 
 public class DefaultVariables {
@@ -34,45 +36,141 @@ public class DefaultVariables {
 //        tools.targetBlockPosition();
 
         String value = "";
-        HitResult blockHit = player.raycast(20.0, 0.0F, false);
-        if (blockHit.getType() == net.minecraft.util.hit.HitResult.Type.BLOCK) {
-            value = String.valueOf(blockHit.getPos().x);
-        } else {
-            value = null;
-        }
+
+        value = String.valueOf(player.getChunkPos().getRegionRelativeX()); // RELATIVE REGION X
+        value = String.valueOf(player.getChunkPos().getRegionX());
+        value = String.valueOf(player.getBlockPos().getX() & 15);
+//        ChunkSectionPos.getSectionCoord(player.getBlockPos().getY());
 //        value = String.valueOf(client.player.pos);
 
         return String.valueOf(value);
     }
 
     // ----- BETA.2 BELOW
-//    public String sprinting() {
-//        return String.valueOf(client.player.isSprinting());
-//    }
+
+    public String region_x() {
+        return String.valueOf(player.getChunkPos().getRegionX());
+    }
+
+    public String region_z() {
+        return String.valueOf(player.getChunkPos().getRegionZ());
+    }
+
+    public String rel_region_x() {
+        return String.valueOf(player.getChunkPos().getRegionRelativeX());
+    }
+
+    public String rel_region_z() {
+        return String.valueOf(player.getChunkPos().getRegionRelativeZ());
+    }
+
+    public String rel_chunk_x() {
+        return String.valueOf(player.getBlockPos().getX() & 15);
+    }
+
+    public String rel_chunk_y() {
+        return String.valueOf(player.getBlockPos().getY() & 15);
+    }
+
+    public String rel_chunk_z() {
+        return String.valueOf(player.getBlockPos().getZ() & 15);
+    }
+
+    public String chunk_y() {
+        return String.valueOf(ChunkSectionPos.getSectionCoord(player.getBlockPos().getY()));
+    }
 
     public String target_block() {
-        BlockHitResult targetBlock = (BlockHitResult) tools.targetBlock();
+        BlockHitResult targetBlock = (BlockHitResult) tools.targetBlock(false);
+        return targetBlock == null ? null : String.valueOf(Registries.BLOCK.getEntry(client.world.getBlockState(targetBlock.getBlockPos()).getBlock()).value().getName().getString());
+    }
+
+    public String target_block_id() {
+        BlockHitResult targetBlock = (BlockHitResult) tools.targetBlock(false);
         return targetBlock == null ? null : String.valueOf(Registries.BLOCK.getId(client.world.getBlockState(targetBlock.getBlockPos()).getBlock()));
     }
 
     public String tbx(@AttributeName("R") String round) {
-        HitResult targetBlock = tools.targetBlock();
+        HitResult targetBlock = tools.targetBlock(false);
         return targetBlock == null ? null : tools.roundNum((float) targetBlock.getPos().x, round == null ? 0 : Integer.parseInt(round));
     }
 
     public String tby(@AttributeName("R") String round) {
-        HitResult targetBlock = tools.targetBlock();
+        HitResult targetBlock = tools.targetBlock(false);
         return targetBlock == null ? null : tools.roundNum((float) targetBlock.getPos().y, round == null ? 0 : Integer.parseInt(round));
     }
 
     public String tbz(@AttributeName("R") String round) {
-        HitResult targetBlock = tools.targetBlock();
+        HitResult targetBlock = tools.targetBlock(false);
         return targetBlock == null ? null : tools.roundNum((float) targetBlock.getPos().z, round == null ? 0 : Integer.parseInt(round));
     }
 
+    public String tb_distance(@AttributeName("R") String round) {
+        BlockHitResult targetBlock = (BlockHitResult) tools.targetBlock(false);
+        return targetBlock == null ? null : tools.roundNum((float) Math.sqrt(targetBlock.squaredDistanceTo(player)), round == null ? 1 : Integer.parseInt(round));
+    }
 
-    public String swimming() {
-        return String.valueOf(client.player.isSwimming());
+    public String target_fluid() {
+        String fluidID = target_fluid_id();
+        return fluidID != null ? WordUtils.capitalizeFully(target_fluid_id().split(":")[1].replaceAll("_", " ")) : null;
+    }
+
+    public String target_fluid_id() {
+        BlockHitResult targetBlock = (BlockHitResult) tools.targetBlock(true);
+        return targetBlock == null ? null : String.valueOf(Registries.FLUID.getId(client.world.getFluidState(targetBlock.getBlockPos()).getFluid()));
+    }
+
+    public String tfx(@AttributeName("R") String round) {
+        HitResult targetBlock = tools.targetBlock(true);
+        return targetBlock == null ? null : tools.roundNum((float) targetBlock.getPos().x, round == null ? 0 : Integer.parseInt(round));
+    }
+
+    public String tfy(@AttributeName("R") String round) {
+        HitResult targetBlock = tools.targetBlock(true);
+        return targetBlock == null ? null : tools.roundNum((float) targetBlock.getPos().y, round == null ? 0 : Integer.parseInt(round));
+    }
+
+    public String tfz(@AttributeName("R") String round) {
+        HitResult targetBlock = tools.targetBlock(true);
+        return targetBlock == null ? null : tools.roundNum((float) targetBlock.getPos().z, round == null ? 0 : Integer.parseInt(round));
+    }
+
+    public String tf_distance(@AttributeName("R") String round) {
+        BlockHitResult targetBlock = (BlockHitResult) tools.targetBlock(true);
+        return targetBlock == null ? null : tools.roundNum((float) Math.sqrt(targetBlock.squaredDistanceTo(player)), round == null ? 1 : Integer.parseInt(round));
+    }
+
+    public String target_entity() {
+        return client.targetedEntity == null ? null : client.targetedEntity.getType().getName().getString();
+    }
+
+    public String target_entity_id() {
+        return client.targetedEntity == null ? null : String.valueOf(Registries.ENTITY_TYPE.getId(client.targetedEntity.getType()));
+    }
+
+    public String ten() {
+        return client.targetedEntity == null ? null : client.targetedEntity.getName().getString();
+    }
+
+    public String teu() {
+        return client.targetedEntity == null ? null : client.targetedEntity.getUuidAsString();
+    }
+
+    public String tex(@AttributeName("R") String round) {
+        return String.valueOf(client.targetedEntity == null ? null : tools.roundNum((float) client.targetedEntity.getPos().x, round == null ? 0 : Integer.parseInt(round)));
+    }
+
+    public String tey(@AttributeName("R") String round) {
+        return String.valueOf(client.targetedEntity == null ? null : tools.roundNum((float) client.targetedEntity.getPos().y, round == null ? 0 : Integer.parseInt(round)));
+    }
+
+    public String tez(@AttributeName("R") String round) {
+        return String.valueOf(client.targetedEntity == null ? null : tools.roundNum((float) client.targetedEntity.getPos().z, round == null ? 0 : Integer.parseInt(round)));
+    }
+
+    public String te_distance(@AttributeName("R") String round) {
+        Entity targetEntity = client.targetedEntity;
+        return targetEntity == null ? null : tools.roundNum((float) Math.sqrt(targetEntity.squaredDistanceTo(player)), round == null ? 1 : Integer.parseInt(round));
     }
 
     public String sneaking() {

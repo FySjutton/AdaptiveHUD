@@ -23,8 +23,8 @@ public class AttributeTools {
         return decimalFormat.format(value);
     }
 
-    public HitResult targetBlock() {
-        HitResult blockHit = MinecraftClient.getInstance().player.raycast(20.0, 0.0F, false);
+    public HitResult targetBlock(boolean include_fluids) {
+        HitResult blockHit = MinecraftClient.getInstance().player.raycast(20.0, 0.0F, include_fluids);
         return blockHit.getType() == net.minecraft.util.hit.HitResult.Type.BLOCK ? blockHit : null;
     }
 }
