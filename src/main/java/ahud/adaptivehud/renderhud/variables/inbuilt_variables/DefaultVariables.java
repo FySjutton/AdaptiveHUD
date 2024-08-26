@@ -3,17 +3,25 @@ package ahud.adaptivehud.renderhud.variables.inbuilt_variables;
 import ahud.adaptivehud.renderhud.variables.AttributeName;
 import ahud.adaptivehud.renderhud.variables.AttributeTools;
 import net.minecraft.SharedConstants;
+import net.minecraft.block.Block;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.option.CloudRenderMode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.Text;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.LightType;
+import net.minecraft.world.biome.Biome;
+import org.jetbrains.annotations.ApiStatus;
 
 public class DefaultVariables {
     MinecraftClient client = MinecraftClient.getInstance();
@@ -23,12 +31,76 @@ public class DefaultVariables {
     AttributeTools tools = new AttributeTools();
 
     public String test() { // For testing purposes, so I don't have to restart my game as often
+//        tools.targetBlockPosition();
+
         String value = "";
+        HitResult blockHit = player.raycast(20.0, 0.0F, false);
+        if (blockHit.getType() == net.minecraft.util.hit.HitResult.Type.BLOCK) {
+            value = String.valueOf(blockHit.getPos().x);
+        } else {
+            value = null;
+        }
+//        value = String.valueOf(client.player.pos);
 
         return String.valueOf(value);
     }
 
-    // -----
+    // ----- BETA.2 BELOW
+//    public String sprinting() {
+//        return String.valueOf(client.player.isSprinting());
+//    }
+
+    public String target_block() {
+        BlockHitResult targetBlock = (BlockHitResult) tools.targetBlock();
+        return targetBlock == null ? null : String.valueOf(Registries.BLOCK.getId(client.world.getBlockState(targetBlock.getBlockPos()).getBlock()));
+    }
+
+    public String tbx(@AttributeName("R") String round) {
+        HitResult targetBlock = tools.targetBlock();
+        return targetBlock == null ? null : tools.roundNum((float) targetBlock.getPos().x, round == null ? 0 : Integer.parseInt(round));
+    }
+
+    public String tby(@AttributeName("R") String round) {
+        HitResult targetBlock = tools.targetBlock();
+        return targetBlock == null ? null : tools.roundNum((float) targetBlock.getPos().y, round == null ? 0 : Integer.parseInt(round));
+    }
+
+    public String tbz(@AttributeName("R") String round) {
+        HitResult targetBlock = tools.targetBlock();
+        return targetBlock == null ? null : tools.roundNum((float) targetBlock.getPos().z, round == null ? 0 : Integer.parseInt(round));
+    }
+
+
+    public String swimming() {
+        return String.valueOf(client.player.isSwimming());
+    }
+
+    public String sneaking() {
+        return String.valueOf(client.player.isSneaking());
+    }
+
+    public String multiplayer() {
+        return String.valueOf(!client.isInSingleplayer());
+    }
+
+    public String singleplayer() {
+        return String.valueOf(client.isInSingleplayer());
+    }
+
+    public String snowing() {
+        return String.valueOf(client.world.isRaining() && (client.world.getBiome(player.getBlockPos()).value().getPrecipitation(player.getBlockPos()) == Biome.Precipitation.SNOW));
+    }
+
+    public String raining() {
+        return String.valueOf(client.world.isRaining());
+    }
+
+    @ApiStatus.AvailableSince("1.0.0.BETA.1")
+    public String thundering() {
+        return String.valueOf(client.world.isThundering());
+    }
+
+    // ---- BETA.1 BELOW
 
     public String tx() {
         return String.valueOf(client.getNetworkHandler().getConnection().getAveragePacketsSent());
