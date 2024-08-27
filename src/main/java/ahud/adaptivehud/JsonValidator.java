@@ -90,8 +90,9 @@ public class JsonValidator {
                 return "Default size must be \"0.1 > default size < 10\".";
             }
 
-            elm.get("render_on_debug").getAsString();
-            elm.get("render_get_help_button").getAsString();
+            elm.get("render_on_debug").getAsBoolean();
+            elm.get("render_get_help_button").getAsBoolean();
+            elm.get("max_target_block_distance").getAsDouble();
 
             if (
                 new Tools().parseColor(elm.get("snapping_lines_color").getAsString()) == 0 ||

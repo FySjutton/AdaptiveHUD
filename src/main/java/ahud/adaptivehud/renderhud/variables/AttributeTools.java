@@ -9,6 +9,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
+import static ahud.adaptivehud.ConfigFiles.configFile;
+
 public class AttributeTools {
     public String roundNum(float value, int decimals) {
         DecimalFormat decimalFormat = new DecimalFormat();
@@ -24,7 +26,8 @@ public class AttributeTools {
     }
 
     public HitResult targetBlock(boolean include_fluids) {
-        HitResult blockHit = MinecraftClient.getInstance().player.raycast(20.0, 0.0F, include_fluids);
+        double max_distance = configFile.getAsJsonObject().get("max_target_block_distance").getAsDouble();
+        HitResult blockHit = MinecraftClient.getInstance().player.raycast(max_distance, 0.0F, include_fluids);
         return blockHit.getType() == net.minecraft.util.hit.HitResult.Type.BLOCK ? blockHit : null;
     }
 }

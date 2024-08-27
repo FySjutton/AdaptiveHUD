@@ -6,7 +6,10 @@
   // --- SETTINGS ---
 // If elements should be rendered while the debug screen is enabled. (F3)
   "render_on_debug": false,
+// If the "Get help button" in the main meny should render.
   "render_get_help_button": true,
+// Maximum target block distance, default is "20.0".
+  "max_target_block_distance": 20.0,
 
   // --- COLORS ---
 // All colors should be written in hex format, "#RRGGBBAA".

@@ -2,11 +2,14 @@ package ahud.adaptivehud.renderhud.variables.inbuilt_variables;
 
 import ahud.adaptivehud.renderhud.variables.AttributeName;
 import ahud.adaptivehud.renderhud.variables.AttributeTools;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.SharedConstants;
 import net.minecraft.block.Block;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
+import net.minecraft.client.input.KeyboardInput;
 import net.minecraft.client.option.CloudRenderMode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,8 +25,13 @@ import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.dimension.DimensionTypes;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.Collection;
 
 public class DefaultVariables {
     MinecraftClient client = MinecraftClient.getInstance();
@@ -35,18 +43,47 @@ public class DefaultVariables {
     public String test() { // For testing purposes, so I don't have to restart my game as often
 //        tools.targetBlockPosition();
 
-        String value = "";
-
-        value = String.valueOf(player.getChunkPos().getRegionRelativeX()); // RELATIVE REGION X
-        value = String.valueOf(player.getChunkPos().getRegionX());
-        value = String.valueOf(player.getBlockPos().getX() & 15);
-//        ChunkSectionPos.getSectionCoord(player.getBlockPos().getY());
-//        value = String.valueOf(client.player.pos);
+        String value = client.getServer().getName();
 
         return String.valueOf(value);
     }
 
+
     // ----- BETA.2 BELOW
+
+//    public String mods() {
+//        return String.valueOf(FabricLoader.getInstance().getAllMods().size());
+//    }
+
+    public String key_pressed(@AttributeName("KEY") String scancode) {
+        // All scancodes can be found at "https://www.glfw.org/docs/3.3/group__keys.html".
+        // For example, "R" is 82.
+        return String.valueOf(GLFW.glfwGetKey(client.getWindow().getHandle(), Integer.parseInt(scancode)) == GLFW.GLFW_PRESS);
+    }
+
+    public String the_end() {
+        return String.valueOf(player.getWorld().getDimensionEntry().getKey().get() == DimensionTypes.THE_END);
+    }
+
+    public String nether() {
+        return String.valueOf(player.getWorld().getDimensionEntry().getKey().get() == DimensionTypes.THE_NETHER);
+    }
+
+    public String overworld() {
+        return String.valueOf(player.getWorld().getDimensionEntry().getKey().get() == DimensionTypes.OVERWORLD); // OVERWORLD.CAVES?
+    }
+
+    public String dimension() {
+        return String.valueOf(player.getWorld().getDimensionKey().getValue().toString());
+    }
+
+    public String on_ground() {
+        return String.valueOf(player.isOnGround());
+    }
+
+    public String flying() {
+        return String.valueOf(player.getAbilities().flying);
+    }
 
     public String region_x() {
         return String.valueOf(player.getChunkPos().getRegionX());
