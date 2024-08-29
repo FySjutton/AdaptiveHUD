@@ -1,5 +1,6 @@
 package ahud.adaptivehud.renderhud;
 
+import ahud.adaptivehud.renderhud.variables.AttributeTools;
 import ahud.adaptivehud.renderhud.variables.ValueParser;
 import ahud.adaptivehud.Tools;
 import com.google.gson.JsonElement;
@@ -12,14 +13,15 @@ import net.minecraft.client.util.math.MatrixStack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
+import static ahud.adaptivehud.AdaptiveHUD.*;
 import static ahud.adaptivehud.ConfigFiles.configFile;
 
 public class RenderHUD {
-    private final boolean USE_LONG;
+    private final boolean USE_VALUE;
+    private long lastAdvancedUpdate = 0;
 
-    public RenderHUD(boolean useLong) {
-        this.USE_LONG = useLong;
+    public RenderHUD(boolean useValue) {
+        this.USE_VALUE = useValue;
     }
 
     public void renderCustomHud(DrawContext drawContext, float tickDelta) {
@@ -31,6 +33,17 @@ public class RenderHUD {
             }
         }
 
+        if (this.USE_VALUE) {
+            complexVARS.generateCommon();
+
+            long currentTime = System.currentTimeMillis();
+            if ((currentTime - lastAdvancedUpdate) > 250) {
+                complexVARS.generateCooldowned();
+                lastAdvancedUpdate = currentTime;
+            }
+        }
+
+
         ValueParser parser = new ValueParser();
         MatrixStack matrices = drawContext.getMatrices();
 
@@ -40,7 +53,7 @@ public class RenderHUD {
                 float defaultScale;
                 String parsedText;
 
-                if (this.USE_LONG) {
+                if (this.USE_VALUE) {
                     parsedText = parser.parseValue(x.get("value").getAsString());
                 } else {
                     parsedText = x.get("name").getAsString();
@@ -66,21 +79,21 @@ public class RenderHUD {
                     matrices.scale(defaultScale, defaultScale, 1);
                 }
 
+                Tools tools = new Tools();
+
                 if (x.get("background").getAsJsonObject().get("enabled").getAsBoolean()) {
                     paddingX = x.get("background").getAsJsonObject().get("paddingX").getAsInt();
                     paddingY = x.get("background").getAsJsonObject().get("paddingY").getAsInt();
 
                     posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText) + paddingX * 2, trueScale, "X");
                     posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9 + Math.round(paddingY * 2), trueScale, "Y");
-//                    LOGGER.info(String.valueOf(posY));
-//                    LOGGER.info(String.valueOf(posY + 9 + Math.round(2 * paddingY)) + "   2");
 
                     drawContext.fill(
                             posX,
                             posY,
                             posX + client.textRenderer.getWidth(parsedText) + 2 * paddingX,
                             posY + 9 + Math.round(2 * paddingY),
-                            new Tools().parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
+                            tools.parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
                     );
                 } else {
                     posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText), defaultScale,"X");
@@ -92,7 +105,7 @@ public class RenderHUD {
                         parsedText,
                         posX + paddingX,
                         posY + paddingY + 1, // + 1, looks wrong otherwise?
-                        new Tools().parseColor(x.get("textColor").getAsString()),
+                        tools.parseColor(x.get("textColor").getAsString()),
                         x.get("shadow").getAsBoolean()
                 );
 

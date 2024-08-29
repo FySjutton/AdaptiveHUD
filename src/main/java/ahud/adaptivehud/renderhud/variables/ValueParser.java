@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ValueParser {
-    VariableRegisterer register = new VariableRegisterer();
+import static ahud.adaptivehud.AdaptiveHUD.variableRegister;
 
+public class ValueParser {
     public String parseValue(String text) {
         text = text.replaceAll("&(?=[\\da-fA-Fk-oK-OrR])", "§");
 
@@ -75,7 +75,7 @@ public class ValueParser {
             String varName = matcher.group(1);
 
             try {
-                Method method = register.loadVariable(varName);
+                Method method = variableRegister.loadVariable(varName);
 
                 if (method != null) {
                     String flagString = matcher.group(2);

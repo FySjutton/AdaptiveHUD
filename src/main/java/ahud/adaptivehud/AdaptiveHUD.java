@@ -2,6 +2,7 @@ package ahud.adaptivehud;
 
 import ahud.adaptivehud.renderhud.RenderHUD;
 import ahud.adaptivehud.renderhud.variables.VariableRegisterer;
+import ahud.adaptivehud.renderhud.variables.inbuilt_variables.ComplexVars;
 import ahud.adaptivehud.screens.configscreen.ConfigScreen;
 import ahud.adaptivehud.screens.movescreen.MoveScreen;
 import net.fabricmc.api.ModInitializer;
@@ -19,6 +20,8 @@ import org.slf4j.LoggerFactory;
 
 public class AdaptiveHUD implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("adaptivehud");
+	public static ComplexVars complexVARS = new ComplexVars();
+	public static VariableRegisterer variableRegister = new VariableRegisterer();
 
 	public static final KeyBinding reloadElementsKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			Text.translatable("adaptivehud.key.reloadElements").getString(),
@@ -78,6 +81,6 @@ public class AdaptiveHUD implements ModInitializer {
 			}
 		});
 
-		new VariableRegisterer().registerDefaults();
+		variableRegister.registerDefaults();
 	}
 }
