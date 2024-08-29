@@ -93,6 +93,7 @@ public class JsonValidator {
             elm.get("render_on_debug").getAsBoolean();
             elm.get("render_get_help_button").getAsBoolean();
             elm.get("max_target_block_distance").getAsDouble();
+            elm.get("variable_reload_cooldown").getAsInt();
 
             if (
                 new Tools().parseColor(elm.get("snapping_lines_color").getAsString()) == 0 ||

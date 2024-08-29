@@ -14,5 +14,12 @@
   // --- COLORS ---
 // All colors should be written in hex format, "#RRGGBBAA".
   "snapping_lines_color": "#FFFFFFB2",
-  "anchor_point_lines_color": "#FF0000FF"
+  "anchor_point_lines_color": "#FF0000FF",
+
+  // --- ADVANCED ---
+/* The variable-reload cooldown in milliseconds.
+   This only affects some of the variables which uses this feature.
+   This is to prevent "heavy" operations being done too often, to improve performance.
+   Don't change this unless you know what you're doing. */
+  "variable_reload_cooldown": 250,
 }

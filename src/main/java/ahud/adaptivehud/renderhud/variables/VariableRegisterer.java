@@ -12,13 +12,7 @@ public class VariableRegisterer {
     private static final Map<String, Method> VARIABLE_LIST = new HashMap<>();
 
     public void registerVariable(String name, Method method) {
-//        Class<?>[] parameters = method.getParameterTypes();
-//        if (parameters.co)
-//        if (parameters == 2) {
         VARIABLE_LIST.put(name, method);
-//        } else {
-//            LOGGER.error("Variable {} could not be registered because it doesn't have the right parameters.", name);
-//        }
     }
 
     public Method loadVariable(String name) {

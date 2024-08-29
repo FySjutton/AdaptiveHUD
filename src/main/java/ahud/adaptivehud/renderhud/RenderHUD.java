@@ -17,8 +17,10 @@ import static ahud.adaptivehud.AdaptiveHUD.*;
 import static ahud.adaptivehud.ConfigFiles.configFile;
 
 public class RenderHUD {
-    private final boolean USE_VALUE;
     private long lastAdvancedUpdate = 0;
+
+    private final boolean USE_VALUE;
+    private final int RELOAD_COOLDOWN = configFile.getAsJsonObject().get("variable_reload_cooldown").getAsInt();
 
     public RenderHUD(boolean useValue) {
         this.USE_VALUE = useValue;
@@ -37,7 +39,7 @@ public class RenderHUD {
             complexVARS.generateCommon();
 
             long currentTime = System.currentTimeMillis();
-            if ((currentTime - lastAdvancedUpdate) > 250) {
+            if ((currentTime - lastAdvancedUpdate) > RELOAD_COOLDOWN) {
                 complexVARS.generateCooldowned();
                 lastAdvancedUpdate = currentTime;
             }

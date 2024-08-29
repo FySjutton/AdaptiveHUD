@@ -41,7 +41,7 @@ public class Tools {
                 );
             }
         } catch (Exception e) {
-            LOGGER.warn("Failed to display toast! Error:");
+            LOGGER.warn("Failed to display toast! Toast title: " + title + ", toast description: " + description + ". Error:");
             LOGGER.error(String.valueOf(e));
         }
     }
