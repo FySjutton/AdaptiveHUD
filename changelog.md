@@ -1,3 +1,8 @@
+## v1.0.0-beta.4+1.20.4 changelog
+**Changes made since v1.0.0-beta.3+1.20.4**
+
+- Fixed a critical bug which made it so your game crashed instantly when opening the mod for the first time. This because I accidentally left a trailing comma in the config file, haha. While the user could edit the file manually and remove it, I will release this hotfix instead. :)
+
 ## v1.0.0-beta.3+1.20.4 changelog
 **Changes made since v1.0.0-beta.2+1.20.4**
 
