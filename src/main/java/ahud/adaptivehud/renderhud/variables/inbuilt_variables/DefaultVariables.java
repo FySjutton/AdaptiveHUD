@@ -2,36 +2,32 @@ package ahud.adaptivehud.renderhud.variables.inbuilt_variables;
 
 import ahud.adaptivehud.renderhud.variables.AttributeName;
 import ahud.adaptivehud.renderhud.variables.AttributeTools;
+import com.mojang.blaze3d.platform.GlDebugInfo;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.SharedConstants;
-import net.minecraft.block.Block;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.input.KeyboardInput;
 import net.minecraft.client.option.CloudRenderMode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.dimension.DimensionTypes;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.Collection;
+import static ahud.adaptivehud.AdaptiveHUD.complexVARS;
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class DefaultVariables {
     MinecraftClient client = MinecraftClient.getInstance();
@@ -41,19 +37,147 @@ public class DefaultVariables {
     AttributeTools tools = new AttributeTools();
 
     public String test() { // For testing purposes, so I don't have to restart my game as often
-//        tools.targetBlockPosition();
 
-        String value = client.getServer().getName();
-
-        return String.valueOf(value);
+        return String.valueOf(GlDebugInfo.getVendor());
     }
 
+    // ----- BETA.3 BELOW
+    public String gpu_version() {
+        return GlDebugInfo.getVersion();
+    }
+
+    public String gpu_name() {
+        return GlDebugInfo.getRenderer();
+    }
+
+    public String display_vendor() {
+        return GlDebugInfo.getVendor();
+    }
+
+    public String display_height() {
+        return String.valueOf(MinecraftClient.getInstance().getWindow().getFramebufferHeight());
+    }
+
+    public String display_width() {
+        return String.valueOf(MinecraftClient.getInstance().getWindow().getFramebufferWidth());
+    }
+
+    public String cpu_name() {
+        return GlDebugInfo.getCpuInfo();
+    }
+
+    public String memory_allocated() {
+        long m = Runtime.getRuntime().totalMemory();
+        return String.valueOf(m / 1024L / 1024L);
+    }
+
+    public String allocated_memory_percent() {
+        long l = Runtime.getRuntime().maxMemory();
+        long m = Runtime.getRuntime().totalMemory();
+        return String.valueOf(m * 100L / l);
+    }
+
+    public String max_memory() {
+        long l = Runtime.getRuntime().maxMemory();
+        return String.valueOf(l / 1024L / 1024L);
+    }
+
+    public String memory_used() {
+        long m = Runtime.getRuntime().totalMemory();
+        long n = Runtime.getRuntime().freeMemory();
+        long o = m - n;
+        return String.valueOf(o / 1024L / 1024L);
+    }
+
+    public String memory_used_percent() {
+        long l = Runtime.getRuntime().maxMemory();
+        long m = Runtime.getRuntime().totalMemory();
+        long n = Runtime.getRuntime().freeMemory();
+        long o = m - n;
+        return String.valueOf(o * 100L / l);
+    }
+
+    public String java_bit() {
+        return String.valueOf(client.is64Bit() ? 64 : 32);
+    }
+
+    public String java_version() {
+        return System.getProperty("java.version");
+    }
+
+    public String light() {
+        return String.valueOf(client.world.getChunkManager().getLightingProvider().getLight(playerPos, 0));
+    }
+
+    public String forced_loaded_chunks() {
+        return String.valueOf(client.player.getWorld() instanceof ServerWorld ? ((ServerWorld) client.player.getWorld()).getForcedChunks() : 0);
+    }
+
+    public String simulation_distance() {
+        return String.valueOf(client.options.getSimulationDistance().getValue());
+    }
+
+    public String loaded_entities() {
+        return String.valueOf(client.world.getRegularEntityCount());
+    }
+
+    public String buffer_count() {
+        return String.valueOf(client.worldRenderer.getChunkBuilder().getFreeBufferCount());
+    }
+
+    public String upload_queue() {
+        return String.valueOf(client.worldRenderer.getChunkBuilder().getChunksToUpload());
+    }
+
+    public String queued_tasks() {
+        return String.valueOf(client.worldRenderer.getChunkBuilder().getToBatchCount());
+    }
+
+    public String render_distance() {
+        return String.valueOf((int) client.worldRenderer.getViewDistance());
+    }
+
+    public String chunk_culling_enabled() {
+        return String.valueOf(client.chunkCullingEnabled);
+    }
+
+    public String loaded_chunks() {
+        return String.valueOf((int) client.worldRenderer.getChunkCount());
+    }
+
+    public String rendered_chunks() {
+        return String.valueOf(client.worldRenderer.getCompletedChunkCount());
+    }
+
+    public String moon_phase() {
+        return String.valueOf(client.world.getMoonPhase() + 1);
+    }
+
+    public String velocity_x(@AttributeName("R") String round) {
+        return String.valueOf(tools.roundNum((float) complexVARS.changeX, round == null ? 1 : Integer.parseInt(round)));
+    }
+
+    public String velocity_y(@AttributeName("R") String round) {
+        return String.valueOf(tools.roundNum((float) complexVARS.changeY, round == null ? 1 : Integer.parseInt(round)));
+    }
+
+    public String velocity_z(@AttributeName("R") String round) {
+        return String.valueOf(tools.roundNum((float) complexVARS.changeZ, round == null ? 1 : Integer.parseInt(round)));
+    }
+
+    public String velocity_xz(@AttributeName("R") String round) {
+        return String.valueOf(tools.roundNum((float) Math.sqrt(Math.pow(complexVARS.changeX, 2) + Math.pow(complexVARS.changeZ, 2)), round == null ? 1 : Integer.parseInt(round)));
+    }
+
+    public String velocity_xyz(@AttributeName("R") String round) {
+        return String.valueOf(tools.roundNum((float) Math.sqrt(Math.pow(Math.sqrt(Math.pow(complexVARS.changeX, 2) + Math.pow(complexVARS.changeZ, 2)), 2) + Math.pow(complexVARS.changeY, 2)), round == null ? 1 : Integer.parseInt(round)));
+    }
+
+    public String mods() {
+        return String.valueOf(FabricLoader.getInstance().getAllMods().size());
+    }
 
     // ----- BETA.2 BELOW
-
-//    public String mods() {
-//        return String.valueOf(FabricLoader.getInstance().getAllMods().size());
-//    }
 
     public String key_pressed(@AttributeName("KEY") String scancode) {
         // All scancodes can be found at "https://www.glfw.org/docs/3.3/group__keys.html".
@@ -118,32 +242,32 @@ public class DefaultVariables {
     }
 
     public String target_block() {
-        BlockHitResult targetBlock = (BlockHitResult) tools.targetBlock(false);
+        BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlock;
         return targetBlock == null ? null : String.valueOf(Registries.BLOCK.getEntry(client.world.getBlockState(targetBlock.getBlockPos()).getBlock()).value().getName().getString());
     }
 
     public String target_block_id() {
-        BlockHitResult targetBlock = (BlockHitResult) tools.targetBlock(false);
+        BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlock;
         return targetBlock == null ? null : String.valueOf(Registries.BLOCK.getId(client.world.getBlockState(targetBlock.getBlockPos()).getBlock()));
     }
 
     public String tbx(@AttributeName("R") String round) {
-        HitResult targetBlock = tools.targetBlock(false);
+        BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlock;
         return targetBlock == null ? null : tools.roundNum((float) targetBlock.getPos().x, round == null ? 0 : Integer.parseInt(round));
     }
 
     public String tby(@AttributeName("R") String round) {
-        HitResult targetBlock = tools.targetBlock(false);
+        BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlock;
         return targetBlock == null ? null : tools.roundNum((float) targetBlock.getPos().y, round == null ? 0 : Integer.parseInt(round));
     }
 
     public String tbz(@AttributeName("R") String round) {
-        HitResult targetBlock = tools.targetBlock(false);
+        BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlock;
         return targetBlock == null ? null : tools.roundNum((float) targetBlock.getPos().z, round == null ? 0 : Integer.parseInt(round));
     }
 
     public String tb_distance(@AttributeName("R") String round) {
-        BlockHitResult targetBlock = (BlockHitResult) tools.targetBlock(false);
+        BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlock;
         return targetBlock == null ? null : tools.roundNum((float) Math.sqrt(targetBlock.squaredDistanceTo(player)), round == null ? 1 : Integer.parseInt(round));
     }
 
@@ -153,27 +277,27 @@ public class DefaultVariables {
     }
 
     public String target_fluid_id() {
-        BlockHitResult targetBlock = (BlockHitResult) tools.targetBlock(true);
+        BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlockFluid;
         return targetBlock == null ? null : String.valueOf(Registries.FLUID.getId(client.world.getFluidState(targetBlock.getBlockPos()).getFluid()));
     }
 
     public String tfx(@AttributeName("R") String round) {
-        HitResult targetBlock = tools.targetBlock(true);
+        BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlockFluid;
         return targetBlock == null ? null : tools.roundNum((float) targetBlock.getPos().x, round == null ? 0 : Integer.parseInt(round));
     }
 
     public String tfy(@AttributeName("R") String round) {
-        HitResult targetBlock = tools.targetBlock(true);
+        BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlockFluid;
         return targetBlock == null ? null : tools.roundNum((float) targetBlock.getPos().y, round == null ? 0 : Integer.parseInt(round));
     }
 
     public String tfz(@AttributeName("R") String round) {
-        HitResult targetBlock = tools.targetBlock(true);
+        BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlockFluid;
         return targetBlock == null ? null : tools.roundNum((float) targetBlock.getPos().z, round == null ? 0 : Integer.parseInt(round));
     }
 
     public String tf_distance(@AttributeName("R") String round) {
-        BlockHitResult targetBlock = (BlockHitResult) tools.targetBlock(true);
+        BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlockFluid;
         return targetBlock == null ? null : tools.roundNum((float) Math.sqrt(targetBlock.squaredDistanceTo(player)), round == null ? 1 : Integer.parseInt(round));
     }
 
@@ -406,12 +530,6 @@ public class DefaultVariables {
         return String.valueOf(client.world.getLightLevel(LightType.BLOCK, playerPos));
     }
 
-    public String entities() {
-        int entities = 0;
-        for (Entity entity : MinecraftClient.getInstance().world.getEntities()) { entities++; }
-        return String.valueOf(entities);
-    }
-
     public String chunk_x() {
         return String.valueOf(player.getChunkPos().x);
     } // Chunk coord X
@@ -427,10 +545,6 @@ public class DefaultVariables {
     public String player_uuid() {
         return client.player.getUuidAsString();
     } // The player's uuid
-
-//    public String velocity_XZ() {
-//        return String.valueOf(Math.abs(client.player.getVelocity().x) * 20 + Math.abs(client.player.getVelocity().z) * 20);
-//    } // Idk if it works
 
     public String fall_distance() {
         return String.valueOf(player.fallDistance);
@@ -455,19 +569,4 @@ public class DefaultVariables {
             return Text.translatable("adaptivehud.variable.noServerFound").getString();
         }
     }
-
-//    SPEED
-//    return String.valueOf(Math.abs(client.player.getVelocity().x) * 20 + (client.player.isOnGround() ? 0 : Math.abs(client.player.getVelocity().y) * 20)) + Math.abs(client.player.getVelocity().z) * 20;
 }
-
-
-
-
-
-
-
-
-
-
-
-
