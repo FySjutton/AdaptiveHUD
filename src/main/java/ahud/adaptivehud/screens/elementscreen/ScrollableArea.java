@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
+
 public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
     private final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
     private final ElementScreen PARENT;
@@ -53,6 +55,8 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
         public String setting;
         public String title;
 
+        private int clickableX = width / 2 + 50;
+
         public Entry(String item) {
             this.setting = item;
 
@@ -74,24 +78,24 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
                     Text.literal(parentElm.get(item).getAsBoolean() ? ON_TEXT : OFF_TEXT),
                     ScrollableArea.this::toggleOnOff
                 )
-                .dimensions(0, 0, 100, 20)
+                .dimensions(clickableX, 0, 100, 20)
                 .build();
             } else if (item.equals("anchorPointY") || item.equals("textAlignY")) {
                 this.button = ButtonWidget.builder(
                     Text.literal(getY(parentElm.get(item).getAsInt())),
                     ScrollableArea.this::alignY
                 )
-                .dimensions(0, 0, 100, 20)
+                .dimensions(clickableX, 0, 100, 20)
                 .build();
             } else if (item.equals("anchorPointX") || item.equals("textAlignX")) {
                 this.button = ButtonWidget.builder(
                     Text.literal(getX(parentElm.get(item).getAsInt())),
                     ScrollableArea.this::alignX
                 )
-                .dimensions(0, 0, 100, 20)
+                .dimensions(clickableX, 0, 100, 20)
                 .build();
             } else {
-                this.textField = new TextFieldWidget(textRenderer, 0, 0, 100, 20, Text.literal(item));
+                this.textField = new TextFieldWidget(textRenderer, clickableX, 0, 100, 20, Text.literal(item));
                 if (item.equals("value")) {
                     this.textField.setMaxLength(350);
                 }
@@ -129,13 +133,11 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
         @Override
         public void render(DrawContext drawContext, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             if (this.textField != null) {
-                this.textField.setX(width / 2 + 50);
                 this.textField.setY(y);
                 this.textField.render(drawContext, mouseX, mouseY, tickDelta);
                 drawContext.drawText(textRenderer, Text.translatable("adaptivehud.config.setting." + TITLES.get(index)).getString(), width / 2 - 150, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF, true);
             }
             if (this.button != null) {
-                this.button.setX(width / 2 + 50);
                 this.button.setY(y);
                 this.button.render(drawContext, mouseX, mouseY, tickDelta);
                 drawContext.drawText(textRenderer, Text.translatable("adaptivehud.config.setting." + TITLES.get(index)).getString(), width / 2 - 150, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFF, true);

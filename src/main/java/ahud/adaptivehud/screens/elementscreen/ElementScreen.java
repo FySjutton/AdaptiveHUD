@@ -25,6 +25,7 @@ public class ElementScreen extends Screen {
     private static final String RIGHT = Text.translatable("adaptivehud.config.button.right").getString();
     private static final String TOP = Text.translatable("adaptivehud.config.button.top").getString();
     private static final String BOTTOM = Text.translatable("adaptivehud.config.button.bottom").getString();
+    private static final String DOC_TEXT = Text.translatable("adaptivehud.config.documentation").getString();
 
     private ScrollableArea scrollableArea;
     public JsonObject elm;
@@ -48,6 +49,11 @@ public class ElementScreen extends Screen {
                 .dimensions(width / 2 + 5, height - 35, 100, 20)
                 .build();
         addDrawableChild(saveBtn);
+
+        ButtonWidget discordButton = ButtonWidget.builder(Text.literal(""), btn -> {}) // FIX
+                .dimensions(width - textRenderer.getWidth("DOC_TEXT") - 10, 20, textRenderer.getWidth("DOC_TEXT"), 20)
+                .build();
+        addDrawableChild(discordButton);
 
         scrollableArea = new ScrollableArea(height, width, this);
         addSelectableChild(scrollableArea);
