@@ -1,16 +1,12 @@
 package ahud.adaptivehud.renderhud.variables.inbuilt_variables;
 
-import ahud.adaptivehud.renderhud.variables.AttributeTools;
+import ahud.adaptivehud.renderhud.variables.FlagTools;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.HitResult;
 
-import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
-
 public class ComplexVars {
-    private AttributeTools tools = new AttributeTools();
+    private FlagTools tools = new FlagTools();
 
     private double oldX = 0;
     private double oldY = 0;

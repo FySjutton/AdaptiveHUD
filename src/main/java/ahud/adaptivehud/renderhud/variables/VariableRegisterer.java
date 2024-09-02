@@ -3,6 +3,7 @@ package ahud.adaptivehud.renderhud.variables;
 import ahud.adaptivehud.renderhud.variables.inbuilt_variables.DefaultVariables;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ public class VariableRegisterer {
 
     public Method loadVariable(String name) {
         try {
+//            LOGGER.info("AAA" + Arrays.toString(VARIABLE_LIST.get(name).getAnnotations()));
             return VARIABLE_LIST.get(name);
         } catch (Exception e) {
             return null;

@@ -1,6 +1,5 @@
 package ahud.adaptivehud.renderhud;
 
-import ahud.adaptivehud.renderhud.variables.AttributeTools;
 import ahud.adaptivehud.renderhud.variables.ValueParser;
 import ahud.adaptivehud.Tools;
 import com.google.gson.JsonElement;

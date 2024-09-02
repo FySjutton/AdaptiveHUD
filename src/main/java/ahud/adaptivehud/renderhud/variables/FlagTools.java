@@ -2,8 +2,6 @@ package ahud.adaptivehud.renderhud.variables;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -11,7 +9,7 @@ import java.util.Locale;
 
 import static ahud.adaptivehud.ConfigFiles.configFile;
 
-public class AttributeTools {
+public class FlagTools {
     public String roundNum(float value, int decimals) {
         DecimalFormat decimalFormat = new DecimalFormat();
 
