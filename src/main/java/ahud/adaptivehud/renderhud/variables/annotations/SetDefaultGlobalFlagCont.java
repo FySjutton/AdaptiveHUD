@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface SetDefaultFlagCont {
-    SetDefaultFlag[] value();  // An array to hold multiple @SetDefaultFlag annotations
+public @interface SetDefaultGlobalFlagCont {
+    SetDefaultGlobalFlag[] value();  // An array to hold multiple @SetDefaultFlag annotations
 }

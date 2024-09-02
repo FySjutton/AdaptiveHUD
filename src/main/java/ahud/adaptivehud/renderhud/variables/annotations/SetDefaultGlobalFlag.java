@@ -4,8 +4,8 @@ import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-@Repeatable(SetDefaultFlagCont.class)  // Specify the container annotation
-public @interface SetDefaultFlag {
+@Repeatable(SetDefaultGlobalFlagCont.class)  // Specify the container annotation
+public @interface SetDefaultGlobalFlag {
     String flag();
     String value() default "";
 }

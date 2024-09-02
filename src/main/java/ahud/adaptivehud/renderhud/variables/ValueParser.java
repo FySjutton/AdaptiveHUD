@@ -1,21 +1,18 @@
 package ahud.adaptivehud.renderhud.variables;
 
-import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultFlag;
-import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultFlagCont;
+import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlag;
+import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlagCont;
 import ahud.adaptivehud.renderhud.variables.annotations.SpecialFlagName;
 import com.udojava.evalex.Expression;
 import net.minecraft.text.Text;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 import static ahud.adaptivehud.AdaptiveHUD.variableRegister;
 
 public class ValueParser {
@@ -67,7 +64,7 @@ public class ValueParser {
                     }
                 }
             } catch (Exception e) {
-            matcher.appendReplacement(result, Text.translatable("adaptivehud.variable.condition_error").getString());
+                matcher.appendReplacement(result, Text.translatable("adaptivehud.variable.condition_error").getString());
             }
         }
         matcher.appendTail(result);
@@ -103,17 +100,18 @@ public class ValueParser {
                         }
                     }
 
-                    if (method.isAnnotationPresent(SetDefaultFlagCont.class)) {
-                        for (SetDefaultFlag x : method.getAnnotation(SetDefaultFlagCont.class).value()) {
+                    if (method.isAnnotationPresent(SetDefaultGlobalFlagCont.class)) {
+                        for (SetDefaultGlobalFlag x : method.getAnnotation(SetDefaultGlobalFlagCont.class).value()) {
                             if (!flags.containsKey(x.flag())) {
                                 flags.put(x.flag(), x.value().isEmpty() ? null : x.value());
                             }
                         }
                     }
 
+                    // Local flags (variable specific)
                     HashMap<String, String> localFlags = new HashMap<>();
 
-                    if (flagString != null) {
+                    if (!flagString.isEmpty()) {
                         for (String flag : flagString.split("--")) {
                             if (flag.contains("=")) {
                                 String[] values = flag.split("=");
@@ -132,10 +130,11 @@ public class ValueParser {
                         if (param.isAnnotationPresent(SpecialFlagName.class)) {
                             String keyName = param.getAnnotation(SpecialFlagName.class).value();
                             if (localFlags.containsKey(keyName)) {
+                                boolean paramBoolean = param.getType() == Boolean.class;
                                 if (localFlags.get(keyName) != null) {
-                                    parameters[i] = localFlags.get(keyName);
+                                    parameters[i] = paramBoolean ? false : localFlags.get(keyName);
                                 } else {
-                                    parameters[i] = true;
+                                    parameters[i] = paramBoolean ? true : "1";
                                 }
                             }
                         }
@@ -149,7 +148,6 @@ public class ValueParser {
                 }
             } catch (Exception e) {
                 matcher.appendReplacement(result, Text.translatable("adaptivehud.variable.variable_error").getString());
-                e.printStackTrace();
             }
         }
         matcher.appendTail(result);

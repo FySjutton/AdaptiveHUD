@@ -5,8 +5,6 @@ import org.apache.commons.lang3.text.WordUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
-
 public class FlagParser {
     private FlagTools tools = new FlagTools();
 
@@ -20,10 +18,7 @@ public class FlagParser {
                     case "round" -> {
                         try {
                             value = tools.roundNum(Float.parseFloat(value), Integer.parseInt(V));
-                        } catch (Exception e) {
-                            LOGGER.info("eror");
-                            // Should warn the user that an incompatible flag is being used? Not that it have to be incompatible ig, but it might be
-                        }
+                        } catch (Exception ignored) {}
                     }
                 }
             } else {
