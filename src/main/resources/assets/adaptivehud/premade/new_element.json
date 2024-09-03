@@ -19,6 +19,9 @@
     "textAlignX": 0,
     "textAlignY": 0
   },
+  "requirement": {
+    "renderRequirement": ""
+  },
   "advanced": {
     "scale": 0
   }

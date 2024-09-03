@@ -30,6 +30,10 @@ public class JsonValidator {
         if (!alignment.has("textAlignX")) {alignment.addProperty("textAlignX", 0);}
         if (!alignment.has("textAlignY")) {alignment.addProperty("textAlignY", 0);}
 
+        if (!obj.has("requirement")) {obj.add("requirement", new JsonObject());}
+        JsonObject requirement = obj.get("requirement").getAsJsonObject();
+        if (!requirement.has("renderRequirement")) {requirement.addProperty("renderRequirement", "");}
+
         if (!obj.has("advanced")) {obj.add("advanced", new JsonObject());}
         JsonObject advanced = obj.get("advanced").getAsJsonObject();
         if (!advanced.has("scale")) {advanced.addProperty("scale", 0);}
@@ -47,6 +51,7 @@ public class JsonValidator {
             JsonObject background = elm.get("background").getAsJsonObject();
             JsonObject alignment = elm.get("alignment").getAsJsonObject();
             JsonObject advanced = elm.get("advanced").getAsJsonObject();
+            JsonObject requirement = elm.get("requirement").getAsJsonObject();
 
             elm.get("enabled").getAsBoolean();
             elm.get("name").getAsString();
@@ -56,6 +61,7 @@ public class JsonValidator {
             background.get("enabled").getAsBoolean();
             background.get("paddingX").getAsInt();
             background.get("paddingY").getAsInt();
+            requirement.get("renderRequirement").getAsString();
 
             if (
                 !(colorReg.matcher(elm.get("textColor").getAsString()).find() &&

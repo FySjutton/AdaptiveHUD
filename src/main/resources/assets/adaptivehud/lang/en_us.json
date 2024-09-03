@@ -2,6 +2,7 @@
   "adaptivehud.variable.variable_error": "#VarError",
   "adaptivehud.variable.condition_error": "#CondError",
   "adaptivehud.variable.math_error": "#MathError",
+  "adaptivehud.variable.render_req_error": "#RenderReqError",
   "adaptivehud.variable.noServerFound": "No Server",
 
   "adaptivehud.config.cancel": "Cancel",
@@ -32,6 +33,7 @@
   "adaptivehud.config.title.BACKGROUND": "BACKGROUND",
   "adaptivehud.config.title.ALIGNMENT": "ALIGNMENT",
   "adaptivehud.config.title.ADVANCED": "ADVANCED",
+  "adaptivehud.config.title.REQUIREMENT": "REQUIREMENTS",
 
   "adaptivehud.key.category": "AdaptiveHUD",
   "adaptivehud.key.reloadElements": "Reload Elements",
@@ -53,5 +55,6 @@
   "adaptivehud.config.setting.anchorPointY": "Anchorpoint Y",
   "adaptivehud.config.setting.textAlignX": "Text Align X",
   "adaptivehud.config.setting.textAlignY": "Text Align Y",
+  "adaptivehud.config.setting.renderRequirement": "Render Requirement",
   "adaptivehud.config.setting.scale": "Scale"
 }

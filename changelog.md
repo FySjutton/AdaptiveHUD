@@ -1,3 +1,12 @@
+## v1.0.0-beta.5+1.20.4 changelog
+**Changes made since v1.0.0-beta.4+1.20.4**
+
+- Remade the flag system, now have global and specific flags. Both can take value.
+- Made a documentation (also a documentation button)
+- Fixed the get help button
+- Added a few more variables
+- Added "loading requirement", a condition for rendering the element
+
 ## v1.0.0-beta.4+1.20.4 changelog
 **Changes made since v1.0.0-beta.3+1.20.4**
 

@@ -20,7 +20,7 @@ import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
     private final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
     private final ElementScreen PARENT;
-    public final ArrayList<String> TITLES = new ArrayList<>(Arrays.asList("MAIN", "name", "value", "textColor", "posX", "posY", "shadow", "BACKGROUND", "enabled", "paddingX", "paddingY", "backgroundColor", "ALIGNMENT", "anchorPointX", "anchorPointY", "textAlignX", "textAlignY", "ADVANCED", "scale"));
+    public final ArrayList<String> TITLES = new ArrayList<>(Arrays.asList("MAIN", "name", "value", "textColor", "posX", "posY", "shadow", "BACKGROUND", "enabled", "paddingX", "paddingY", "backgroundColor", "ALIGNMENT", "anchorPointX", "anchorPointY", "textAlignX", "textAlignY", "REQUIREMENT", "renderRequirement", "ADVANCED", "scale"));
 
     private static final String CENTER = Text.translatable("adaptivehud.config.button.center").getString();
     private static final String LEFT = Text.translatable("adaptivehud.config.button.left").getString();
@@ -65,13 +65,15 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
                 parentElm = PARENT.elm.get("background").getAsJsonObject();
             } else if (item.equals("anchorPointX") || item.equals("anchorPointY") || item.equals("textAlignX") || item.equals("textAlignY")) {
                 parentElm = PARENT.elm.get("alignment").getAsJsonObject();
+            } else if (item.equals("renderRequirement")) {
+                parentElm = PARENT.elm.get("requirement").getAsJsonObject();
             } else if (item.equals("scale")) {
                 parentElm = PARENT.elm.get("advanced").getAsJsonObject();
             } else {
                 parentElm = PARENT.elm;
             }
 
-            if (item.equals("MAIN") || item.equals("BACKGROUND") || item.equals("ALIGNMENT") || item.equals("ADVANCED")) {
+            if (item.equals("MAIN") || item.equals("BACKGROUND") || item.equals("ALIGNMENT") || item.equals("REQUIREMENT") || item.equals("ADVANCED")) {
                 this.title = item;
             } else if (item.equals("shadow") || item.equals("enabled")) {
                 this.button = ButtonWidget.builder(

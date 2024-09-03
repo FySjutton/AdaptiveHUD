@@ -8,6 +8,7 @@ import ahud.adaptivehud.ConfigFiles;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,11 +52,25 @@ public class RenderHUD {
         for (JsonElement element : ConfigFiles.elementArray) {
             JsonObject x = element.getAsJsonObject();
             if (x.get("enabled").getAsBoolean()) {
+                String renderReq = x.get("requirement").getAsJsonObject().get("renderRequirement").getAsString();
+                boolean reqError = false;
+                if (!renderReq.isEmpty()) {
+                    int render = parser.renderCheck(renderReq);
+                    if (render == -1) {
+                        reqError = true;
+                    } else if (render == 0) {
+                        continue;
+                    }
+                }
                 float defaultScale;
                 String parsedText;
 
                 if (this.USE_VALUE) {
-                    parsedText = parser.parseValue(x.get("value").getAsString());
+                    if (!reqError) {
+                        parsedText = parser.parseValue(x.get("value").getAsString());
+                    } else {
+                        parsedText = Text.translatable("adaptivehud.variable.render_req_error").getString();
+                    }
                 } else {
                     parsedText = x.get("name").getAsString();
                 }

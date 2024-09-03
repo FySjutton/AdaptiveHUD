@@ -26,6 +26,16 @@ public class ValueParser {
         return text;
     }
 
+    public int renderCheck(String text) {
+        try {
+            text = parseVariables(text);
+            Expression exp = new Expression(text);
+            return exp.eval().intValue() == 0 ? 0 : 1;
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
     private String parseConditions(String text) {
         Pattern pattern = Pattern.compile("\\[([^,:\\[\\]]+):((?:\\\\[,:\\[\\]]|[^,:\\[\\]])+)((?:,[^,:\\[\\]]+:(?:\\\\[,:\\[\\]]|[^,:\\[\\]])+)*)(?:,((?:\\\\[,:\\[\\]]|[^,:\\[\\]])+))?]");
         Matcher matcher = pattern.matcher(text);

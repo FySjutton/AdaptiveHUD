@@ -110,6 +110,8 @@ public class ElementScreen extends Screen {
                     specElm = elm.get("background").getAsJsonObject();
                 } else if (x.setting.equals("anchorPointX") || x.setting.equals("anchorPointY") || x.setting.equals("textAlignX") || x.setting.equals("textAlignY")) {
                     specElm = elm.get("alignment").getAsJsonObject();
+                } else if (x.setting.equals("renderRequirement")) {
+                    specElm = elm.get("requirement").getAsJsonObject();
                 } else if (x.setting.equals("scale")) {
                     specElm = elm.get("advanced").getAsJsonObject();
                 } else {
