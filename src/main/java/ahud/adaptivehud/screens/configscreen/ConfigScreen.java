@@ -18,10 +18,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import org.apache.commons.io.IOUtils;
 
-import java.awt.*;
 import java.io.File;
 import java.io.InputStream;
-import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -196,7 +194,7 @@ public class ConfigScreen extends Screen {
 
     private void openDiscord() {
         try {
-            Desktop.getDesktop().browse(new URI("https://discord.gg/tqn38v6w7k"));
+            Util.getOperatingSystem().open("https://discord.gg/tqn38v6w7k");
             LOGGER.info("Opening discord support server invite link in browser... (https://discord.gg/tqn38v6w7k)");
         } catch (Exception e) {
             LOGGER.error("Failed to open discord link! Link: https://discord.gg/tqn38v6w7k");

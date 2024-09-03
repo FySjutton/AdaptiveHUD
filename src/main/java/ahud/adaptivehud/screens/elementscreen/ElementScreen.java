@@ -11,10 +11,12 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 import static ahud.adaptivehud.ConfigFiles.elementArray;
 
 @Environment(EnvType.CLIENT)
@@ -30,9 +32,8 @@ public class ElementScreen extends Screen {
     private ScrollableArea scrollableArea;
     public JsonObject elm;
 
-
     public ElementScreen(Screen parent, JsonElement elm) {
-        super(Text.translatable("adaptivehud.config.title"));
+        super(Text.of("AdaptiveHUD"));
         this.PARENT = parent;
         this.elm = elm.deepCopy().getAsJsonObject();
 
@@ -50,10 +51,10 @@ public class ElementScreen extends Screen {
                 .build();
         addDrawableChild(saveBtn);
 
-        ButtonWidget discordButton = ButtonWidget.builder(Text.literal(""), btn -> {}) // FIX
-                .dimensions(width - textRenderer.getWidth("DOC_TEXT") - 10, 20, textRenderer.getWidth("DOC_TEXT"), 20)
+        ButtonWidget documentationButton = ButtonWidget.builder(Text.literal(DOC_TEXT), btn -> openDocumentation())
+                .dimensions(width - textRenderer.getWidth(DOC_TEXT) - 10 - 10, 20, textRenderer.getWidth(DOC_TEXT) + 10, 20)
                 .build();
-        addDrawableChild(discordButton);
+        addDrawableChild(documentationButton);
 
         scrollableArea = new ScrollableArea(height, width, this);
         addSelectableChild(scrollableArea);
@@ -169,6 +170,16 @@ public class ElementScreen extends Screen {
             }
         } else {
             new Tools().sendToast("§cInvalid!", "§f" + validated);
+        }
+    }
+
+    private void openDocumentation() {
+        try {
+            Util.getOperatingSystem().open("https://adaptivehud.gitbook.io/");
+            LOGGER.info("Opening AdaptiveHUD documentation in browser... (https://adaptivehud.gitbook.io/)");
+        } catch (Exception e) {
+            LOGGER.error("Failed to open AdaptiveHUD documentation! Link: https://adaptivehud.gitbook.io/");
+            LOGGER.error(String.valueOf(e));
         }
     }
 }
