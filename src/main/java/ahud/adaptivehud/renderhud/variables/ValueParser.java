@@ -9,10 +9,12 @@ import net.minecraft.text.Text;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 import static ahud.adaptivehud.AdaptiveHUD.variableRegister;
 
 public class ValueParser {
@@ -110,7 +112,12 @@ public class ValueParser {
                         }
                     }
 
-                    if (method.isAnnotationPresent(SetDefaultGlobalFlagCont.class)) {
+                    if (method.isAnnotationPresent(SetDefaultGlobalFlag.class)) {
+                        SetDefaultGlobalFlag annFlag = method.getAnnotation(SetDefaultGlobalFlag.class);
+                        if (!flags.containsKey(annFlag.flag())) {
+                            flags.put(annFlag.flag(), annFlag.value().isEmpty() ? null : annFlag.value());
+                        }
+                    } else if (method.isAnnotationPresent(SetDefaultGlobalFlagCont.class)) {
                         for (SetDefaultGlobalFlag x : method.getAnnotation(SetDefaultGlobalFlagCont.class).value()) {
                             if (!flags.containsKey(x.flag())) {
                                 flags.put(x.flag(), x.value().isEmpty() ? null : x.value());
