@@ -34,8 +34,18 @@ public class DefaultVariables {
     BlockPos playerPos = client.player.getBlockPos();
 
     public String test() { // For testing purposes, so I don't have to restart my game as often
+        Text displayName = client.player.getDisplayName();
+        return displayName != null ? displayName.getString() : client.player.getGameProfile().getName();
+//        if (displayName == null) {
+//            displayName = client.player.getGameProfile().getName();
+//        }
+//        return String.valueOf(GlDebugInfo.getVendor());
+    }
 
-        return String.valueOf(GlDebugInfo.getVendor());
+    // ----- BETA.5 BELOW
+    public String display_name() {
+        Text displayName = client.player.getDisplayName();
+        return displayName != null ? displayName.getString() : client.player.getGameProfile().getName();
     }
 
     // ----- BETA.3 BELOW
