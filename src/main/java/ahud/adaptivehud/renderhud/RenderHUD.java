@@ -52,24 +52,22 @@ public class RenderHUD {
         for (JsonElement element : ConfigFiles.elementArray) {
             JsonObject x = element.getAsJsonObject();
             if (x.get("enabled").getAsBoolean()) {
-                String renderReq = x.get("requirement").getAsJsonObject().get("renderRequirement").getAsString();
-                boolean reqError = false;
-                if (!renderReq.isEmpty()) {
-                    int render = parser.renderCheck(renderReq);
-                    if (render == -1) {
-                        reqError = true;
-                    } else if (render == 0) {
-                        continue;
-                    }
-                }
                 float defaultScale;
                 String parsedText;
 
                 if (this.USE_VALUE) {
-                    if (!reqError) {
-                        parsedText = parser.parseValue(x.get("value").getAsString());
+                    String renderReq = x.get("requirement").getAsJsonObject().get("renderRequirement").getAsString();
+                    if (!renderReq.isEmpty()) {
+                        int render = parser.renderCheck(renderReq);
+                        if (render == -1) {
+                            parsedText = Text.translatable("adaptivehud.variable.render_req_error").getString();
+                        } else if (render == 0) {
+                            continue;
+                        } else {
+                            parsedText = parser.parseValue(x.get("value").getAsString());
+                        }
                     } else {
-                        parsedText = Text.translatable("adaptivehud.variable.render_req_error").getString();
+                        parsedText = parser.parseValue(x.get("value").getAsString());
                     }
                 } else {
                     parsedText = x.get("name").getAsString();
