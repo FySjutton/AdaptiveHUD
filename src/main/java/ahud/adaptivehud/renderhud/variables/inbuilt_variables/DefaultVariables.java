@@ -311,7 +311,7 @@ public class DefaultVariables {
     @SetDefaultGlobalFlag(flag = "round", value = "0")
     public String tfz() {
         BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlockFluid;
-        return targetBlock == null ? null : String.valueOf(targetBlock.getPos());
+        return targetBlock == null ? null : String.valueOf(targetBlock.getPos().z);
     }
 
     @SetDefaultGlobalFlag(flag = "round", value = "1")
