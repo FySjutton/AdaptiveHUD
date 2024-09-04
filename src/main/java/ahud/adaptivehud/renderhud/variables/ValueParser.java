@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 import static ahud.adaptivehud.AdaptiveHUD.variableRegister;
 
 public class ValueParser {
@@ -30,17 +29,14 @@ public class ValueParser {
     public int renderCheck(String text) {
         try {
             text = parseVariables(text);
-//            text = text.replaceAll("null|\"null\"|minecraft:empty", "0").replaceAll("[^0-9.,]+", "1");
-//            Expression exp = new Expression(text);
-//            return exp.eval().intValue() == 0 ? 0 : 1;
-            return parseBooleanExpression() == false ? 0 : 1;
+            return !parseBooleanExpression(text) ? 0 : 1;
         } catch (Exception e) {
             return -1;
         }
     }
 
     private String parseConditions(String text) {
-        Pattern pattern = Pattern.compile("\\[([^,:\\[\\]]+):((?:\\\\[,:\\[\\]]|[^,:\\[\\]])+)((?:,[^,:\\[\\]]+:(?:\\\\[,:\\[\\]]|[^,:\\[\\]])+)*)(?:,((?:\\\\[,:\\[\\]]|[^,:\\[\\]])+))?]");
+        Pattern pattern = Pattern.compile("\\[([^,:\\[\\]]+):([^,:\\[\\]]+)((?:,[^,:\\[\\]]+:[^,:\\[\\]]+)*)(?:,([^,:\\[\\]]+))?]");
         Matcher matcher = pattern.matcher(text);
         StringBuffer result = new StringBuffer();
 
@@ -55,20 +51,14 @@ public class ValueParser {
                     elseValue = "";
                 }
 
-//                ifCondition = ifCondition.replaceAll("null|\"null\"|minecraft:empty", "0").replaceAll("[^0-9.,]+", "1");
-//                Expression expression = new Expression(ifCondition);
-//                if (expression.eval().intValue() != 0) {
-                if (parseBooleanExpression()) {
+                if (parseBooleanExpression(ifCondition)) {
                     matcher.appendReplacement(result, ifValue.replaceAll("\\\\(?=[\\[\\]:,])", ""));
                 } else {
                     boolean found = false;
                     if (!elseIfs.isEmpty()) {
                         for (String x : elseIfs.substring(1).split("(?<!\\\\),")) {
                             String[] conVal = x.split("(?<!\\\\):");
-//                            conVal[0] = conVal[0].replaceAll("null|\"null\"|minecraft:empty", "0").replaceAll("[^0-9.,]+", "1");
-//                            Expression exp = new Expression(conVal[0]);
-//                            if (exp.eval().intValue() != 0) {
-                            if (parseBooleanExpression()) {
+                            if (parseBooleanExpression(conVal[0])) {
                                 matcher.appendReplacement(result, conVal[1].replaceAll("\\\\(?=[\\[\\]:,])", ""));
                                 found = true;
                                 break;
@@ -193,8 +183,19 @@ public class ValueParser {
         return mathResult.toString();
     }
 
-    private boolean parseBooleanExpression() {
-//        (?:("[^"]+")[ ]*==[ ]*("[^"]+"))
-        return false;
+    private boolean parseBooleanExpression(String expression) {
+        Pattern stringPattern = Pattern.compile("\"([^\"]+)\"(?: *== *\"([^\"]+)\")?");
+        Matcher stringMatcher = stringPattern.matcher(expression.replaceAll("(\"null\"|\"false\")", "false"));
+        StringBuffer stringResult = new StringBuffer();
+        while (stringMatcher.find()) {
+            if (stringMatcher.group(2) != null) {
+                stringMatcher.appendReplacement(stringResult, String.valueOf(stringMatcher.group(1).equals(stringMatcher.group(2))));
+            } else {
+                stringMatcher.appendReplacement(stringResult, String.valueOf(!stringMatcher.group(1).isEmpty()));
+            }
+        }
+        stringMatcher.appendTail(stringResult);
+        Expression expression_fr = new Expression(stringResult.toString());
+        return expression_fr.eval().intValue() != 0;
     }
 }
