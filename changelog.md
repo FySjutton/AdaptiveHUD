@@ -1,3 +1,9 @@
+## v1.0.0-beta.6+1.20.4 changelog
+**Changes made since v1.0.0-beta.5+1.20.4**
+
+- Fixed major problem with flags
+- Made conditions support strings to some limits.
+
 ## v1.0.0-beta.5+1.20.4 changelog
 **Changes made since v1.0.0-beta.4+1.20.4**
 

@@ -31,6 +31,7 @@ public class ValueParser {
     public int renderCheck(String text) {
         try {
             text = parseVariables(text);
+            text = text.replaceAll("null|\"null\"", "0").replaceAll("[^0-9.,]+", "1");
             Expression exp = new Expression(text);
             return exp.eval().intValue() == 0 ? 0 : 1;
         } catch (Exception e) {
@@ -54,6 +55,7 @@ public class ValueParser {
                     elseValue = "";
                 }
 
+                ifCondition = ifCondition.replaceAll("null|\"null\"", "0").replaceAll("[^0-9.,]+", "1");
                 Expression expression = new Expression(ifCondition);
                 if (expression.eval().intValue() != 0) {
                     matcher.appendReplacement(result, ifValue.replaceAll("\\\\(?=[\\[\\]:,])", ""));
@@ -62,6 +64,7 @@ public class ValueParser {
                     if (!elseIfs.isEmpty()) {
                         for (String x : elseIfs.substring(1).split("(?<!\\\\),")) {
                             String[] conVal = x.split("(?<!\\\\):");
+                            conVal[0] = conVal[0].replaceAll("null|\"null\"", "0").replaceAll("[^0-9.,]+", "1");
                             Expression exp = new Expression(conVal[0]);
                             if (exp.eval().intValue() != 0) {
                                 matcher.appendReplacement(result, conVal[1].replaceAll("\\\\(?=[\\[\\]:,])", ""));
