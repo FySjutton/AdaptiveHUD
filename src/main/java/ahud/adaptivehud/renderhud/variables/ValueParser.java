@@ -37,9 +37,9 @@ public class ValueParser {
     }
 
     private String parseConditions(String text) {
-        Pattern pattern = Pattern.compile("\\[\"((?:[^\":\\[\\],\\\\]|\\\\.)+)\" *: *\"((?:[^\":\\[\\],\\\\]|\\\\.)+)\"((?:, *\"(?:[^\":\\[\\],\\\\]|\\\\.)+\" *: *\"(?:[^\":\\[\\],\\\\]|\\\\.)+\")*)(?:, *\"((?:[^\":\\[\\],\\\\]|\\\\.)+)\")?]");
+        Pattern pattern = Pattern.compile("\\[((?:[^:\\[\\],\\\\]|\\\\.)+):((?:[^:\\[\\],\\\\]|\\\\.)+)((?:,(?:[^:\\[\\],\\\\]|\\\\.)+:(?:[^:\\[\\],\\\\]|\\\\.)+)*)(?:,((?:[^:\\[\\],\\\\]|\\\\.)+))?]");
         Matcher matcher = pattern.matcher(text);
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         while (matcher.find()) {
             try {
@@ -52,14 +52,14 @@ public class ValueParser {
                 }
 
                 if (parseBooleanExpression(ifCondition)) {
-                    matcher.appendReplacement(result, ifValue.replaceAll("(\\\\).", ""));
+                    matcher.appendReplacement(result, ifValue);
                 } else {
                     boolean found = false;
                     if (!elseIfs.isEmpty()) {
-                        for (String x : elseIfs.substring(1).split(",")) {
-                            String[] conVal = x.split(":");
+                        for (String x : elseIfs.substring(1).split("(?<!\\\\),")) {
+                            String[] conVal = x.split("(?<!\\\\):");
                             if (parseBooleanExpression(conVal[0])) {
-                                matcher.appendReplacement(result, conVal[1].replaceAll("(\\\\).", ""));
+                                matcher.appendReplacement(result, conVal[1]);
                                 found = true;
                                 break;
                             }
@@ -67,7 +67,7 @@ public class ValueParser {
                     }
 
                     if (!found) {
-                        matcher.appendReplacement(result, elseValue.replaceAll("(\\\\).", ""));
+                        matcher.appendReplacement(result, elseValue);
                     }
                 }
             } catch (Exception e) {
@@ -81,7 +81,7 @@ public class ValueParser {
     private String parseVariables(String text) {
         Pattern pattern = Pattern.compile("\\{(\\w+)?((?: *-[a-zA-Z]+(?:=[a-zA-Z0-9._]+)?)*)((?: *--[a-zA-Z]+(?:=[a-zA-Z0-9._]+)?)*)}");
         Matcher matcher = pattern.matcher(text);
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         while (matcher.find()) {
             String varName = matcher.group(1);
@@ -169,7 +169,7 @@ public class ValueParser {
     private String parseMath(String text) {
         Pattern mathPattern = Pattern.compile("%([\\d+\\-*/^ a-z]*)%");
         Matcher mathMatcher = mathPattern.matcher(text);
-        StringBuffer mathResult = new StringBuffer();
+        StringBuilder mathResult = new StringBuilder();
         while (mathMatcher.find()) {
             try {
                 Expression exp = new Expression(mathMatcher.group(1));
@@ -186,7 +186,7 @@ public class ValueParser {
     private boolean parseBooleanExpression(String expression) {
         Pattern stringPattern = Pattern.compile("\"([^\"]+)\"(?: *== *\"([^\"]+)\")?");
         Matcher stringMatcher = stringPattern.matcher(expression.replaceAll("(\"null\"|\"false\"|\"Empty\")", "false"));
-        StringBuffer stringResult = new StringBuffer();
+        StringBuilder stringResult = new StringBuilder();
         while (stringMatcher.find()) {
             if (stringMatcher.group(2) != null) {
                 stringMatcher.appendReplacement(stringResult, String.valueOf(stringMatcher.group(1).equals(stringMatcher.group(2))));
