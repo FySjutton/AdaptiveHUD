@@ -9,6 +9,8 @@ import net.minecraft.text.Text;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -79,7 +81,7 @@ public class ValueParser {
     }
 
     private String parseVariables(String text) {
-        Pattern pattern = Pattern.compile("\\{(\\w+)?((?: *-[a-zA-Z]+(?:=[a-zA-Z0-9._]+)?)*)((?: *--[a-zA-Z]+(?:=[a-zA-Z0-9._]+)?)*)}");
+        Pattern pattern = Pattern.compile("\\{(\\w+)+((?: *-[a-zA-Z]+(?:=(?:[^:{}=\\-\\\\]|\\\\.)+)?)*)((?: *--[a-zA-Z]+(?:=(?:[^:{}=\\-\\\\]|\\\\.)+)?)*)}");
         Matcher matcher = pattern.matcher(text);
         StringBuilder result = new StringBuilder();
 
@@ -94,13 +96,13 @@ public class ValueParser {
                     String flagString = matcher.group(3).replaceAll(" ", ""); // WILL GET ERROR IF NULL?
 
                     // Global Variables:
-                    HashMap<String, String> flags = new HashMap<>();
+                    HashMap<String, String[]> flags = new HashMap<>();
 
                     if (!globalFlagString.isEmpty()) {
                         for (String x : globalFlagString.split(" *-")) {
                             if (x.contains("=")) {
                                 String[] valueFlag = x.split("=");
-                                flags.put(valueFlag[0], valueFlag[1]);
+                                flags.put(valueFlag[0], valueFlag[1].split("(?<!\\\\);"));
                             } else {
                                 flags.put(x, null);
                             }
@@ -110,12 +112,12 @@ public class ValueParser {
                     if (method.isAnnotationPresent(SetDefaultGlobalFlag.class)) {
                         SetDefaultGlobalFlag annFlag = method.getAnnotation(SetDefaultGlobalFlag.class);
                         if (!flags.containsKey(annFlag.flag())) {
-                            flags.put(annFlag.flag(), annFlag.value().isEmpty() ? null : annFlag.value());
+                            flags.put(annFlag.flag(), annFlag.values().length > 0 ? null : annFlag.values());
                         }
                     } else if (method.isAnnotationPresent(SetDefaultGlobalFlagCont.class)) {
                         for (SetDefaultGlobalFlag x : method.getAnnotation(SetDefaultGlobalFlagCont.class).value()) {
                             if (!flags.containsKey(x.flag())) {
-                                flags.put(x.flag(), x.value().isEmpty() ? null : x.value());
+                                flags.put(x.flag(), x.values().length > 0 ? null : x.values());
                             }
                         }
                     }

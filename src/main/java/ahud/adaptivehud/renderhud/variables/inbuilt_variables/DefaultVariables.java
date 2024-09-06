@@ -160,22 +160,22 @@ public class DefaultVariables {
         return String.valueOf(client.world.getMoonPhase() + 1);
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "1")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String velocity_x() {
         return String.valueOf(complexVARS.changeX);
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "1")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String velocity_y() {
         return String.valueOf(complexVARS.changeY);
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "1")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String velocity_z() {
         return String.valueOf(complexVARS.changeZ);
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "1")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String velocity_xz() {
         return String.valueOf(Math.sqrt(Math.pow(complexVARS.changeX, 2) + Math.pow(complexVARS.changeZ, 2)));
     }
@@ -262,25 +262,25 @@ public class DefaultVariables {
         return targetBlock == null ? null : String.valueOf(Registries.BLOCK.getId(client.world.getBlockState(targetBlock.getBlockPos()).getBlock()));
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String tbx() {
         BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlock;
         return targetBlock == null ? null : String.valueOf(targetBlock.getPos().x);
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String tby() {
         BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlock;
         return targetBlock == null ? null : String.valueOf(targetBlock.getPos().y);
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String tbz() {
         BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlock;
         return targetBlock == null ? null : String.valueOf(targetBlock.getPos().z);
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "1")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String tb_distance() {
         BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlock;
         return targetBlock == null ? null : String.valueOf(Math.sqrt(targetBlock.squaredDistanceTo(player)));
@@ -296,25 +296,25 @@ public class DefaultVariables {
         return targetBlock == null ? null : String.valueOf(Registries.FLUID.getId(client.world.getFluidState(targetBlock.getBlockPos()).getFluid()));
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String tfx() {
         BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlockFluid;
         return targetBlock == null ? null : String.valueOf(targetBlock.getPos().x);
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String tfy() {
         BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlockFluid;
         return targetBlock == null ? null : String.valueOf(targetBlock.getPos().y);
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String tfz() {
         BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlockFluid;
         return targetBlock == null ? null : String.valueOf(targetBlock.getPos().z);
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "1")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String tf_distance() {
         BlockHitResult targetBlock = (BlockHitResult) complexVARS.targetBlockFluid;
         return targetBlock == null ? null : String.valueOf(Math.sqrt(targetBlock.squaredDistanceTo(player)));
@@ -336,22 +336,22 @@ public class DefaultVariables {
         return client.targetedEntity == null ? null : client.targetedEntity.getUuidAsString();
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String tex() {
         return String.valueOf(client.targetedEntity == null ? null : client.targetedEntity.getPos().x);
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String tey() {
         return String.valueOf(client.targetedEntity == null ? null : client.targetedEntity.getPos().y);
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String tez() {
         return String.valueOf(client.targetedEntity == null ? null : client.targetedEntity.getPos().z);
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "1")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String te_distance() {
         Entity targetEntity = client.targetedEntity;
         return targetEntity == null ? null : String.valueOf(Math.sqrt(targetEntity.squaredDistanceTo(player)));
@@ -401,13 +401,13 @@ public class DefaultVariables {
         }
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String mtps() {
         IntegratedServer server = client.getServer();
         return server == null ? "-" : String.valueOf(server.getAverageTickTime());
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String gpu() {
         return String.valueOf(client.getGpuUtilizationPercentage());
     }
@@ -496,12 +496,12 @@ public class DefaultVariables {
         return client.player.getMovementDirection().name().substring(0, 1);
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String yaw() {
         return String.valueOf(MathHelper.wrapDegrees(player.getYaw()));
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String pitch() {
         return String.valueOf(MathHelper.wrapDegrees(player.getPitch()));
     }
@@ -518,17 +518,17 @@ public class DefaultVariables {
         return String.valueOf(1000 / client.getCurrentFps());
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String x() {
         return String.valueOf(player.getX());
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String y() {
         return String.valueOf(player.getY());
     }
 
-    @SetDefaultGlobalFlag(flag = "round", value = "0")
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String z() {
         return String.valueOf(player.getZ());
     }
