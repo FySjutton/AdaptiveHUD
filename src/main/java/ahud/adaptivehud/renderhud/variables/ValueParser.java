@@ -37,7 +37,7 @@ public class ValueParser {
     }
 
     private String parseConditions(String text) {
-        Pattern pattern = Pattern.compile("\\[([^,:\\[\\]]+):([^,:\\[\\]]+)((?:,[^,:\\[\\]]+:[^,:\\[\\]]+)*)(?:,([^,:\\[\\]]+))?]");
+        Pattern pattern = Pattern.compile("\\[\"((?:[^\":\\[\\],\\\\]|\\\\.)+)\" *: *\"((?:[^\":\\[\\],\\\\]|\\\\.)+)\"((?:, *\"(?:[^\":\\[\\],\\\\]|\\\\.)+\" *: *\"(?:[^\":\\[\\],\\\\]|\\\\.)+\")*)(?:, *\"((?:[^\":\\[\\],\\\\]|\\\\.)+)\")?]");
         Matcher matcher = pattern.matcher(text);
         StringBuffer result = new StringBuffer();
 
@@ -52,14 +52,14 @@ public class ValueParser {
                 }
 
                 if (parseBooleanExpression(ifCondition)) {
-                    matcher.appendReplacement(result, ifValue.replace("\\", "\\\\"));
+                    matcher.appendReplacement(result, ifValue.replaceAll("(\\\\).", ""));
                 } else {
                     boolean found = false;
                     if (!elseIfs.isEmpty()) {
                         for (String x : elseIfs.substring(1).split(",")) {
                             String[] conVal = x.split(":");
                             if (parseBooleanExpression(conVal[0])) {
-                                matcher.appendReplacement(result, conVal[1].replace("\\", "\\\\"));
+                                matcher.appendReplacement(result, conVal[1].replaceAll("(\\\\).", ""));
                                 found = true;
                                 break;
                             }
@@ -67,7 +67,7 @@ public class ValueParser {
                     }
 
                     if (!found) {
-                        matcher.appendReplacement(result, elseValue.replace("\\", "\\\\"));
+                        matcher.appendReplacement(result, elseValue.replaceAll("(\\\\).", ""));
                     }
                 }
             } catch (Exception e) {
