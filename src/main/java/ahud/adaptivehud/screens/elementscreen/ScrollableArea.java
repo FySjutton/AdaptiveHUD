@@ -98,8 +98,8 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
                 .build();
             } else {
                 this.textField = new TextFieldWidget(textRenderer, clickableX, 0, 100, 20, Text.literal(item));
-                if (item.equals("value")) {
-                    this.textField.setMaxLength(350);
+                if (item.equals("value") || item.equals("renderRequirement")) {
+                    this.textField.setMaxLength(500);
                 }
                 if (item.equals("textColor") || item.equals("backgroundColor")) {
                     this.textField.setPlaceholder(Text.of("#RRGGBBAA"));
