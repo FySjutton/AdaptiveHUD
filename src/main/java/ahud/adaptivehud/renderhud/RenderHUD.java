@@ -10,8 +10,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static ahud.adaptivehud.AdaptiveHUD.*;
 import static ahud.adaptivehud.ConfigFiles.configFile;
@@ -45,7 +44,6 @@ public class RenderHUD {
             }
         }
 
-
         ValueParser parser = new ValueParser();
         MatrixStack matrices = drawContext.getMatrices();
 
@@ -73,6 +71,15 @@ public class RenderHUD {
                     parsedText = x.get("name").getAsString();
                 }
 
+//                LOGGER.info(parsedText);
+                ArrayList<String> texts = new ArrayList<>(Arrays.asList(parsedText.split("(?<!\\\\)\\\\n")));
+                texts.removeAll(Collections.singleton(""));
+//                LOGGER.info("AAA: " + texts);
+                ArrayList<Integer> widths = new ArrayList<>();
+                for (String text : texts) {
+                    widths.add(client.textRenderer.getWidth(text));
+                }
+                int maxWidth = Collections.max(widths);
                 int paddingY = 0;
                 int paddingX = 0;
                 int posX;
@@ -99,29 +106,32 @@ public class RenderHUD {
                     paddingX = x.get("background").getAsJsonObject().get("paddingX").getAsInt();
                     paddingY = x.get("background").getAsJsonObject().get("paddingY").getAsInt();
 
-                    posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText) + paddingX * 2, trueScale, "X");
-                    posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9 + Math.round(paddingY * 2), trueScale, "Y");
+                    posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), maxWidth + paddingX * 2, trueScale, "X");
+                    posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), texts.size() * 11 - 2 + Math.round(paddingY * 2), trueScale, "Y");
 
                     drawContext.fill(
                             posX,
                             posY,
-                            posX + client.textRenderer.getWidth(parsedText) + 2 * paddingX,
-                            posY + 9 + Math.round(2 * paddingY),
+                            posX + maxWidth + 2 * paddingX,
+                            posY + texts.size() * 11 - 2 + Math.round(2 * paddingY),
                             tools.parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
                     );
                 } else {
-                    posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), client.textRenderer.getWidth(parsedText), defaultScale,"X");
-                    posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), 9, defaultScale,"Y");
+                    posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), maxWidth, defaultScale,"X");
+                    posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), texts.size() * 11 - 2, defaultScale,"Y");
                 }
-
-                drawContext.drawText(
-                        client.textRenderer,
-                        parsedText,
-                        posX + paddingX,
-                        posY + paddingY + 1, // + 1, looks wrong otherwise?
-                        tools.parseColor(x.get("textColor").getAsString()),
-                        x.get("shadow").getAsBoolean()
-                );
+                int extra = 0;
+                for (String text : texts) {
+                    drawContext.drawText(
+                            client.textRenderer,
+                            text,
+                            posX + paddingX,
+                            posY + paddingY + extra + 1, // + 1, looks wrong otherwise?
+                            tools.parseColor(x.get("textColor").getAsString()),
+                            x.get("shadow").getAsBoolean()
+                    );
+                    extra += 11;
+                }
 
                 matrices.pop();
             }

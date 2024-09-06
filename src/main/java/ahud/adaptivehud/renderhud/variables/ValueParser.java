@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 import static ahud.adaptivehud.AdaptiveHUD.variableRegister;
 
 public class ValueParser {
@@ -46,20 +47,19 @@ public class ValueParser {
                 String ifValue = matcher.group(2);
                 String elseIfs = matcher.group(3);
                 String elseValue = matcher.group(4);
-
                 if (elseValue == null) {
                     elseValue = "";
                 }
 
                 if (parseBooleanExpression(ifCondition)) {
-                    matcher.appendReplacement(result, ifValue.replaceAll("\\\\(?=[\\[\\]:,])", ""));
+                    matcher.appendReplacement(result, ifValue.replace("\\", "\\\\"));
                 } else {
                     boolean found = false;
                     if (!elseIfs.isEmpty()) {
-                        for (String x : elseIfs.substring(1).split("(?<!\\\\),")) {
-                            String[] conVal = x.split("(?<!\\\\):");
+                        for (String x : elseIfs.substring(1).split(",")) {
+                            String[] conVal = x.split(":");
                             if (parseBooleanExpression(conVal[0])) {
-                                matcher.appendReplacement(result, conVal[1].replaceAll("\\\\(?=[\\[\\]:,])", ""));
+                                matcher.appendReplacement(result, conVal[1].replace("\\", "\\\\"));
                                 found = true;
                                 break;
                             }
@@ -67,7 +67,7 @@ public class ValueParser {
                     }
 
                     if (!found) {
-                        matcher.appendReplacement(result, elseValue.replaceAll("\\\\(?=[\\[\\]:,])", ""));
+                        matcher.appendReplacement(result, elseValue.replace("\\", "\\\\"));
                     }
                 }
             } catch (Exception e) {
@@ -185,7 +185,7 @@ public class ValueParser {
 
     private boolean parseBooleanExpression(String expression) {
         Pattern stringPattern = Pattern.compile("\"([^\"]+)\"(?: *== *\"([^\"]+)\")?");
-        Matcher stringMatcher = stringPattern.matcher(expression.replaceAll("(\"null\"|\"false\")", "false"));
+        Matcher stringMatcher = stringPattern.matcher(expression.replaceAll("(\"null\"|\"false\"|\"Empty\")", "false"));
         StringBuffer stringResult = new StringBuffer();
         while (stringMatcher.find()) {
             if (stringMatcher.group(2) != null) {
