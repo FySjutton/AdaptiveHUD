@@ -71,10 +71,11 @@ public class RenderHUD {
                     parsedText = x.get("name").getAsString();
                 }
 
-//                LOGGER.info(parsedText);
                 ArrayList<String> texts = new ArrayList<>(Arrays.asList(parsedText.split("(?<!\\\\)\\\\n")));
                 texts.removeAll(Collections.singleton(""));
-//                LOGGER.info("AAA: " + texts);
+                if (texts.isEmpty()) {
+                    continue;
+                }
                 ArrayList<Integer> widths = new ArrayList<>();
                 for (String text : texts) {
                     widths.add(client.textRenderer.getWidth(text));

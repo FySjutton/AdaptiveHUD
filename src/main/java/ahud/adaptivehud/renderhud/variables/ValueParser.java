@@ -54,14 +54,14 @@ public class ValueParser {
                 }
 
                 if (parseBooleanExpression(ifCondition)) {
-                    matcher.appendReplacement(result, ifValue);
+                    matcher.appendReplacement(result, ifValue.replaceAll("\\\\n", "\\\\\\\\n"));
                 } else {
                     boolean found = false;
                     if (!elseIfs.isEmpty()) {
                         for (String x : elseIfs.substring(1).split("(?<!\\\\),")) {
                             String[] conVal = x.split("(?<!\\\\):");
                             if (parseBooleanExpression(conVal[0])) {
-                                matcher.appendReplacement(result, conVal[1]);
+                                matcher.appendReplacement(result, conVal[1].replaceAll("\\\\n", "\\\\\\\\n"));
                                 found = true;
                                 break;
                             }
@@ -69,11 +69,12 @@ public class ValueParser {
                     }
 
                     if (!found) {
-                        matcher.appendReplacement(result, elseValue);
+                        matcher.appendReplacement(result, elseValue.replaceAll("\\\\n", "\\\\\\\\n"));
                     }
                 }
             } catch (Exception e) {
                 matcher.appendReplacement(result, Text.translatable("adaptivehud.variable.condition_error").getString());
+//                e.printStackTrace();
             }
         }
         matcher.appendTail(result);
@@ -112,12 +113,12 @@ public class ValueParser {
                     if (method.isAnnotationPresent(SetDefaultGlobalFlag.class)) {
                         SetDefaultGlobalFlag annFlag = method.getAnnotation(SetDefaultGlobalFlag.class);
                         if (!flags.containsKey(annFlag.flag())) {
-                            flags.put(annFlag.flag(), annFlag.values().length > 0 ? null : annFlag.values());
+                            flags.put(annFlag.flag(), annFlag.values());
                         }
                     } else if (method.isAnnotationPresent(SetDefaultGlobalFlagCont.class)) {
                         for (SetDefaultGlobalFlag x : method.getAnnotation(SetDefaultGlobalFlagCont.class).value()) {
                             if (!flags.containsKey(x.flag())) {
-                                flags.put(x.flag(), x.values().length > 0 ? null : x.values());
+                                flags.put(x.flag(), x.values());
                             }
                         }
                     }
@@ -156,11 +157,14 @@ public class ValueParser {
 
                     // Call function and parse normal variables
                     String varValue = String.valueOf(method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), parameters));
+//                    LOGGER.info(String.valueOf(flags));
                     varValue = new FlagParser().parseFlags(varValue, flags);
 
                     matcher.appendReplacement(result, varValue);
                 }
             } catch (Exception e) {
+//                matcher.appendReplacement(result, e.toString());
+//                e.printStackTrace();
                 matcher.appendReplacement(result, Text.translatable("adaptivehud.variable.variable_error").getString());
             }
         }
@@ -186,6 +190,7 @@ public class ValueParser {
     }
 
     private boolean parseBooleanExpression(String expression) {
+//        LOGGER.info(expression);
         Pattern stringPattern = Pattern.compile("\"([^\"]+)\"(?: *== *\"([^\"]+)\")?");
         Matcher stringMatcher = stringPattern.matcher(expression.replaceAll("(\"null\"|\"false\"|\"Empty\")", "false"));
         StringBuilder stringResult = new StringBuilder();
