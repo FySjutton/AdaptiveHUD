@@ -1,3 +1,15 @@
+## v1.0.0-beta.7+1.20.4 changelog
+**Changes made since v1.0.0-beta.6+1.20.4**
+
+- Fixed the tfz variable (default rounding)
+- Fixed so you can have strings in conditions. Some characters can also be escaped using the backslash.
+- Added multiline support. (\n)
+- Increased max length of values.
+- Added some more flags, like replace, split and more. 
+- Added support for multiple arguments on flags, this using the ";" character.
+- Fixed some other minor bugs.
+- Improved the default elements, also a default information screen.
+
 ## v1.0.0-beta.6+1.20.4 changelog
 **Changes made since v1.0.0-beta.5+1.20.4**
 
