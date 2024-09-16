@@ -22,6 +22,7 @@ public class AdaptiveHUD implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("adaptivehud");
 	public static ComplexVars complexVARS = new ComplexVars();
 	public static VariableRegisterer variableRegister = new VariableRegisterer();
+	public static boolean renderElements = true;
 
 	public static final KeyBinding reloadElementsKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			Text.translatable("adaptivehud.key.reloadElements").getString(),
@@ -61,7 +62,6 @@ public class AdaptiveHUD implements ModInitializer {
 		new ConfigFiles().GenerateElementArray();
 
 		HudRenderCallback.EVENT.register(new RenderHUD(true)::renderCustomHud);
-
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (reloadElementsKeyBind.wasPressed()) {
 				new ConfigFiles().GenerateElementArray();

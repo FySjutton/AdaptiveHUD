@@ -1,6 +1,5 @@
 package ahud.adaptivehud.renderhud.variables.inbuilt_variables;
 
-import ahud.adaptivehud.renderhud.variables.FlagTools;
 import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlag;
 import ahud.adaptivehud.renderhud.variables.annotations.SpecialFlagName;
 import com.mojang.blaze3d.platform.GlDebugInfo;
@@ -32,10 +31,6 @@ public class DefaultVariables {
     MinecraftClient client = MinecraftClient.getInstance();
     PlayerEntity player = MinecraftClient.getInstance().player;
     BlockPos playerPos = client.player.getBlockPos();
-
-    public String test() { // For testing purposes, so I don't have to restart my game as often
-        return "ABCDEFG";
-    }
 
     // ----- BETA.5 BELOW
     public String display_name() {
@@ -97,10 +92,6 @@ public class DefaultVariables {
         long n = Runtime.getRuntime().freeMemory();
         long o = m - n;
         return String.valueOf(o * 100L / l);
-    }
-
-    public String java_bit() {
-        return String.valueOf(client.is64Bit() ? 64 : 32);
     }
 
     public String java_version() {
@@ -205,7 +196,7 @@ public class DefaultVariables {
     }
 
     public String dimension() {
-        return String.valueOf(player.getWorld().getDimensionKey().getValue().toString());
+        return String.valueOf(player.getWorld().getRegistryKey().getValue().toString());
     }
 
     public String on_ground() {

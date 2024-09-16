@@ -62,12 +62,9 @@ public class ElementScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackgroundTexture(context);
-        scrollableArea.render(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
+        scrollableArea.render(context, mouseX, mouseY, delta);
     }
-    @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {}
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {

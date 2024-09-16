@@ -14,6 +14,7 @@ import java.util.*;
 
 import static ahud.adaptivehud.AdaptiveHUD.*;
 import static ahud.adaptivehud.ConfigFiles.configFile;
+import static ahud.adaptivehud.AdaptiveHUD.renderElements;
 
 public class RenderHUD {
     private long lastAdvancedUpdate = 0;
@@ -26,6 +27,9 @@ public class RenderHUD {
     }
 
     public void renderCustomHud(DrawContext drawContext, float tickDelta) {
+        if (!renderElements && this.USE_VALUE) {
+            return;
+        }
         MinecraftClient client = MinecraftClient.getInstance();
 
         if (!configFile.getAsJsonObject().get("render_on_debug").getAsBoolean()) {

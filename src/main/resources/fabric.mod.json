@@ -27,10 +27,10 @@
 	"depends": {
 		"fabricloader": ">=0.14.0",
 		"fabric": "*",
-		"minecraft": ">=1.20.3- <1.20.5-"
+		"minecraft": ">=1.20.5"
 	},
 	"recommends": {
-		"modmenu": ">=9.0.0"
+		"modmenu": ">=10.0.0"
 	},
 	"custom": {
 		"adaptivehud": {

@@ -40,7 +40,7 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
     }
 
     @Override
-    protected int getScrollbarPositionX() {
+    protected int getScrollbarX() {
         return width - 15;
     }
 

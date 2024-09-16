@@ -17,6 +17,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ahud.adaptivehud.AdaptiveHUD.renderElements;
 import static ahud.adaptivehud.ConfigFiles.configFile;
 import static ahud.adaptivehud.ConfigFiles.elementArray;
 
@@ -54,11 +55,12 @@ public class MoveScreen extends Screen {
         this.snapPointsX = new ArrayList<>();
         this.snapPointsY = new ArrayList<>();
         this.autoSave = autoSave;
+        renderElements = false;
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackgroundTexture(context);
+//        renderBackgroundTexture(context);
         super.render(context, mouseX, mouseY, delta);
         new RenderHUD(false).renderCustomHud(context, 0);
 
@@ -78,11 +80,12 @@ public class MoveScreen extends Screen {
         }
     }
 
-    @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {}
+//    @Override
+//    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {}
 
     @Override
     public void close() {
+        renderElements = true;
         if (this.autoSave) {
             new ConfigFiles().saveElementFiles(elementArray, new ArrayList<>());
         }
