@@ -50,12 +50,6 @@ public class AdaptiveHUD implements ModInitializer {
 			GLFW.GLFW_KEY_RIGHT_SHIFT,
 			Text.translatable("adaptivehud.key.category").getString()
 	));
-	public static final KeyBinding reloadDefaultVariables = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-			"Reload Default Variables",
-			InputUtil.Type.KEYSYM,
-			GLFW.GLFW_KEY_KP_3,
-			Text.translatable("adaptivehud.key.category").getString()
-	));
 
 	@Override
 	public void onInitialize() {
@@ -76,10 +70,6 @@ public class AdaptiveHUD implements ModInitializer {
 			}
 			if (openMoveScreenKeyBind.wasPressed()) {
 				MinecraftClient.getInstance().setScreen(new MoveScreen(null, true));
-			}
-			if (reloadDefaultVariables.wasPressed()) {
-				new VariableRegisterer().deleteVariables();
-				new VariableRegisterer().registerDefaults();
 			}
 		});
 
