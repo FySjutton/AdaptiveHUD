@@ -97,8 +97,8 @@ public class RenderHUD {
                     trueScale = wantedHeight / itemHeight;
                     matrices.scale(trueScale, trueScale, 1);
                 } else {
-                    defaultScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
-                    matrices.scale(defaultScale, defaultScale, 1);
+                    trueScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
+                    matrices.scale(trueScale, trueScale, 1);
                 }
 
                 Tools tools = new Tools();
@@ -118,8 +118,8 @@ public class RenderHUD {
                             tools.parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
                     );
                 } else {
-                    posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), maxWidth, defaultScale,"X");
-                    posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), texts.size() * 11 - 2, defaultScale,"Y");
+                    posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), maxWidth, trueScale,"X");
+                    posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), texts.size() * 11 - 2, trueScale,"Y");
                 }
                 int extra = 0;
                 for (String text : texts) {
