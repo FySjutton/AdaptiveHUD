@@ -26,7 +26,7 @@ public class RenderHUD {
         this.USE_VALUE = useValue;
     }
 
-    public void renderCustomHud(DrawContext drawContext, float tickDelta) {
+    public void renderCustomHud(DrawContext drawContext) {
         if (!renderElements && this.USE_VALUE) {
             return;
         }

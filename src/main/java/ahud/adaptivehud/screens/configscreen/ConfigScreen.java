@@ -33,7 +33,7 @@ public class ConfigScreen extends Screen {
     private final Screen PARENT;
     private final List<JsonElement> BACKUP_ELEMENT_ARR = new ArrayList<>();
     private final List<String> DELETED_FILES = new ArrayList<>();
-    private final Identifier DISCORD_TEXTURE = new Identifier("adaptivehud", "textures/gui/discord_logo.png");
+    private final Identifier DISCORD_TEXTURE = Identifier.of("adaptivehud", "textures/gui/discord_logo.png");
     private static final Text DISCORD_TEXT = Text.translatable("adaptivehud.config.discordText");
     private static final Text DEFAULT_NAME = Text.translatable("adaptivehud.config.defaultName");
     private final boolean renderDiscordButton = configFile.getAsJsonObject().get("render_get_help_button").getAsBoolean();

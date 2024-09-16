@@ -1,3 +1,8 @@
+## Release: v1.0.0+1.21 changelog
+**Changes made since v1.0.0+1.20.6**
+
+- Updated to 1.21-1.21.1
+
 ## Release: v1.0.0+1.20.6 changelog
 **Changes made since v1.0.0+1.20.4**
 
