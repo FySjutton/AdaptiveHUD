@@ -1,3 +1,9 @@
+## Release: v1.0.0+1.20.4 changelog
+**Changes made since v1.0.0-beta.7+1.20.4**
+
+- Added support for 1.20.3
+- Released the mod!
+
 ## v1.0.0-beta.7+1.20.4 changelog
 **Changes made since v1.0.0-beta.6+1.20.4**
 
