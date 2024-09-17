@@ -49,13 +49,17 @@ public class AdaptiveHUD implements ModInitializer {
 			Text.translatable("adaptivehud.key.category").getString()
 	));
 
+	private RenderHUD hudRenderer;
+
 	@Override
 	public void onInitialize() {
 		new ConfigFiles().CheckDefaultConfigs();
 		new ConfigFiles().generateConfigArray();
 		new ConfigFiles().GenerateElementArray();
 
-		HudRenderCallback.EVENT.register(new RenderHUD(true)::renderCustomHud);
+		hudRenderer = new RenderHUD(true);
+
+		HudRenderCallback.EVENT.register((drawContext, tickCounter) -> hudRenderer.renderCustomHud(drawContext));
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (reloadElementsKeyBind.wasPressed()) {
 				new ConfigFiles().GenerateElementArray();
