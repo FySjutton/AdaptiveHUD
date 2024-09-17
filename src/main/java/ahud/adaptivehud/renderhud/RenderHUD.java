@@ -25,7 +25,7 @@ public class RenderHUD {
         this.USE_VALUE = useValue;
     }
 
-    public void renderCustomHud(DrawContext drawContext, float tickDelta) {
+    public void renderCustomHud(DrawContext drawContext) {
         MinecraftClient client = MinecraftClient.getInstance();
 
         if (!configFile.getAsJsonObject().get("render_on_debug").getAsBoolean()) {

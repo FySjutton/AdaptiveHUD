@@ -5,8 +5,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.util.hit.HitResult;
 
+import java.util.Calendar;
+
 public class ComplexVars {
     private FlagTools tools = new FlagTools();
+    private long lastRun = 0;
 
     private double oldX = 0;
     private double oldY = 0;
@@ -28,10 +31,12 @@ public class ComplexVars {
     // Same as the one above, but run less frequent.
     public void generateCooldowned() {
         // ALL ELEMENTS ARE LOADED; EVEN IF THEY WONT BE USED LATER: PERFORMENCE ISSUE!!! FIX
+        long toPerSecond = 1000 / (Calendar.getInstance().getTimeInMillis() - lastRun);
+        lastRun = Calendar.getInstance().getTimeInMillis();
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        changeX = Math.abs(player.getX() - oldX) * 4;
-        changeY = Math.abs(player.getY() - oldY) * 4;
-        changeZ = Math.abs(player.getZ() - oldZ) * 4;
+        changeX = Math.abs(player.getX() - oldX) * toPerSecond;
+        changeY = Math.abs(player.getY() - oldY) * toPerSecond;
+        changeZ = Math.abs(player.getZ() - oldZ) * toPerSecond;
         oldX = player.getX();
         oldY = player.getY();
         oldZ = player.getZ();

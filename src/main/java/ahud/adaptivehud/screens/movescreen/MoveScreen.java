@@ -60,7 +60,7 @@ public class MoveScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         renderBackgroundTexture(context);
         super.render(context, mouseX, mouseY, delta);
-        new RenderHUD(false).renderCustomHud(context, 0);
+        new RenderHUD(false).renderCustomHud(context);
 
         if (dragged != null) {
             int xPos = new CoordCalculators().getActualCords(dragged, dragged.get("posX").getAsInt() + alignX, client.getWindow().getScaledWidth(), width, 0, "X");
