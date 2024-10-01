@@ -1,3 +1,8 @@
+## Release: v1.0.1+XXX changelog
+**Changes made since v1.0.0+XXX**
+
+- Changed to the new logo
+
 ## Release: v1.0.0+1.20.4 changelog
 **Changes made since v1.0.0-beta.7+1.20.4**
 
