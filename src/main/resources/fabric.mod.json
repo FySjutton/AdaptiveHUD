@@ -3,11 +3,13 @@
 	"id": "adaptivehud",
 	"version": "${version}",
 	"name": "AdaptiveHUD",
-	"description": "A highly configurable mod which adds HUD elements to your screen! Like a little mini F3 visible at all times!",
+	"description": "A highly configurable mod which adds HUD elements to your screen! A little mini F3 visible at all times!",
 	"authors": [
 		"Fy17"
 	],
 	"contact": {
+		"homepage": "https://adaptivehud.gitbook.io/",
+		"sources": "https://github.com/FySjutton/AdaptiveHUD",
 		"issues": "https://discord.gg/6gBT2CgqQj"
 	},
 	"license": "CC0-1.0",
@@ -15,7 +17,7 @@
 	"environment": "client",
 	"entrypoints": {
 		"main": [
-          "ahud.adaptivehud.AdaptiveHUD"
+			"ahud.adaptivehud.AdaptiveHUD"
         ],
 		"modmenu": [
 			"ahud.adaptivehud.ModMenuIntegration"
@@ -33,10 +35,11 @@
 		"modmenu": ">=11.0.0"
 	},
 	"custom": {
-		"adaptivehud": {
+		"modmenu": {
 			"links": {
 				"adaptivehud.discord": "https://discord.gg/V2BXH2q6Rq"
-			}
+			},
+			"update_checker": true
 		}
 	}
 }

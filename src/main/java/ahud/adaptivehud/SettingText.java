@@ -18,10 +18,14 @@ public class SettingText extends TextFieldWidget {
     public void setError(boolean value, String errorMessage) {
         error = value;
         if (value) {
-            errorText = errorMessage;
-            errors.add(this.getMessage().getString());
+            if (!errors.contains(this.getMessage().getString())) {
+                errorText = errorMessage;
+                errors.add(this.getMessage().getString());
+                this.setEditableColor(0xa83832);
+            }
         } else {
             errors.remove(this.getMessage().getString());
+            this.setEditableColor(0xFFFFFF);
         }
     }
 }

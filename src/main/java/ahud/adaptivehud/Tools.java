@@ -7,7 +7,7 @@ import net.minecraft.text.Text;
 import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class Tools {
-    public int parseColor(String colorString) {
+    public Integer parseColor(String colorString) {
         try {
             if (colorString.startsWith("#")) {
                 colorString = colorString.substring(1);
@@ -25,7 +25,7 @@ public class Tools {
 
             return (alpha << 24) | (red << 16) | (green << 8) | blue;
         } catch (Exception e) {
-            return 0;
+            return null;
         }
     }
 

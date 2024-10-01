@@ -30,11 +30,13 @@ public class ElementScreen extends Screen {
     public final Screen PARENT;
     private final TabManager tabManager = new TabManager(this::addDrawableChild, this::remove);
     private JsonObject element;
+    private JsonObject backupElement;
 
     public ElementScreen(Screen PARENT, JsonObject element) {
         super(Text.of("AdaptiveHUD"));
         this.PARENT = PARENT;
         this.element = element;
+        this.backupElement = element.deepCopy();
     }
 
     @Override
@@ -42,8 +44,8 @@ public class ElementScreen extends Screen {
         Tab[] tabs = new Tab[2];
         tabs[0] = new newTab(
             this, "General",
-            new ArrayList<>(List.of("enabled", "name")),
-            new ArrayList<>(List.of(1, 2))
+            new ArrayList<>(List.of("enabled", "name", "value", "textColor")),
+            new ArrayList<>(List.of(1, 2, 2, 2))
         );
         tabs[1] = new newTab(
             this, "Background",
@@ -54,8 +56,8 @@ public class ElementScreen extends Screen {
         TabNavigationWidget tabNavigation = TabNavigationWidget.builder(this.tabManager, this.width).tabs(tabs).build();
         this.addDrawableChild(tabNavigation);
 
-//        ButtonWidget saveButton = ButtonWidget.builder(Text.translatable("tab.bettertab.config.button_text.done"), btn -> saveFile()).dimensions(width / 4, height - 25, width / 2, 20).build();
-//        this.addDrawableChild(saveButton);
+        ButtonWidget doneButton = ButtonWidget.builder(Text.of("Done"), btn -> close()).dimensions(width / 4, height - 25, width / 2, 20).build();
+        this.addDrawableChild(doneButton);
 
         tabNavigation.selectTab(0, false);
         tabNavigation.init();

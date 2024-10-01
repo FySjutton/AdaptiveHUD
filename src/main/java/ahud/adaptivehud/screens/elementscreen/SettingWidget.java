@@ -1,6 +1,7 @@
 package ahud.adaptivehud.screens.elementscreen;
 
 import ahud.adaptivehud.SettingText;
+import ahud.adaptivehud.Tools;
 import ahud.adaptivehud.screens.configscreen.ConfigScreen;
 import ahud.adaptivehud.screens.configscreen.ScrollableList;
 import com.google.gson.JsonElement;
@@ -30,7 +31,7 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
     public static ArrayList<String> errors = new ArrayList<>();
 
     public SettingWidget(Screen parent, ArrayList<String> settings, ArrayList<Integer> types, JsonObject element, int width, int height) {
-        super(MinecraftClient.getInstance(), width, height - 24 - 50, 24, 25);
+        super(MinecraftClient.getInstance(), width, height - 24 - 25 - 10, 24, 25);
         this.PARENT = parent;
         this.element = element;
 
@@ -65,6 +66,9 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
                 updateBooleanValue(setting, button);
             } else if (type == 2) { // 2 = Text Field
                 this.textField = new SettingText(textRenderer, width / 2 + width / 4 - 50, 0, 100, 20, Text.of(setting));
+                if (setting.equals("value")) {
+                    textField.setMaxLength(1000);
+                }
                 textField.setChangedListener(newValue -> textFieldListener(newValue, setting, textField));
                 updateTextFieldText(setting, textField);
             }
@@ -123,6 +127,7 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
     }
 
     private void textFieldListener(String newValue, String setting, SettingText textField) {
+        // FIX SO THE DONE BUTTON CAN'T BE PRESSED ON ERROR; INACTIVATE
         if (setting.equals("name")) {
             // IMPROVE HAHA, FEELS INEFFICIENT
             if (newValue.contains(" ") || newValue.isEmpty()) {
@@ -139,6 +144,13 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
             boolean hasSameName = deepCopyArray.stream().anyMatch(elm -> elm.getAsJsonObject().get("name").getAsString().equals(newValue));
             if (hasSameName) {
                 textField.setError(true, "Name already defined!");
+                return;
+            }
+        }
+
+        if (setting.equals("textColor")) {
+            if (new Tools().parseColor(newValue) == null) {
+                textField.setError(true, "Invalid Color!");
                 return;
             }
         }
