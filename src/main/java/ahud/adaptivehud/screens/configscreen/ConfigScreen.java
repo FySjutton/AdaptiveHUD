@@ -31,7 +31,7 @@ import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 @Environment(EnvType.CLIENT)
 public class ConfigScreen extends Screen {
     private final Screen PARENT;
-    private final List<JsonElement> BACKUP_ELEMENT_ARR = new ArrayList<>();
+    public final List<JsonElement> BACKUP_ELEMENT_ARR = new ArrayList<>();
     private final List<String> DELETED_FILES = new ArrayList<>();
     private final Identifier DISCORD_TEXTURE = Identifier.of("adaptivehud", "textures/gui/discord_logo.png");
     private static final Text DISCORD_TEXT = Text.translatable("adaptivehud.config.discordText");

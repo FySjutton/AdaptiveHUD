@@ -100,7 +100,7 @@ public class ScrollableList extends ScrollableWidget {
     protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
 
     private void editElement(JsonElement element) {
-        MinecraftClient.getInstance().setScreen(new ElementScreen(PARENT, element));
+        MinecraftClient.getInstance().setScreen(new ElementScreen(PARENT, element.getAsJsonObject()));
     }
 
     private void switchEnabled(ButtonWidget button, JsonElement element) {
