@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,9 +23,57 @@ public class ValueParser {
     public String parseValue(String text) {
         text = text.replaceAll("&(?=[\\da-fA-Fk-oK-OrR])", "§");
 
-        text = parseVariables(text);
-        text = parseConditions(text);
-        text = parseMath(text);
+        LOGGER.info("Aa");
+        LOGGER.info(text);
+        char[] textList = text.toCharArray();
+
+        Stack<Character> lastCharacters = new Stack<>();
+        Stack<Integer> startPositions = new Stack<>();
+        int parseCounter = 1; // To keep track of the replacement numbering
+        char actualLast = 0;
+        char lastOpener = 0;
+
+        LOGGER.info("Original text: " + text);
+
+        // First pass: Track positions of opening and closing brackets
+        for (int i = 0; i < text.length(); i++) {
+            if ((textList[i] == '{' || textList[i] == '[' || textList[i] == '%') && actualLast != '\\' && lastOpener != '%') {
+                lastOpener = textList[i];
+                startPositions.push(i);
+                lastCharacters.push(textList[i]);
+
+            }
+            else if (((textList[i] == '}' && lastCharacters.peek() == '{') ||
+                    (textList[i] == ']' && lastCharacters.peek() == '[') ||
+                    (textList[i] == '%')) && actualLast != '\\') {
+
+                lastCharacters.pop();
+
+                // Process the innermost content when a closing bracket is found
+                int startPos = startPositions.pop();
+                String innerContent = text.substring(startPos + 1, i); // Get inner content
+
+                // Format the content with numbered replacements
+                String parsedResult = parseCounter + innerContent + parseCounter;
+                LOGGER.info("PARSED " + parseCounter);
+                LOGGER.info("CONTENT " + innerContent);
+                parseCounter++;
+
+                // Replace the original content with the parsed result
+                text = text.substring(0, startPos) + parsedResult + text.substring(i + 1);
+                textList = text.toCharArray();  // Update textList after modification
+
+                // Adjust 'i' since we modified the string
+                i = startPos + parsedResult.length() - 1;
+            }
+            actualLast = textList[i];
+        }
+
+        LOGGER.info("Final parsed string: " + text);
+
+//        text = parseVariables(text);
+//        text = parseConditions(text);
+//        text = parseMath(text);
 
         return text;
     }
