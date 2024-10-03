@@ -53,10 +53,11 @@
   "adaptivehud.config.setting.paddingX": "Padding X",
   "adaptivehud.config.setting.paddingY": "Padding Y",
   "adaptivehud.config.setting.backgroundColor": "Background Color",
-  "adaptivehud.config.setting.itemAlignX": "Anchorpoint X",
-  "adaptivehud.config.setting.itemAlignY": "Anchorpoint Y",
-  "adaptivehud.config.setting.textAlignX": "Text Align X",
-  "adaptivehud.config.setting.textAlignY": "Text Align Y",
+  "adaptivehud.config.setting.itemAlignX": "Item Align X",
+  "adaptivehud.config.setting.itemAlignY": "Item Align Y",
+  "adaptivehud.config.setting.selfAlignX": "Self Align X",
+  "adaptivehud.config.setting.selfAlignY": "Self Align Y",
+  "adaptivehud.config.setting.textAlign": "Text Align",
   "adaptivehud.config.setting.renderRequirement": "Render Requirement",
   "adaptivehud.config.setting.scale": "Scale"
 }

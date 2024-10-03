@@ -44,8 +44,9 @@ public class JsonValidator {
         JsonObject alignment = getOrCreateObject(obj, "alignment");
         addDefaultProperty(alignment, "itemAlignX", new JsonPrimitive(0));
         addDefaultProperty(alignment, "itemAlignY", new JsonPrimitive(0));
-        addDefaultProperty(alignment, "textAlignX", new JsonPrimitive(0));
-        addDefaultProperty(alignment, "textAlignY", new JsonPrimitive(0));
+        addDefaultProperty(alignment, "selfAlignX", new JsonPrimitive(0));
+        addDefaultProperty(alignment, "selfAlignY", new JsonPrimitive(0));
+        addDefaultProperty(alignment, "textAlign", new JsonPrimitive(0));
 
         JsonObject requirement = getOrCreateObject(obj, "requirement");
         addDefaultProperty(requirement, "renderRequirement", new JsonPrimitive(""));
@@ -66,8 +67,10 @@ public class JsonValidator {
     private String validateAlignment(JsonObject alignment) {
         if (!ALLOWED_POS.contains(alignment.get("itemAlignX").getAsInt()) ||
                 !ALLOWED_POS.contains(alignment.get("itemAlignY").getAsInt()) ||
-                !ALLOWED_POS.contains(alignment.get("textAlignX").getAsInt()) ||
-                !ALLOWED_POS.contains(alignment.get("textAlignY").getAsInt())) {
+                !ALLOWED_POS.contains(alignment.get("selfAlignX").getAsInt()) ||
+                !ALLOWED_POS.contains(alignment.get("selfAlignY").getAsInt()) ||
+                !ALLOWED_POS.contains(alignment.get("textAlign").getAsInt())
+        ){
             return "Invalid alignment!";
         }
         return null;
@@ -137,8 +140,8 @@ public class JsonValidator {
 //        JsonObject alignment = obj.get("alignment").getAsJsonObject();
 //        if (!alignment.has("itemAlignX")) {alignment.addProperty("itemAlignX", 0);}
 //        if (!alignment.has("itemAlignY")) {alignment.addProperty("itemAlignY", 0);}
-//        if (!alignment.has("textAlignX")) {alignment.addProperty("textAlignX", 0);}
-//        if (!alignment.has("textAlignY")) {alignment.addProperty("textAlignY", 0);}
+//        if (!alignment.has("selfAlignX")) {alignment.addProperty("selfAlignX", 0);}
+//        if (!alignment.has("selfAlignY")) {alignment.addProperty("selfAlignY", 0);}
 //
 //        if (!obj.has("requirement")) {obj.add("requirement", new JsonObject());}
 //        JsonObject requirement = obj.get("requirement").getAsJsonObject();
@@ -182,8 +185,8 @@ public class JsonValidator {
 //            if (
 //                !(allowedPos.contains(alignment.get("itemAlignX").getAsInt()) &&
 //                allowedPos.contains(alignment.get("itemAlignY").getAsInt()) &&
-//                allowedPos.contains(alignment.get("textAlignX").getAsInt()) &&
-//                allowedPos.contains(alignment.get("textAlignY").getAsInt()))
+//                allowedPos.contains(alignment.get("selfAlignX").getAsInt()) &&
+//                allowedPos.contains(alignment.get("selfAlignY").getAsInt()))
 //            ) {
 //                return "Invalid alignment!";
 //            }

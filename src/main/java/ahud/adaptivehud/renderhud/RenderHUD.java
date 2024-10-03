@@ -115,25 +115,25 @@ public class RenderHUD {
                     posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), texts.size() * 11 - 2 + Math.round(paddingY * 2), trueScale, "Y");
 
                     drawContext.fill(
-                            posX,
-                            posY,
-                            posX + maxWidth + 2 * paddingX,
-                            posY + texts.size() * 11 - 2 + Math.round(2 * paddingY),
-                            tools.parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
+                        posX,
+                        posY,
+                        posX + maxWidth + 2 * paddingX,
+                        posY + texts.size() * 11 - 2 + Math.round(2 * paddingY),
+                        tools.parseColor(x.get("background").getAsJsonObject().get("backgroundColor").getAsString())
                     );
                 } else {
                     posX = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posX").getAsInt(), client.getWindow().getScaledWidth(), maxWidth, trueScale,"X");
                     posY = new CoordCalculators().getActualCords(element.getAsJsonObject(), x.get("posY").getAsInt(), client.getWindow().getScaledHeight(), texts.size() * 11 - 2, trueScale,"Y");
                 }
                 int extra = 0;
-                for (String text : texts) {
+                for (int i = 0; i < texts.size(); i++) {
                     drawContext.drawText(
-                            client.textRenderer,
-                            text,
-                            posX + paddingX,
-                            posY + paddingY + extra + 1, // + 1, looks wrong otherwise?
-                            tools.parseColor(x.get("textColor").getAsString()),
-                            x.get("shadow").getAsBoolean()
+                        client.textRenderer,
+                        texts.get(i),
+                        posX + new CoordCalculators().getTextAlignX(element.getAsJsonObject(), maxWidth + 2 * paddingX, widths.get(i), paddingX),
+                        posY + paddingY + extra + 1, // + 1, looks wrong otherwise?
+                        tools.parseColor(x.get("textColor").getAsString()),
+                        x.get("shadow").getAsBoolean()
                     );
                     extra += 11;
                 }

@@ -16,8 +16,9 @@
   "alignment": {
     "itemAlignX": 0,
     "itemAlignY": 0,
-    "textAlignX": 0,
-    "textAlignY": 0
+    "selfAlignX": 0,
+    "selfAlignY": 0,
+    "textAlign": 0
   },
   "requirement": {
     "renderRequirement": ""

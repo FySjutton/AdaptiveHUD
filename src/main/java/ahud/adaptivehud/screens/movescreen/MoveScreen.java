@@ -175,7 +175,7 @@ public class MoveScreen extends Screen {
                     } else {
                         itemAlignY = client.currentScreen.height - 2;
                     }
-                    int PalignX = align.get("textAlignX").getAsInt();
+                    int PalignX = align.get("selfAlignX").getAsInt();
                     if (PalignX == 0) {
                         alignX = 0;
                     } else if (PalignX == 1) {
@@ -183,7 +183,7 @@ public class MoveScreen extends Screen {
                     } else {
                         alignX = width;
                     }
-                    int PalignY = align.get("textAlignY").getAsInt();
+                    int PalignY = align.get("selfAlignY").getAsInt();
                     if (PalignY == 0) {
                         alignY = 0;
                     } else if (PalignY == 1) {

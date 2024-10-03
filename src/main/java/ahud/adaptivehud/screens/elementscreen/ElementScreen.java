@@ -63,8 +63,8 @@ public class ElementScreen extends Screen {
         );
         tabs[2] = new newTab(
                 this, "Alignment", "alignment",
-                new ArrayList<>(List.of("itemAlignX", "itemAlignY", "textAlignX", "textAlignY")),
-                new ArrayList<>(List.of(7, 8, 7, 8))
+                new ArrayList<>(List.of("itemAlignX", "itemAlignY", "selfAlignX", "selfAlignY", "textAlign")),
+                new ArrayList<>(List.of(7, 8, 7, 8, 7))
         );
 
         TabNavigationWidget tabNavigation = TabNavigationWidget.builder(this.tabManager, this.width).tabs(tabs).build();
@@ -186,7 +186,7 @@ public class ElementScreen extends Screen {
 //                JsonObject specElm;
 //                if (x.setting.equals("enabled") || x.setting.equals("paddingX") || x.setting.equals("paddingY") || x.setting.equals("backgroundColor")) {
 //                    specElm = elm.get("background").getAsJsonObject();
-//                } else if (x.setting.equals("itemAlignX") || x.setting.equals("itemAlignY") || x.setting.equals("textAlignX") || x.setting.equals("textAlignY")) {
+//                } else if (x.setting.equals("itemAlignX") || x.setting.equals("itemAlignY") || x.setting.equals("selfAlignX") || x.setting.equals("selfAlignY")) {
 //                    specElm = elm.get("alignment").getAsJsonObject();
 //                } else if (x.setting.equals("renderRequirement")) {
 //                    specElm = elm.get("requirement").getAsJsonObject();
@@ -217,7 +217,7 @@ public class ElementScreen extends Screen {
 //                if (x.button != null) {
 //                    if (x.setting.equals("shadow") || x.setting.equals("enabled")) {
 //                        specElm.addProperty(x.setting, x.button.getMessage().getString().equals(Text.translatable("adaptivehud.config.button.on").getString()));
-//                    } else if (x.setting.equals("itemAlignX") || x.setting.equals("itemAlignY") || x.setting.equals("textAlignX") || x.setting.equals("textAlignY")) {
+//                    } else if (x.setting.equals("itemAlignX") || x.setting.equals("itemAlignY") || x.setting.equals("selfAlignX") || x.setting.equals("selfAlignY")) {
 //                        String value = x.button.getMessage().getString();
 //                        int corN = 1;
 //                        if (value.equals(LEFT) || value.equals(TOP)) {
