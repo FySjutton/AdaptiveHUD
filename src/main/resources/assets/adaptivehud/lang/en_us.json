@@ -9,6 +9,7 @@
 
   "adaptivehud.config.cancel": "Cancel",
   "adaptivehud.config.done": "Done",
+  "adaptivehud.config.save_error": "Error: ",
   "adaptivehud.config.save": "Save",
   "adaptivehud.config.discordText": "Get help here!",
   "adaptivehud.config.documentation": "Documentation!",
@@ -31,11 +32,11 @@
   "adaptivehud.config.button.top": "Top",
   "adaptivehud.config.button.bottom": "Bottom",
 
-  "adaptivehud.config.title.MAIN": "MAIN",
-  "adaptivehud.config.title.BACKGROUND": "BACKGROUND",
-  "adaptivehud.config.title.ALIGNMENT": "ALIGNMENT",
-  "adaptivehud.config.title.ADVANCED": "ADVANCED",
-  "adaptivehud.config.title.REQUIREMENT": "REQUIREMENTS",
+  "adaptivehud.config.title.general": "General",
+  "adaptivehud.config.title.background": "Background",
+  "adaptivehud.config.title.alignment": "Alignment",
+  "adaptivehud.config.title.advanced": "Advanced",
+  "adaptivehud.config.title.requirement": "Requirements",
 
   "adaptivehud.key.category": "AdaptiveHUD",
   "adaptivehud.key.reloadElements": "Reload Elements",
@@ -59,5 +60,12 @@
   "adaptivehud.config.setting.selfAlignY": "Self Align Y",
   "adaptivehud.config.setting.textAlign": "Text Align",
   "adaptivehud.config.setting.renderRequirement": "Render Requirement",
-  "adaptivehud.config.setting.scale": "Scale"
+  "adaptivehud.config.setting.scale": "Scale",
+
+  "adaptivehud.config.error.invalid_name": "Invalid Name",
+  "adaptivehud.config.error.invalid_number": "Invalid Number",
+  "adaptivehud.config.error.invalid_color": "Invalid Color",
+  "adaptivehud.config.error.invalid_alignment": "Invalid Alignment",
+  "adaptivehud.config.error.invalid_scale": "Invalid Scale",
+  "adaptivehud.config.error.name_already_in_use": "Name already in use!"
 }

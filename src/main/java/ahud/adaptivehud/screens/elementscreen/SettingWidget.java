@@ -23,10 +23,9 @@ import java.util.stream.Collectors;
 import static ahud.adaptivehud.ConfigFiles.elementArray;
 
 public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
-    private Screen PARENT;
+    public Screen PARENT;
     private final TextRenderer textRenderer = client.textRenderer;
     private JsonObject element;
-    public static ArrayList<String> errors = new ArrayList<>();
 
     private JsonValidator validator = new JsonValidator();
 
@@ -70,7 +69,7 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
                 this.button.type = type;
                 updateButtonValue(setting, button);
             } else if (type >= 2 && type <= 6) { // 2 - 6 = Text Field
-                this.textField = new CustomTextField(textRenderer, width / 2 + width / 4 - 50, 0, 100, 20, Text.of(setting));
+                this.textField = new CustomTextField(textRenderer, width / 2 + width / 4 - 50, 0, 100, 20, Text.of(setting), SettingWidget.this);
                 if (type == 6) {
                     textField.setMaxLength(1000);
                 }
@@ -137,24 +136,24 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
 
     private void updateButtonValue(String setting, CustomButton button) {
         if (button.type == 1) {
-            button.setMessage(Text.of(element.get(setting).getAsBoolean() ? "On" : "Off"));
+            button.setMessage(Text.translatable("adaptivehud.config.button." + (element.get(setting).getAsBoolean() ? "on" : "off")));
         } else if (button.type == 7) {
             int current = element.get(setting).getAsInt();
             if (current == 0) {
-                button.setMessage(Text.of("Left"));
+                button.setMessage(Text.translatable("adaptivehud.config.button.left"));
             } else if (current == 1) {
-                button.setMessage(Text.of("Center"));
+                button.setMessage(Text.translatable("adaptivehud.config.button.center"));
             } else {
-                button.setMessage(Text.of("Right"));
+                button.setMessage(Text.translatable("adaptivehud.config.button.right"));
             }
         } else if (button.type == 8) {
             int current = element.get(setting).getAsInt();
             if (current == 0) {
-                button.setMessage(Text.of("Top"));
+                button.setMessage(Text.translatable("adaptivehud.config.button.top"));
             } else if (current == 1) {
-                button.setMessage(Text.of("Center"));
+                button.setMessage(Text.translatable("adaptivehud.config.button.center"));
             } else {
-                button.setMessage(Text.of("Bottom"));
+                button.setMessage(Text.translatable("adaptivehud.config.button.bottom"));
             }
         }
     }
@@ -168,9 +167,9 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
         if (textField.type == 3) {
             // IMPROVE HAHA, FEELS INEFFICIENT
             if (newValue.contains(" ") || newValue.isEmpty()) {
-                textField.setError(true, "Invalid name!");
+                textField.setError(true, Text.translatable("adaptivehud.config.error.invalid_name").getString());
                 return;
-            };
+            }
             List<JsonElement> deepCopyArray = elementArray.stream()
                     .map(JsonElement::deepCopy)
                     .collect(Collectors.toList());
@@ -180,7 +179,7 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
             // Checks if there's already an element with that same name
             boolean hasSameName = deepCopyArray.stream().anyMatch(elm -> elm.getAsJsonObject().get("name").getAsString().equals(newValue));
             if (hasSameName) {
-                textField.setError(true, "Name already defined!");
+                textField.setError(true, Text.translatable("adaptivehud.config.error.name_already_in_use").getString());
                 return;
             }
         }
@@ -197,7 +196,7 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
             try {
                 Integer.parseInt(newValue);
             } catch (Exception ignored) {
-                textField.setError(true, "Invalid number!");
+                textField.setError(true, Text.translatable("adaptivehud.config.error.invalid_number").getString());
                 return;
             }
         }

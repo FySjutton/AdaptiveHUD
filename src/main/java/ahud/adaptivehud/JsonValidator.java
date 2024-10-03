@@ -3,9 +3,8 @@ package ahud.adaptivehud;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import net.minecraft.text.Text;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -59,7 +58,7 @@ public class JsonValidator {
 
     public String validateColor(String check) {
         if (!COLOR_REGEX.matcher(check).matches()) {
-            return "Invalid color!";
+            return Text.translatable("adaptivehud.config.error.invalid_color").getString();
         }
         return null;
     }
@@ -71,7 +70,7 @@ public class JsonValidator {
                 !ALLOWED_POS.contains(alignment.get("selfAlignY").getAsInt()) ||
                 !ALLOWED_POS.contains(alignment.get("textAlign").getAsInt())
         ){
-            return "Invalid alignment!";
+            return Text.translatable("adaptivehud.config.error.invalid_alignment").getString();
         }
         return null;
     }
@@ -79,7 +78,7 @@ public class JsonValidator {
     private String validateScale(JsonObject advanced) {
         float scale = advanced.get("scale").getAsFloat();
         if (scale < 0 || scale >= 10) {
-            return "Invalid scale!";
+            return Text.translatable("adaptivehud.config.error.invalid_scale").getString();
         }
         return null;
     }
@@ -116,91 +115,6 @@ public class JsonValidator {
             return "Validation error: " + e.getMessage();
         }
     }
-
-
-
-
-
-//    public JsonElement repairElement(JsonElement elm) {
-//        JsonObject obj = elm.getAsJsonObject();
-//        if (!obj.has("enabled")) {obj.addProperty("enabled", true);}
-//        if (!obj.has("textColor")) {obj.addProperty("textColor", "#FFFFFF");}
-//        if (!obj.has("posX")) {obj.addProperty("posX", 0);}
-//        if (!obj.has("posY")) {obj.addProperty("posY", 0);}
-//        if (!obj.has("shadow")) {obj.addProperty("shadow", true);}
-//
-//        if (!obj.has("background")) {obj.add("background", new JsonObject());}
-//        JsonObject background = obj.get("background").getAsJsonObject();
-//        if (!background.has("enabled")) {background.addProperty("enabled", false);}
-//        if (!background.has("paddingX")) {background.addProperty("paddingX", 5);}
-//        if (!background.has("paddingY")) {background.addProperty("paddingY", 5);}
-//        if (!background.has("backgroundColor")) {background.addProperty("backgroundColor", "#0000004c");}
-//
-//        if (!obj.has("alignment")) {obj.add("alignment", new JsonObject());}
-//        JsonObject alignment = obj.get("alignment").getAsJsonObject();
-//        if (!alignment.has("itemAlignX")) {alignment.addProperty("itemAlignX", 0);}
-//        if (!alignment.has("itemAlignY")) {alignment.addProperty("itemAlignY", 0);}
-//        if (!alignment.has("selfAlignX")) {alignment.addProperty("selfAlignX", 0);}
-//        if (!alignment.has("selfAlignY")) {alignment.addProperty("selfAlignY", 0);}
-//
-//        if (!obj.has("requirement")) {obj.add("requirement", new JsonObject());}
-//        JsonObject requirement = obj.get("requirement").getAsJsonObject();
-//        if (!requirement.has("renderRequirement")) {requirement.addProperty("renderRequirement", "");}
-//
-//        if (!obj.has("advanced")) {obj.add("advanced", new JsonObject());}
-//        JsonObject advanced = obj.get("advanced").getAsJsonObject();
-//        if (!advanced.has("scale")) {advanced.addProperty("scale", 0);}
-//
-//        return elm;
-//    }
-//
-//    public String validateElement(JsonObject elm) {
-//        Pattern colorReg = Pattern.compile("^#?([0-9A-Fa-f]{6})([0-9A-Fa-f]{2})?$");
-//        ArrayList<Integer> allowedPos = new ArrayList<>(Arrays.asList(0, 1, 2));
-////        0: LEFT, TOP
-////        1: CENTER
-////        2: RIGHT, BOTTOM
-//        try {
-//            JsonObject background = elm.get("background").getAsJsonObject();
-//            JsonObject alignment = elm.get("alignment").getAsJsonObject();
-//            JsonObject advanced = elm.get("advanced").getAsJsonObject();
-//            JsonObject requirement = elm.get("requirement").getAsJsonObject();
-//
-//            elm.get("enabled").getAsBoolean();
-//            elm.get("name").getAsString();
-//            elm.get("posX").getAsInt();
-//            elm.get("posY").getAsInt();
-//            elm.get("shadow").getAsBoolean();
-//            background.get("enabled").getAsBoolean();
-//            background.get("paddingX").getAsInt();
-//            background.get("paddingY").getAsInt();
-//            requirement.get("renderRequirement").getAsString();
-//
-//            if (
-//                !(colorReg.matcher(elm.get("textColor").getAsString()).find() &&
-//                colorReg.matcher(background.get("backgroundColor").getAsString()).find())
-//            ) {
-//                return "Invalid color!";
-//            }
-//            if (
-//                !(allowedPos.contains(alignment.get("itemAlignX").getAsInt()) &&
-//                allowedPos.contains(alignment.get("itemAlignY").getAsInt()) &&
-//                allowedPos.contains(alignment.get("selfAlignX").getAsInt()) &&
-//                allowedPos.contains(alignment.get("selfAlignY").getAsInt()))
-//            ) {
-//                return "Invalid alignment!";
-//            }
-//            if (
-//                !(advanced.get("scale").getAsFloat() >= 0 &&
-//                advanced.get("scale").getAsFloat() < 10)
-//            ) {
-//                return "Invalid scale!";
-//            }
-//            return null;
-//        } catch (Exception e) {
-//            return e.getMessage();
-//        }
-//    }
 
     public String validateConfig(JsonObject elm) {
         try {
