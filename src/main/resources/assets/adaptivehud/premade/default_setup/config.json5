@@ -14,7 +14,7 @@
   // --- COLORS ---
 // All colors should be written in hex format, "#RRGGBBAA".
   "snapping_lines_color": "#FFFFFFB2",
-  "anchor_point_lines_color": "#FF0000FF",
+  "item_align_lines_color": "#FF0000FF",
 
   // --- ADVANCED ---
 /* The variable-reload cooldown in milliseconds.

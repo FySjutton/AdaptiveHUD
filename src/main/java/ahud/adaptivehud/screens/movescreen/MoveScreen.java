@@ -38,14 +38,14 @@ public class MoveScreen extends Screen {
     private double snapX = 0;
     private double snapY = 0;
 
-    private int anchorX = 0;
-    private int anchorY = 0;
+    private int itemAlignX = 0;
+    private int itemAlignY = 0;
     private int alignX = 0;
     private int alignY = 0;
 
     private boolean autoSave;
 
-    private final int anchorLineColor = new Tools().parseColor(configFile.getAsJsonObject().get("anchor_point_lines_color").getAsString());
+    private final int itemAlignLineColor = new Tools().parseColor(configFile.getAsJsonObject().get("item_align_lines_color").getAsString());
     private final int snappingLineColor = new Tools().parseColor(configFile.getAsJsonObject().get("snapping_lines_color").getAsString());
 
     public MoveScreen(Screen parent, boolean autoSave) {
@@ -67,8 +67,8 @@ public class MoveScreen extends Screen {
             int xPos = new CoordCalculators().getActualCords(dragged, dragged.get("posX").getAsInt() + alignX, client.getWindow().getScaledWidth(), width, 0, "X");
             int yPos = new CoordCalculators().getActualCords(dragged, dragged.get("posY").getAsInt() + alignY, client.getWindow().getScaledHeight(), height, 0, "Y");
 
-            context.fill(anchorX, anchorY, xPos, anchorY + 2, anchorLineColor);
-            context.fill(xPos, anchorY, xPos + 2, yPos, anchorLineColor);
+            context.fill(itemAlignX, itemAlignY, xPos, itemAlignY + 2, itemAlignLineColor);
+            context.fill(xPos, itemAlignY, xPos + 2, yPos, itemAlignLineColor);
 
             if (snapX != 0) {
                 context.fill((int) snapX, 0, (int) snapX + 1, client.currentScreen.height, snappingLineColor);
@@ -159,21 +159,21 @@ public class MoveScreen extends Screen {
                     }
 
                     JsonObject align = dragged.get("alignment").getAsJsonObject();
-                    int PanchorX = align.get("anchorPointX").getAsInt();
-                    if (PanchorX == 0) {
-                        anchorX = 0;
-                    } else if (PanchorX == 1) {
-                        anchorX = client.currentScreen.width / 2;
+                    int PitemAlignX = align.get("itemAlignX").getAsInt();
+                    if (PitemAlignX == 0) {
+                        itemAlignX = 0;
+                    } else if (PitemAlignX == 1) {
+                        itemAlignX = client.currentScreen.width / 2;
                     } else {
-                        anchorX = client.currentScreen.width;
+                        itemAlignX = client.currentScreen.width;
                     }
-                    int PanchorY = align.get("anchorPointY").getAsInt();
-                    if (PanchorY == 0) {
-                        anchorY = 0;
-                    } else if (PanchorY == 1) {
-                        anchorY = client.currentScreen.height / 2 - 1;
+                    int PitemAlignY = align.get("itemAlignY").getAsInt();
+                    if (PitemAlignY == 0) {
+                        itemAlignY = 0;
+                    } else if (PitemAlignY == 1) {
+                        itemAlignY = client.currentScreen.height / 2 - 1;
                     } else {
-                        anchorY = client.currentScreen.height - 2;
+                        itemAlignY = client.currentScreen.height - 2;
                     }
                     int PalignX = align.get("textAlignX").getAsInt();
                     if (PalignX == 0) {

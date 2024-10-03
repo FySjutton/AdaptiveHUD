@@ -5,12 +5,12 @@ import com.google.gson.JsonObject;
 public class CoordCalculators {
     public int getActualCords(JsonObject elm, int value, int max, int length, float scale, String axis) {
         // Calculate actual cords from alignments
-        int anchor = elm.get("alignment").getAsJsonObject().get("anchorPoint" + axis).getAsInt();
+        int itemAlign = elm.get("alignment").getAsJsonObject().get("itemAlign" + axis).getAsInt();
         int align = elm.get("alignment").getAsJsonObject().get("textAlign" + axis).getAsInt();
         int pos;
-        if (anchor == 1) {
+        if (itemAlign == 1) {
             pos = max / 2 + value;
-        } else if (anchor == 2) {
+        } else if (itemAlign == 2) {
             pos = max + value;
         } else {
             pos = value;
@@ -31,7 +31,7 @@ public class CoordCalculators {
         int pos;
         int specWidth = 0;
 
-        int anchor = elm.get("alignment").getAsJsonObject().get("anchorPoint" + axis).getAsInt();
+        int itemAlign = elm.get("alignment").getAsJsonObject().get("itemAlign" + axis).getAsInt();
         int align = elm.get("alignment").getAsJsonObject().get("textAlign" + axis).getAsInt();
 
         if (align == 1) {
@@ -40,9 +40,9 @@ public class CoordCalculators {
             specWidth += length;
         }
 
-        if (anchor == 1) {
+        if (itemAlign == 1) {
             pos = (left + specWidth) - max / 2;
-        } else if (anchor == 2) {
+        } else if (itemAlign == 2) {
             pos = (left + specWidth) - max;
         } else {
             pos = left + specWidth;
