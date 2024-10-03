@@ -41,16 +41,30 @@ public class ElementScreen extends Screen {
 
     @Override
     public void init() {
-        Tab[] tabs = new Tab[2];
+        Tab[] tabs = new Tab[3];
+        // Types:
+        // 1: Boolean Button
+        // 2: Text Field (no requirement)
+        // 3: Text Field (name validation)
+        // 4: Text Field (color validation)
+        // 5: Text Field (int validation)
+        // 6: Text Field (max width 1000)
+        // 7: Button (left - center - right)
+        // 8: Button (top - center - bottom)
         tabs[0] = new newTab(
-            this, "General",
-            new ArrayList<>(List.of("enabled", "name", "value", "textColor")),
-            new ArrayList<>(List.of(1, 2, 2, 2))
+            this, "General", null,
+            new ArrayList<>(List.of("enabled", "name", "value", "textColor", "posX", "posY", "shadow")),
+            new ArrayList<>(List.of(1, 2, 6, 4, 5, 5, 1))
         );
         tabs[1] = new newTab(
-            this, "Background",
-            new ArrayList<>(List.of()),
-            new ArrayList<>(List.of())
+            this, "Background", "background",
+            new ArrayList<>(List.of("enabled", "paddingX", "paddingY", "backgroundColor")),
+            new ArrayList<>(List.of(1, 5, 5, 4))
+        );
+        tabs[2] = new newTab(
+                this, "Alignment", "alignment",
+                new ArrayList<>(List.of("itemAlignX", "itemAlignY", "textAlignX", "textAlignY")),
+                new ArrayList<>(List.of(7, 8, 7, 8))
         );
 
         TabNavigationWidget tabNavigation = TabNavigationWidget.builder(this.tabManager, this.width).tabs(tabs).build();
@@ -80,11 +94,11 @@ public class ElementScreen extends Screen {
 
     private class newTab extends GridScreenTab {
         public SettingWidget settingWidget;
-        public newTab(Screen parent, String tabName, ArrayList<String> settings, ArrayList<Integer> types) {
+        public newTab(Screen parent, String tabName, String tabInd, ArrayList<String> settings, ArrayList<Integer> types) {
             super(Text.of(tabName));
             GridWidget.Adder adder = grid.createAdder(1);
 
-            settingWidget = new SettingWidget(parent, settings, types, element, width, height);
+            settingWidget = new SettingWidget(parent, tabInd, settings, types, element, width, height);
             adder.add(settingWidget);
         }
     }
@@ -172,7 +186,7 @@ public class ElementScreen extends Screen {
 //                JsonObject specElm;
 //                if (x.setting.equals("enabled") || x.setting.equals("paddingX") || x.setting.equals("paddingY") || x.setting.equals("backgroundColor")) {
 //                    specElm = elm.get("background").getAsJsonObject();
-//                } else if (x.setting.equals("anchorPointX") || x.setting.equals("anchorPointY") || x.setting.equals("textAlignX") || x.setting.equals("textAlignY")) {
+//                } else if (x.setting.equals("itemAlignX") || x.setting.equals("itemAlignY") || x.setting.equals("textAlignX") || x.setting.equals("textAlignY")) {
 //                    specElm = elm.get("alignment").getAsJsonObject();
 //                } else if (x.setting.equals("renderRequirement")) {
 //                    specElm = elm.get("requirement").getAsJsonObject();
@@ -203,7 +217,7 @@ public class ElementScreen extends Screen {
 //                if (x.button != null) {
 //                    if (x.setting.equals("shadow") || x.setting.equals("enabled")) {
 //                        specElm.addProperty(x.setting, x.button.getMessage().getString().equals(Text.translatable("adaptivehud.config.button.on").getString()));
-//                    } else if (x.setting.equals("anchorPointX") || x.setting.equals("anchorPointY") || x.setting.equals("textAlignX") || x.setting.equals("textAlignY")) {
+//                    } else if (x.setting.equals("itemAlignX") || x.setting.equals("itemAlignY") || x.setting.equals("textAlignX") || x.setting.equals("textAlignY")) {
 //                        String value = x.button.getMessage().getString();
 //                        int corN = 1;
 //                        if (value.equals(LEFT) || value.equals(TOP)) {

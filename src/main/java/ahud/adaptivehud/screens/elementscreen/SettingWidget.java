@@ -1,9 +1,9 @@
 package ahud.adaptivehud.screens.elementscreen;
 
-import ahud.adaptivehud.SettingText;
-import ahud.adaptivehud.Tools;
-import ahud.adaptivehud.screens.configscreen.ConfigScreen;
-import ahud.adaptivehud.screens.configscreen.ScrollableList;
+import ahud.adaptivehud.JsonValidator;
+import ahud.adaptivehud.screens.elementscreen.widgets.CustomTextField;
+import ahud.adaptivehud.screens.elementscreen.widgets.CustomButton;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.MinecraftClient;
@@ -19,10 +19,8 @@ import net.minecraft.text.Text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static ahud.adaptivehud.ConfigFiles.elementArray;
-import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
     private Screen PARENT;
@@ -30,10 +28,16 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
     private JsonObject element;
     public static ArrayList<String> errors = new ArrayList<>();
 
-    public SettingWidget(Screen parent, ArrayList<String> settings, ArrayList<Integer> types, JsonObject element, int width, int height) {
+    private JsonValidator validator = new JsonValidator();
+
+    public SettingWidget(Screen parent, String tabInt, ArrayList<String> settings, ArrayList<Integer> types, JsonObject element, int width, int height) {
         super(MinecraftClient.getInstance(), width, height - 24 - 25 - 10, 24, 25);
         this.PARENT = parent;
-        this.element = element;
+        if (tabInt == null) {
+            this.element = element;
+        } else {
+            this.element = element.getAsJsonObject().get(tabInt).getAsJsonObject();
+        }
 
         for (int i = 0; i < settings.size(); i++) {
             addEntry(new Entry(settings.get(i), types.get(i)));
@@ -51,24 +55,26 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
     }
 
     public class Entry extends ElementListWidget.Entry<SettingWidget.Entry> {
-        public SettingText textField;
-        public ButtonWidget button;
+        public CustomTextField textField;
+        public CustomButton button;
         public String setting;
         public Text displayText;
 
         public Entry(String item, int type) {
             this.setting = item;
             this.displayText = Text.translatable("adaptivehud.config.setting." + item);
-            if (type == 1) { // 1 = Boolean Button
-                this.button = ButtonWidget.builder(Text.empty(), btn -> toggleElement(setting, btn))
+            if (type == 1 || type == 7 || type == 8) { // 1, 7 = Button
+                this.button = CustomButton.customBuilder(Text.empty(), btn -> buttonPress(setting, this.button))
                     .dimensions(width / 2 + width / 4 - 50, 0, 100, 20)
                     .build();
-                updateBooleanValue(setting, button);
-            } else if (type == 2) { // 2 = Text Field
-                this.textField = new SettingText(textRenderer, width / 2 + width / 4 - 50, 0, 100, 20, Text.of(setting));
-                if (setting.equals("value")) {
+                this.button.type = type;
+                updateButtonValue(setting, button);
+            } else if (type >= 2 && type <= 6) { // 2 - 6 = Text Field
+                this.textField = new CustomTextField(textRenderer, width / 2 + width / 4 - 50, 0, 100, 20, Text.of(setting));
+                if (type == 6) {
                     textField.setMaxLength(1000);
                 }
+                this.textField.type = type;
                 textField.setChangedListener(newValue -> textFieldListener(newValue, setting, textField));
                 updateTextFieldText(setting, textField);
             }
@@ -113,22 +119,53 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
         }
     }
 
-    private void toggleElement(String setting, ButtonWidget button) {
-        element.addProperty(setting, !element.get(setting).getAsBoolean());
-        updateBooleanValue(setting, button);
+    private void buttonPress(String setting, CustomButton button) {
+        if (button.type == 1) {
+            element.addProperty(setting, !element.get(setting).getAsBoolean());
+        } else if (button.type == 7 || button.type == 8) {
+            // [7] 0: Left, 1: Center, 2: Right
+            // [8] 0: Top, 1: Center, 2: Bottom
+            int current = element.get(setting).getAsInt();
+            if (current == 0) {
+                element.addProperty(setting, 1);
+            } else {
+                element.addProperty(setting, current == 1 ? 2 : 0);
+            }
+        }
+        updateButtonValue(setting, button);
     }
 
-    private void updateBooleanValue(String setting, ButtonWidget button) {
-        button.setMessage(Text.of(element.get(setting).getAsBoolean() ? "On" : "Off"));
+    private void updateButtonValue(String setting, CustomButton button) {
+        if (button.type == 1) {
+            button.setMessage(Text.of(element.get(setting).getAsBoolean() ? "On" : "Off"));
+        } else if (button.type == 7) {
+            int current = element.get(setting).getAsInt();
+            if (current == 0) {
+                button.setMessage(Text.of("Left"));
+            } else if (current == 1) {
+                button.setMessage(Text.of("Center"));
+            } else {
+                button.setMessage(Text.of("Right"));
+            }
+        } else if (button.type == 8) {
+            int current = element.get(setting).getAsInt();
+            if (current == 0) {
+                button.setMessage(Text.of("Top"));
+            } else if (current == 1) {
+                button.setMessage(Text.of("Center"));
+            } else {
+                button.setMessage(Text.of("Bottom"));
+            }
+        }
     }
 
-    private void updateTextFieldText(String setting, SettingText textField) {
+    private void updateTextFieldText(String setting, CustomTextField textField) {
         textField.setText(element.get(setting).getAsString());
     }
 
-    private void textFieldListener(String newValue, String setting, SettingText textField) {
+    private void textFieldListener(String newValue, String setting, CustomTextField textField) {
         // FIX SO THE DONE BUTTON CAN'T BE PRESSED ON ERROR; INACTIVATE
-        if (setting.equals("name")) {
+        if (textField.type == 3) {
             // IMPROVE HAHA, FEELS INEFFICIENT
             if (newValue.contains(" ") || newValue.isEmpty()) {
                 textField.setError(true, "Invalid name!");
@@ -148,9 +185,19 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
             }
         }
 
-        if (setting.equals("textColor")) {
-            if (new Tools().parseColor(newValue) == null) {
-                textField.setError(true, "Invalid Color!");
+        if (textField.type == 4) {
+            String color = validator.validateColor(newValue);
+            if (color != null) {
+                textField.setError(true, color);
+                return;
+            }
+        }
+
+        if (textField.type == 5) {
+            try {
+                Integer.parseInt(newValue);
+            } catch (Exception ignored) {
+                textField.setError(true, "Invalid number!");
                 return;
             }
         }

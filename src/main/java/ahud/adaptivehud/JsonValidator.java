@@ -42,8 +42,8 @@ public class JsonValidator {
         addDefaultProperty(background, "backgroundColor", new JsonPrimitive("#0000004c"));
 
         JsonObject alignment = getOrCreateObject(obj, "alignment");
-        addDefaultProperty(alignment, "anchorPointX", new JsonPrimitive(0));
-        addDefaultProperty(alignment, "anchorPointY", new JsonPrimitive(0));
+        addDefaultProperty(alignment, "itemAlignX", new JsonPrimitive(0));
+        addDefaultProperty(alignment, "itemAlignY", new JsonPrimitive(0));
         addDefaultProperty(alignment, "textAlignX", new JsonPrimitive(0));
         addDefaultProperty(alignment, "textAlignY", new JsonPrimitive(0));
 
@@ -56,17 +56,16 @@ public class JsonValidator {
         return elm;
     }
 
-    private String validateColor(JsonObject elm, JsonObject background) {
-        if (!COLOR_REGEX.matcher(elm.get("textColor").getAsString()).find() ||
-                !COLOR_REGEX.matcher(background.get("backgroundColor").getAsString()).find()) {
+    public String validateColor(String check) {
+        if (!COLOR_REGEX.matcher(check).matches()) {
             return "Invalid color!";
         }
         return null;
     }
 
     private String validateAlignment(JsonObject alignment) {
-        if (!ALLOWED_POS.contains(alignment.get("anchorPointX").getAsInt()) ||
-                !ALLOWED_POS.contains(alignment.get("anchorPointY").getAsInt()) ||
+        if (!ALLOWED_POS.contains(alignment.get("itemAlignX").getAsInt()) ||
+                !ALLOWED_POS.contains(alignment.get("itemAlignY").getAsInt()) ||
                 !ALLOWED_POS.contains(alignment.get("textAlignX").getAsInt()) ||
                 !ALLOWED_POS.contains(alignment.get("textAlignY").getAsInt())) {
             return "Invalid alignment!";
@@ -99,8 +98,10 @@ public class JsonValidator {
             background.get("paddingY").getAsInt();
             requirement.get("renderRequirement").getAsString();
 
-            String colorValidation = validateColor(elm, background);
-            if (colorValidation != null) return colorValidation;
+            String textColor = validateColor(elm.get("textColor").getAsString());
+            if (textColor != null) return textColor;
+            String backgroundColor = validateColor(background.get("backgroundColor").getAsString());
+            if (backgroundColor != null) return backgroundColor;
 
             String alignmentValidation = validateAlignment(alignment);
             if (alignmentValidation != null) return alignmentValidation;
@@ -134,8 +135,8 @@ public class JsonValidator {
 //
 //        if (!obj.has("alignment")) {obj.add("alignment", new JsonObject());}
 //        JsonObject alignment = obj.get("alignment").getAsJsonObject();
-//        if (!alignment.has("anchorPointX")) {alignment.addProperty("anchorPointX", 0);}
-//        if (!alignment.has("anchorPointY")) {alignment.addProperty("anchorPointY", 0);}
+//        if (!alignment.has("itemAlignX")) {alignment.addProperty("itemAlignX", 0);}
+//        if (!alignment.has("itemAlignY")) {alignment.addProperty("itemAlignY", 0);}
 //        if (!alignment.has("textAlignX")) {alignment.addProperty("textAlignX", 0);}
 //        if (!alignment.has("textAlignY")) {alignment.addProperty("textAlignY", 0);}
 //
@@ -179,8 +180,8 @@ public class JsonValidator {
 //                return "Invalid color!";
 //            }
 //            if (
-//                !(allowedPos.contains(alignment.get("anchorPointX").getAsInt()) &&
-//                allowedPos.contains(alignment.get("anchorPointY").getAsInt()) &&
+//                !(allowedPos.contains(alignment.get("itemAlignX").getAsInt()) &&
+//                allowedPos.contains(alignment.get("itemAlignY").getAsInt()) &&
 //                allowedPos.contains(alignment.get("textAlignX").getAsInt()) &&
 //                allowedPos.contains(alignment.get("textAlignY").getAsInt()))
 //            ) {
@@ -212,7 +213,7 @@ public class JsonValidator {
 
             if (
                 new Tools().parseColor(elm.get("snapping_lines_color").getAsString()) == 0 ||
-                new Tools().parseColor(elm.get("anchor_point_lines_color").getAsString()) == 0
+                new Tools().parseColor(elm.get("item_align_lines_color").getAsString()) == 0
             ) {
                 return "Invalid color in config file!";
             }

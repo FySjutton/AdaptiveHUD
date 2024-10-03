@@ -1,17 +1,17 @@
-package ahud.adaptivehud;
+package ahud.adaptivehud.screens.elementscreen.widgets;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 
-import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 import static ahud.adaptivehud.screens.elementscreen.SettingWidget.errors;
 
-public class SettingText extends TextFieldWidget {
+public class CustomTextField extends TextFieldWidget {
     public boolean error;
+    public int type;
     public String errorText;
 
-    public SettingText(TextRenderer textRenderer, int x, int y, int width, int height, Text text) {
+    public CustomTextField(TextRenderer textRenderer, int x, int y, int width, int height, Text text) {
         super(textRenderer, x, y, width, height, text);
     }
 
