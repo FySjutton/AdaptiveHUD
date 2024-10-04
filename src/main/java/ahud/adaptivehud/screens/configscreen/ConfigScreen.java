@@ -30,15 +30,19 @@ import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 @Environment(EnvType.CLIENT)
 public class ConfigScreen extends Screen {
-    private final Screen PARENT;
     public final List<JsonElement> BACKUP_ELEMENT_ARR = new ArrayList<>();
     private final List<String> DELETED_FILES = new ArrayList<>();
+    private final Screen PARENT;
+
     private final Identifier DISCORD_TEXTURE = Identifier.of("adaptivehud", "textures/gui/discord_logo.png");
-    private static final Text DISCORD_TEXT = Text.translatable("adaptivehud.config.discordText");
-    private static final Text DEFAULT_NAME = Text.translatable("adaptivehud.config.defaultName");
+    private final Identifier SEARCH_ICON = Identifier.ofVanilla("icon/search");
     private final boolean renderDiscordButton = configFile.getAsJsonObject().get("render_get_help_button").getAsBoolean();
 
-    private ScrollableList scrollableList;
+    private static final Text DISCORD_TEXT = Text.translatable("adaptivehud.config.discordText");
+    private static final Text DEFAULT_NAME = Text.translatable("adaptivehud.config.defaultName");
+
+    private ElementWidget elementWidget;
+    private SearchBar searchBar;
     private Boolean fileChanged = false;
     private int discordWidth;
 
@@ -80,15 +84,19 @@ public class ConfigScreen extends Screen {
                 .build();
         addDrawableChild(saveAndExitElm);
 
+        elementWidget = new ElementWidget(this, width, height);
+        addDrawableChild(elementWidget);
+
+        SearchBar searchBarElm = new SearchBar(textRenderer, width, elementWidget);
+        addDrawableChild(searchBarElm);
+        searchBar = searchBarElm;
+
         if (renderDiscordButton) {
             ButtonWidget discordButton = ButtonWidget.builder(Text.literal(""), btn -> openDiscord())
-                    .dimensions(width - discordWidth - 10, 20, discordWidth, 20)
+                    .dimensions(width - discordWidth - 18, 9, discordWidth, 20)
                     .build();
             addDrawableChild(discordButton);
         }
-
-        scrollableList = new ScrollableList(height, width, this);
-        addDrawableChild(scrollableList);
 
         changesMade();
     }
@@ -96,18 +104,21 @@ public class ConfigScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredTextWithShadow(textRenderer, "AdaptiveHUD", width / 2, 20, 0xffffff);
+        context.drawCenteredTextWithShadow(textRenderer, "AdaptiveHUD", width / 2, 15, 0xffffff);
+        context.drawGuiTexture(SEARCH_ICON, width / 2 + 1, 34, 12, 12);
 
         if (renderDiscordButton) {
-            context.drawTexture(DISCORD_TEXTURE, width - discordWidth - 5, 23, 0, 0, 14, 14, 14, 14);
-            context.drawText(textRenderer, DISCORD_TEXT, width - discordWidth + 14, (int) (26.5), 0xFFFFFF, true);
+            context.drawTexture(DISCORD_TEXTURE, width - discordWidth - 13, 12, 0, 0, 14, 14, 14, 14);
+            context.drawText(textRenderer, DISCORD_TEXT, width - discordWidth + 6, (int) (15.5), 0xFFFFFF, true);
         }
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         super.mouseReleased(mouseX, mouseY, button);
-        setFocused(null);
+        if (!searchBar.isFocused()) {
+            setFocused(null);
+        }
         return true;
     }
 
@@ -135,7 +146,8 @@ public class ConfigScreen extends Screen {
             }
             newObject.addProperty("name", newName);
             elementArray.add(newElement);
-            scrollableList.updateElementList(width);
+            elementWidget.updateElementList(null);
+            searchBar.setText("");
             changesMade();
         } catch (Exception e) {
             LOGGER.error("Failed to create new element!");
@@ -161,7 +173,8 @@ public class ConfigScreen extends Screen {
         for (JsonElement elm : elementArray) {
             BACKUP_ELEMENT_ARR.add(elm.deepCopy());
         }
-        scrollableList.updateElementList(width);
+        elementWidget.updateElementList(null);
+        searchBar.setText("");
     }
 
     private void moveElements() {
@@ -184,11 +197,11 @@ public class ConfigScreen extends Screen {
         saveButtonElm.setMessage(Text.translatable("adaptivehud.config." + (fileChanged ? "save" : "done")));
     }
 
-    public void deleteElement(JsonElement element, int width) {
+    public void deleteElement(JsonElement element) {
         elementArray.remove(element);
         String deleted_file_name = element.getAsJsonObject().get("name").getAsString();
         addDeletedFile(deleted_file_name);
-        scrollableList.updateElementList(width);
+        elementWidget.updateElementList(searchBar.getText());
         changesMade();
     }
 

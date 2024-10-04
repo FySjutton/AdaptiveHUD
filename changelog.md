@@ -1,3 +1,8 @@
+### Beta Version: v2.0.0-beta.2+1.21 changelog
+**Changes made since v2.0.0-beta.1+1.21**
+
+- .
+
 ### Beta Version: v2.0.0-beta.1+1.21 changelog
 **Changes made since v1.0.1+XXX**
 
@@ -8,7 +13,6 @@
 - Renamed "text align" to "self align"
 - Added actual text align
 - New option if everything should be rendered on F1
-
 
 - **NOTE**: Your current config-file won't work, and will make the game crash! Delete "/minecraft/config/adaptivehud/config.json5" and let the game generate a new one!
 

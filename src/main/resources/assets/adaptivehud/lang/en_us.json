@@ -7,6 +7,7 @@
   "adaptivehud.variable.render_req_error": "#RenderReqError",
   "adaptivehud.variable.noServerFound": "No Server",
 
+  "adaptivehud.config.title": "AdaptiveHUD",
   "adaptivehud.config.cancel": "Cancel",
   "adaptivehud.config.done": "Done",
   "adaptivehud.config.save_error": "Error: ",
