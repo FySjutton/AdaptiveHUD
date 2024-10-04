@@ -75,12 +75,16 @@ public class JsonValidator {
         return null;
     }
 
-    private String validateScale(JsonObject advanced) {
-        float scale = advanced.get("scale").getAsFloat();
-        if (scale < 0 || scale >= 10) {
+    public String validateScale(String value) {
+        try {
+            float scale = Float.parseFloat(value);
+            if (scale < 0 || scale >= 10) {
+                return Text.translatable("adaptivehud.config.error.invalid_scale").getString();
+            }
+            return null;
+        } catch (Exception e) {
             return Text.translatable("adaptivehud.config.error.invalid_scale").getString();
         }
-        return null;
     }
 
     public String validateElement(JsonObject elm) {
@@ -109,7 +113,7 @@ public class JsonValidator {
             if (alignmentValidation != null) return alignmentValidation;
 
             // Same as the one above, since it's the last one it'll return null if no error at all
-            return validateScale(advanced);
+            return validateScale(advanced.get("scale").getAsString());
 
         } catch (Exception e) {
             return "Validation error: " + e.getMessage();

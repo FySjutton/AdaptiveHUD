@@ -74,11 +74,22 @@ public class ValueParser {
 
     public int renderCheck(String text) {
         try {
+            // Parse variables
+            Pattern pattern = Pattern.compile("\\{((?:\\w+)+(?: *-[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*(?: *--[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)}");
+            Matcher matcher = pattern.matcher(text);
+            StringBuilder result = new StringBuilder();
 
-            // FIX THIS HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-//            text = parseVariables(text);
-            return !parseBooleanExpression(text) ? 0 : 1;
+            while (matcher.find()) {
+                String variableString = matcher.group(1);
+                String varValue = parseVariable(variableString);
+                matcher.appendReplacement(result, varValue); // wont be null cuz of the regex above
+            }
+            matcher.appendTail(result);
+
+            // Parse rest
+            return !parseBooleanExpression(result.toString()) ? 0 : 1;
         } catch (Exception e) {
+            LOGGER.info(e.getMessage());
             return -1;
         }
     }

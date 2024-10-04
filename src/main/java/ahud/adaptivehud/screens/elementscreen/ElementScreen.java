@@ -50,7 +50,7 @@ public class ElementScreen extends Screen {
         this.addDrawableChild(doneBtn);
         this.doneButton = doneBtn;
 
-        Tab[] tabs = new Tab[3];
+        Tab[] tabs = new Tab[5];
         // Types:
         // 1: Boolean Button
         // 2: Text Field (no requirement)
@@ -60,6 +60,7 @@ public class ElementScreen extends Screen {
         // 6: Text Field (max width 1000)
         // 7: Button (left - center - right)
         // 8: Button (top - center - bottom)
+        // 9: Text Field (scale validation, min 0 max 10, 0 -> DEFAULT)
         tabs[0] = new newTab(
             this, "general", null,
             new ArrayList<>(List.of("enabled", "name", "value", "textColor", "posX", "posY", "shadow")),
@@ -74,6 +75,16 @@ public class ElementScreen extends Screen {
                 this, "alignment", "alignment",
                 new ArrayList<>(List.of("itemAlignX", "itemAlignY", "selfAlignX", "selfAlignY", "textAlign")),
                 new ArrayList<>(List.of(7, 8, 7, 8, 7))
+        );
+        tabs[3] = new newTab(
+                this, "requirement", "requirement",
+                new ArrayList<>(List.of("renderRequirement")),
+                new ArrayList<>(List.of(2))
+        );
+        tabs[4] = new newTab(
+                this, "advanced", "advanced",
+                new ArrayList<>(List.of("scale")),
+                new ArrayList<>(List.of(9))
         );
 
         TabNavigationWidget tabNavigation = TabNavigationWidget.builder(this.tabManager, this.width).tabs(tabs).build();

@@ -1,7 +1,16 @@
-### Beta Version: v2.0.0-beta.1+1.21 changlog
+### Beta Version: v2.0.0-beta.1+1.21 changelog
 **Changes made since v1.0.1+XXX**
 
-- .
+- Switched to tabs in the configuration menu
+- Rewrote the configuration system (better error handling)
+- Rewrote json validation system
+- Parse conditions from the inside-out, nest-support
+- Renamed "text align" to "self align"
+- Added actual text align
+- New option if everything should be rendered on F1
+
+
+- **NOTE**: Your current config-file won't work, and will make the game crash! Delete "/minecraft/config/adaptivehud/config.json5" and let the game generate a new one!
 
 ## Release: v1.0.1+XXX changelog
 **Changes made since v1.0.0+XXX**

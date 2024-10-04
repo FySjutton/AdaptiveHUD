@@ -68,7 +68,7 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
                     .build();
                 this.button.type = type;
                 updateButtonValue(setting, button);
-            } else if (type >= 2 && type <= 6) { // 2 - 6 = Text Field
+            } else if ((type >= 2 && type <= 6) || type == 9) { // 2 - 6 = Text Field
                 this.textField = new CustomTextField(textRenderer, width / 2 + width / 4 - 50, 0, 100, 20, Text.of(setting), SettingWidget.this);
                 if (type == 6) {
                     textField.setMaxLength(1000);
@@ -182,26 +182,32 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
                 textField.setError(true, Text.translatable("adaptivehud.config.error.name_already_in_use").getString());
                 return;
             }
-        }
-
-        if (textField.type == 4) {
+        } else if (textField.type == 4) {
             String color = validator.validateColor(newValue);
             if (color != null) {
                 textField.setError(true, color);
                 return;
             }
-        }
-
-        if (textField.type == 5) {
+        } else if (textField.type == 5) {
             try {
                 Integer.parseInt(newValue);
             } catch (Exception ignored) {
                 textField.setError(true, Text.translatable("adaptivehud.config.error.invalid_number").getString());
                 return;
             }
+        } else if (textField.type == 9) {
+            String scale = validator.validateScale(newValue);
+            if (scale != null) {
+                textField.setError(true, scale);
+                return;
+            }
         }
 
         textField.setError(false, null);
-        element.addProperty(setting, newValue);
+        if (textField.type == 9 && newValue.isEmpty()) {
+            element.addProperty(setting, "0");
+        } else {
+            element.addProperty(setting, newValue);
+        }
     }
 }
