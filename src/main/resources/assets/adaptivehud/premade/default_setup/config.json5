@@ -6,6 +6,8 @@
   // --- SETTINGS ---
 // If elements should be rendered while the debug screen is enabled. (F3)
   "render_on_debug": false,
+// If elements should be rendered while the hud is hidden. (F1)
+  "render_on_f1": false,
 // If the "Get help button" in the main meny should render.
   "render_get_help_button": true,
 // Maximum target block distance, default is "20.0".

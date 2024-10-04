@@ -38,6 +38,12 @@ public class RenderHUD {
             }
         }
 
+        if (!configFile.getAsJsonObject().get("render_on_f1").getAsBoolean()) {
+            if (client.options.hudHidden) {
+                return;
+            }
+        }
+
         if (this.USE_VALUE) {
             complexVARS.generateCommon();
 
