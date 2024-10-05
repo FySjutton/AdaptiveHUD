@@ -181,7 +181,7 @@ public class ConfigScreen extends Screen {
         MinecraftClient.getInstance().setScreen(new MoveScreen(this, false));
     }
 
-    public void changesMade() {
+    protected void changesMade() {
         fileChanged = !elementArray.equals(BACKUP_ELEMENT_ARR);
 
         ButtonWidget reloadElementsElm = (ButtonWidget) children().get(2);
@@ -197,7 +197,7 @@ public class ConfigScreen extends Screen {
         saveButtonElm.setMessage(Text.translatable("adaptivehud.config." + (fileChanged ? "save" : "done")));
     }
 
-    public void deleteElement(JsonElement element) {
+    protected void deleteElement(JsonElement element) {
         elementArray.remove(element);
         String deleted_file_name = element.getAsJsonObject().get("name").getAsString();
         addDeletedFile(deleted_file_name);
@@ -205,7 +205,7 @@ public class ConfigScreen extends Screen {
         changesMade();
     }
 
-    private void openDiscord() {
+    protected void openDiscord() {
         try {
             Util.getOperatingSystem().open("https://discord.gg/tqn38v6w7k");
             LOGGER.info("Opening discord support server invite link in browser... (https://discord.gg/tqn38v6w7k)");
@@ -221,7 +221,7 @@ public class ConfigScreen extends Screen {
         Util.getOperatingSystem().open(folder);
     }
 
-    public void addDeletedFile(String oldFileName) {
+    protected void addDeletedFile(String oldFileName) {
         if (!DELETED_FILES.contains(oldFileName)) {
             if (BACKUP_ELEMENT_ARR.toString().contains("\"name\":\"" + oldFileName + "\",")) {
                 DELETED_FILES.add(oldFileName);

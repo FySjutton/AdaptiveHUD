@@ -41,7 +41,7 @@ public class ElementWidget extends ElementListWidget<ElementWidget.Entry> {
         updateElementList(null);
     }
 
-    public void updateElementList(String search) {
+    protected void updateElementList(String search) {
         clearEntries();
 
         for (JsonElement element : elementArray) {

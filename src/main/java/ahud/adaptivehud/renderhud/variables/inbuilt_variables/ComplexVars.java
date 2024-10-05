@@ -17,12 +17,12 @@ public class ComplexVars {
     private double oldY = 0;
     private double oldZ = 0;
 
-    public double changeX;
-    public double changeY;
-    public double changeZ;
+    protected double changeX;
+    protected double changeY;
+    protected double changeZ;
 
-    public HitResult targetBlock;
-    public HitResult targetBlockFluid;
+    protected HitResult targetBlock;
+    protected HitResult targetBlockFluid;
 
     public void generateCommon() {
         // ALL ELEMENTS ARE LOADED EACH FRAME; EVEN IF THEY WONT BE USED LATER: PERFORMENCE ISSUE!!! FIX

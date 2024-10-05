@@ -1,7 +1,7 @@
 package ahud.adaptivehud.renderhud.variables.inbuilt_variables;
 
+import ahud.adaptivehud.renderhud.variables.annotations.LocalFlagName;
 import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlag;
-import ahud.adaptivehud.renderhud.variables.annotations.SpecialFlagName;
 import com.mojang.blaze3d.platform.GlDebugInfo;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
@@ -177,7 +177,7 @@ public class DefaultVariables {
 
     // ----- BETA.2 BELOW
 
-    public String key_pressed(@SpecialFlagName("KEY") String scancode) {
+    public String key_pressed(@LocalFlagName("KEY") String scancode) {
         // All scancodes can be found at "https://www.glfw.org/docs/3.3/group__keys.html".
         // For example, "R" is 82.
         return String.valueOf(GLFW.glfwGetKey(client.getWindow().getHandle(), Integer.parseInt(scancode)) == GLFW.GLFW_PRESS);
