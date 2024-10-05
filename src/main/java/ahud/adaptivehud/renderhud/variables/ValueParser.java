@@ -1,9 +1,12 @@
 package ahud.adaptivehud.renderhud.variables;
 
 import ahud.adaptivehud.AdaptiveHudRegistry;
+import ahud.adaptivehud.renderhud.variables.annotations.RequiresAttributes;
 import ahud.adaptivehud.renderhud.variables.annotations.LocalFlagName;
 import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlag;
 import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlagCont;
+import ahud.adaptivehud.renderhud.variables.attributes.AttributeParser;
+import ahud.adaptivehud.renderhud.variables.attributes.AttributeResult;
 import com.udojava.evalex.Expression;
 import net.minecraft.text.Text;
 
@@ -14,8 +17,6 @@ import java.util.HashMap;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class ValueParser {
     public String parseValue(String text) {
@@ -75,6 +76,7 @@ public class ValueParser {
     public int renderCheck(String text) {
         try {
             // Parse variables
+            // CHANGE PATTERN; (.attributes not included)!
             Pattern pattern = Pattern.compile("\\{((?:\\w+)+(?: *-[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*(?: *--[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)}");
             Matcher matcher = pattern.matcher(text);
             StringBuilder result = new StringBuilder();
@@ -94,7 +96,7 @@ public class ValueParser {
     }
 
     private String parseVariable(String text) {
-        Pattern variablePattern = Pattern.compile("(\\w+)+((?: *-[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)((?: *--[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)");
+        Pattern variablePattern = Pattern.compile("(\\w+)((?:\\.\\w+)*)((?: *-[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)((?: *--[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)");
         Matcher matcher = variablePattern.matcher(text);
         if (matcher.matches()) {
             String varName = matcher.group(1);
@@ -102,8 +104,9 @@ public class ValueParser {
                 Method method = new AdaptiveHudRegistry().loadVariable(varName);
 
                 if (method != null) {
-                    String globalFlagString = matcher.group(2).replaceAll(" ", "");
-                    String flagString = matcher.group(3).replaceAll(" ", ""); // WILL GET ERROR IF NULL?
+                    String[] attributes = matcher.group(2).substring(1).split("\\.");
+                    String globalFlagString = matcher.group(3).replaceAll(" ", "");
+                    String flagString = matcher.group(4).replaceAll(" ", ""); // WILL GET ERROR IF NULL?
 
                     // Global Variables:
                     HashMap<String, String[]> flags = new HashMap<>();
@@ -117,19 +120,6 @@ public class ValueParser {
                                 } else {
                                     flags.put(x, null);
                                 }
-                            }
-                        }
-                    }
-
-                    if (method.isAnnotationPresent(SetDefaultGlobalFlag.class)) {
-                        SetDefaultGlobalFlag annFlag = method.getAnnotation(SetDefaultGlobalFlag.class);
-                        if (!flags.containsKey(annFlag.flag())) {
-                            flags.put(annFlag.flag(), annFlag.values());
-                        }
-                    } else if (method.isAnnotationPresent(SetDefaultGlobalFlagCont.class)) {
-                        for (SetDefaultGlobalFlag x : method.getAnnotation(SetDefaultGlobalFlagCont.class).value()) {
-                            if (!flags.containsKey(x.flag())) {
-                                flags.put(x.flag(), x.values());
                             }
                         }
                     }
@@ -166,8 +156,37 @@ public class ValueParser {
                         }
                     }
 
+                    String varValue;
+                    if (attributes.length > 0) {
+                        Object result = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), parameters);
+                        AttributeResult parsedResult = new AttributeParser().parseAttributes(attributes, result);
+                        method = parsedResult.getMethod();
+                        Object resultText = parsedResult.getValue();
+                        if (resultText instanceof String) {
+                            varValue = String.valueOf(resultText);
+                        } else {
+                            return null;
+                        }
+                    } else if (!method.isAnnotationPresent(RequiresAttributes.class)) {
+                        varValue = String.valueOf(method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), parameters));
+                    } else {
+                        return null;
+                    }
+
+                    if (method.isAnnotationPresent(SetDefaultGlobalFlag.class)) {
+                        SetDefaultGlobalFlag annFlag = method.getAnnotation(SetDefaultGlobalFlag.class);
+                        if (!flags.containsKey(annFlag.flag())) {
+                            flags.put(annFlag.flag(), annFlag.values());
+                        }
+                    } else if (method.isAnnotationPresent(SetDefaultGlobalFlagCont.class)) {
+                        for (SetDefaultGlobalFlag x : method.getAnnotation(SetDefaultGlobalFlagCont.class).value()) {
+                            if (!flags.containsKey(x.flag())) {
+                                flags.put(x.flag(), x.values());
+                            }
+                        }
+                    }
+
                     // Call function and parse normal variables
-                    String varValue = String.valueOf(method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), parameters));
                     varValue = new FlagParser().parseFlags(varValue, flags);
                     return varValue;
                 }

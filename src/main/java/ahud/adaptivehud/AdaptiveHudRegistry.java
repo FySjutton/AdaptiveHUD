@@ -43,8 +43,6 @@ public class AdaptiveHudRegistry {
             return false;
         }
         if (method.getParameters().length == 2) {
-            LOGGER.info(String.valueOf(method.getParameters()[0].getType()));
-            LOGGER.info(String.valueOf(method.getParameters()[1].getType()));
             if (method.getParameters()[0].getType() == String.class && method.getParameters()[1].getType() == String[].class) {
                 FLAGS.put(name, method);
                 return true;

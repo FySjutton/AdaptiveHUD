@@ -1,5 +1,6 @@
 package ahud.adaptivehud.renderhud.variables.inbuilt_variables;
 
+import ahud.adaptivehud.renderhud.variables.annotations.RequiresAttributes;
 import ahud.adaptivehud.renderhud.variables.annotations.LocalFlagName;
 import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlag;
 import com.mojang.blaze3d.platform.GlDebugInfo;
@@ -31,6 +32,16 @@ public class DefaultVariables {
     MinecraftClient client = MinecraftClient.getInstance();
     PlayerEntity player = MinecraftClient.getInstance().player;
     BlockPos playerPos = client.player.getBlockPos();
+
+    @RequiresAttributes
+    public PlayerEntity player() {
+        return player;
+    }
+
+//    @RequiresAttributes
+//    public PlayerEntity targetentity() {
+//        return player;
+//    }
 
     // ----- BETA.5 BELOW
     public String display_name() {
