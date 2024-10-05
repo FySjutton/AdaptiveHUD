@@ -1,8 +1,9 @@
 package ahud.adaptivehud.renderhud.variables;
 
+import ahud.adaptivehud.AdaptiveHudRegistry;
+import ahud.adaptivehud.renderhud.variables.annotations.LocalFlagName;
 import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlag;
 import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlagCont;
-import ahud.adaptivehud.renderhud.variables.annotations.SpecialFlagName;
 import com.udojava.evalex.Expression;
 import net.minecraft.text.Text;
 
@@ -15,7 +16,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
-import static ahud.adaptivehud.AdaptiveHUD.variableRegister;
 
 public class ValueParser {
     public String parseValue(String text) {
@@ -89,7 +89,6 @@ public class ValueParser {
             // Parse rest
             return !parseBooleanExpression(result.toString()) ? 0 : 1;
         } catch (Exception e) {
-            LOGGER.info(e.getMessage());
             return -1;
         }
     }
@@ -99,9 +98,8 @@ public class ValueParser {
         Matcher matcher = variablePattern.matcher(text);
         if (matcher.matches()) {
             String varName = matcher.group(1);
-
             try {
-                Method method = variableRegister.loadVariable(varName);
+                Method method = new AdaptiveHudRegistry().loadVariable(varName);
 
                 if (method != null) {
                     String globalFlagString = matcher.group(2).replaceAll(" ", "");
@@ -111,12 +109,14 @@ public class ValueParser {
                     HashMap<String, String[]> flags = new HashMap<>();
 
                     if (!globalFlagString.isEmpty()) {
-                        for (String x : globalFlagString.split(" *-")) {
-                            if (x.contains("=")) {
-                                String[] valueFlag = x.split("=");
-                                flags.put(valueFlag[0], valueFlag[1].split("(?<!\\\\);"));
-                            } else {
-                                flags.put(x, null);
+                        for (String x : globalFlagString.split("-")) {
+                            if (!x.isEmpty()) {
+                                if (x.contains("=")) {
+                                    String[] valueFlag = x.split("=");
+                                    flags.put(valueFlag[0], valueFlag[1].split("(?<!\\\\);"));
+                                } else {
+                                    flags.put(x, null);
+                                }
                             }
                         }
                     }
@@ -153,8 +153,8 @@ public class ValueParser {
 
                     for (int i = 0; i < params.length; i++) {
                         Parameter param = params[i];
-                        if (param.isAnnotationPresent(SpecialFlagName.class)) {
-                            String keyName = param.getAnnotation(SpecialFlagName.class).value();
+                        if (param.isAnnotationPresent(LocalFlagName.class)) {
+                            String keyName = param.getAnnotation(LocalFlagName.class).value();
                             if (localFlags.containsKey(keyName)) {
                                 boolean paramBoolean = param.getType() == Boolean.class;
                                 if (localFlags.get(keyName) != null) {
