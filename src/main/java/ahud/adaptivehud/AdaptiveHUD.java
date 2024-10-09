@@ -1,6 +1,8 @@
 package ahud.adaptivehud;
 
 import ahud.adaptivehud.renderhud.RenderHUD;
+import ahud.adaptivehud.renderhud.variables.attributes.attribute_classes.Item;
+import ahud.adaptivehud.renderhud.variables.attributes.attribute_classes.Player;
 import ahud.adaptivehud.renderhud.variables.inbuilt_flags.DefaultFlags;
 import ahud.adaptivehud.renderhud.variables.inbuilt_variables.ComplexVars;
 import ahud.adaptivehud.renderhud.variables.inbuilt_variables.DefaultVariables;
@@ -12,8 +14,11 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
@@ -30,6 +35,7 @@ public class AdaptiveHUD implements ModInitializer {
 
 	public static final Map<String, Method> VARIABLES = new HashMap<>();
 	public static final Map<String, Method> FLAGS = new HashMap<>();
+	public static final Map<Class<?>, Class<?>> ATTRIBUTE_CLASSES = new HashMap<>();
 
 	private static final KeyBinding reloadElementsKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			Text.translatable("adaptivehud.key.reloadElements").getString(),
@@ -90,5 +96,9 @@ public class AdaptiveHUD implements ModInitializer {
 		}
 
 		new DefaultFlags().loadNonValueFlags();
+
+		registry.registerAttribute(ItemStack.class, Item.class);
+		registry.registerAttribute(PlayerEntity.class, Player.class); // idk seem to need both
+		registry.registerAttribute(ClientPlayerEntity.class, Player.class);
 	}
 }

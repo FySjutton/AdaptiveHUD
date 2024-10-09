@@ -1,13 +1,14 @@
 package ahud.adaptivehud.renderhud.variables.attributes.attribute_classes;
 
 import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlag;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
 public class Player {
     private final PlayerEntity player;
 
-    public Player(PlayerEntity player) {
+    public Player(ClientPlayerEntity player) {
         this.player = player;
     }
 

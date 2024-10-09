@@ -72,4 +72,8 @@ public class AdaptiveHudRegistry {
             return null;
         }
     }
+
+    public void registerAttribute(Class<?> requiredClass, Class<?> attributeClass) {
+        ATTRIBUTE_CLASSES.put(requiredClass, attributeClass);
+    }
 }

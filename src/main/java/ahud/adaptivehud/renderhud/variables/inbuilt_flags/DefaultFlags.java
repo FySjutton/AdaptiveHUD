@@ -20,8 +20,6 @@ public class DefaultFlags {
         for (Method x : methods) {
             String name = x.getName();
             if (!name.equals("loadNonValueFlags")) {
-                LOGGER.info("PUTTINg " + name);
-                LOGGER.info(String.valueOf(x));
                 flags.put(name, x);
             }
         }
