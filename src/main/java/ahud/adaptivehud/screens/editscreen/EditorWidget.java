@@ -11,6 +11,8 @@ import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.StringHelper;
+import net.minecraft.util.Util;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,13 @@ public class EditorWidget extends ClickableWidget implements Drawable {
     private int maxVisibleLines;
 
     private List<OrderedText> lines = new ArrayList<>();
-    private int cursorOnLine = 0;
+    private List<OrderedText> displayLines = new ArrayList<>();
+    private int selectionStart = 0;
+    private int cursorY = 0;
+    private int cursorX = 0;
+
+    private long lastTime = 0;
+    private boolean showCursor = true;
 
     public EditorWidget(TextRenderer textRenderer, int x, int y, int width, int height, Text text) {
         super(x, y, width, height, text);
@@ -39,21 +47,33 @@ public class EditorWidget extends ClickableWidget implements Drawable {
         Identifier identifier = TEXTURES.get(this.isNarratable(), this.isFocused());
         context.drawGuiTexture(identifier, this.getX(), this.getY(), this.getWidth(), this.getHeight());
 
-//        List<OrderedText> lines = textRenderer.wrapLines(StringVisitable.plain(text), width - 10);
-        List<OrderedText> cutList = lines;
-        if (maxVisibleLines < lines.size()) {
-            if (scroll > lines.size() - maxVisibleLines) {
-                scroll --;
-            }
-            cutList = lines.subList(lines.size() - scroll < maxVisibleLines ? lines.size() - maxVisibleLines : scroll, Math.min(scroll + maxVisibleLines, lines.size()));
-        }
         int y = getY() + 5;
-        for (OrderedText line : cutList) {
+        for (OrderedText line : displayLines) {
             if (y + 10 >= height) {
                 break;
             }
             context.drawText(textRenderer, line, getX() + 5, y, 0xFFFFFFFF, true);
             y += 10;
+        }
+
+        if (showCursor && this.isFocused()) {
+            context.fill(selectionStart + 5, (cursorY) * 10 + 5 - 2, selectionStart + 5 + 1, cursorY * 10 + 5 + 8, 0xFFFFFFFF);
+
+        }
+        if (Util.getMeasuringTimeMs() > lastTime + 530) {
+            lastTime = Util.getMeasuringTimeMs();
+            showCursor = !showCursor;
+        }
+    }
+
+    private void updateDisplayLines() {
+        if (maxVisibleLines < lines.size()) {
+            if (scroll > lines.size() - maxVisibleLines) {
+                scroll = lines.size() - maxVisibleLines;
+            }
+            displayLines = lines.subList(lines.size() - scroll < maxVisibleLines ? lines.size() - maxVisibleLines : scroll, Math.min(scroll + maxVisibleLines, lines.size()));
+        } else {
+            displayLines = lines;
         }
     }
 
@@ -62,16 +82,13 @@ public class EditorWidget extends ClickableWidget implements Drawable {
         int length = 0;
         boolean found = false;
         for (int i = 0; i < lines.size(); i++) {
-            StringBuilder builder = new StringBuilder();
-
-            lines.get(i).accept((index, style, codePoint) -> {
-                builder.append(Character.toChars(codePoint));
-                return true;
-            });
-
-            int thisLength = builder.toString().length();
+            int thisLength = OrderedTextToString(lines.get(i)).length();
+            if (length < cursorPosition && length + thisLength >= cursorPosition) {
+                cursorX = cursorPosition - length;
+                LOGGER.info("ah");
+            }
             if (cursorPosition < length) {
-                cursorOnLine = i + 1;
+                cursorY = i;
                 found = true;
                 break;
             } else {
@@ -79,11 +96,41 @@ public class EditorWidget extends ClickableWidget implements Drawable {
             }
         }
         if (!found) {
-            cursorOnLine = lines.size();
+            cursorY = Math.max(lines.size() - 1, 0);
         }
-        if (scroll + maxVisibleLines < cursorOnLine) {
-            scroll = cursorOnLine - maxVisibleLines;
+
+//        char[] currentLine = OrderedTextToString(lines.get(cursorY - 1)).toCharArray();
+//        int cursorDrawPos = 0;
+        LOGGER.info("a");
+        LOGGER.info(String.valueOf(selectionStart));
+        LOGGER.info(String.valueOf(cursorY));
+        LOGGER.info(String.valueOf(cursorX));
+        if (!lines.isEmpty()) {
+            String line = OrderedTextToString(lines.get(cursorY)).substring(0, cursorX);
+            selectionStart = textRenderer.getWidth(line);
+        } else {
+            selectionStart = 0;
         }
+
+        LOGGER.info(String.valueOf(selectionStart));
+
+        if (scroll + maxVisibleLines < cursorY + 1) {
+            scroll = cursorY + 1 - maxVisibleLines;
+        }
+        updateDisplayLines();
+    }
+
+    private void setCursor(int cursor, String line) {
+        selectionStart = MathHelper.clamp(cursor, 0, line.length());
+    }
+
+    private String OrderedTextToString(OrderedText orderedText) {
+        StringBuilder builder = new StringBuilder();
+        orderedText.accept((index, style, codePoint) -> {
+            builder.append(Character.toChars(codePoint));
+            return true;
+        });
+        return builder.toString();
     }
 
     public boolean isActive() {
@@ -108,6 +155,7 @@ public class EditorWidget extends ClickableWidget implements Drawable {
             } else if (verticalAmount < 0) {
                 scroll += 1;
             }
+            updateDisplayLines();
         }
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
