@@ -1,14 +1,9 @@
 package ahud.adaptivehud.screens.configscreen;
 
-import ahud.adaptivehud.ConfigFiles;
-import ahud.adaptivehud.JsonValidator;
 import ahud.adaptivehud.screens.elementscreen.ElementScreen;
-import ahud.adaptivehud.screens.elementscreen.widgets.CustomButton;
-import ahud.adaptivehud.screens.elementscreen.widgets.CustomTextField;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
@@ -41,7 +36,7 @@ public class ElementWidget extends ElementListWidget<ElementWidget.Entry> {
         updateElementList(null);
     }
 
-    protected void updateElementList(String search) {
+    public void updateElementList(String search) {
         clearEntries();
 
         for (JsonElement element : elementArray) {

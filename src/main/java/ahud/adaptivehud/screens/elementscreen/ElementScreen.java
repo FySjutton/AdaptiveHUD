@@ -57,7 +57,7 @@ public class ElementScreen extends Screen {
         // 3: Text Field (name validation)
         // 4: Text Field (color validation)
         // 5: Text Field (int validation)
-        // 6: Text Field (max width 1000)
+        // 6: Button (Open value screen)
         // 7: Button (left - center - right)
         // 8: Button (top - center - bottom)
         // 9: Text Field (scale validation, min 0 max 10, 0 -> DEFAULT)

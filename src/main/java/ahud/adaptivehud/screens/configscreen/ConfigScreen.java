@@ -2,6 +2,7 @@ package ahud.adaptivehud.screens.configscreen;
 
 import ahud.adaptivehud.ConfigFiles;
 import ahud.adaptivehud.screens.movescreen.MoveScreen;
+import ahud.adaptivehud.screens.widgets.SearchBar;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

@@ -362,7 +362,6 @@ public class DefaultVariables {
     public String multiplayer() {
         return String.valueOf(!client.isInSingleplayer());
     }
-
     public String singleplayer() {
         return String.valueOf(client.isInSingleplayer());
     }

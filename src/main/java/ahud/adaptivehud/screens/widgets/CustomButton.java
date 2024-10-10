@@ -1,4 +1,4 @@
-package ahud.adaptivehud.screens.elementscreen.widgets;
+package ahud.adaptivehud.screens.widgets;
 
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;

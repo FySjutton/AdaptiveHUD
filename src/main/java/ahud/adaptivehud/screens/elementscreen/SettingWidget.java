@@ -1,8 +1,9 @@
 package ahud.adaptivehud.screens.elementscreen;
 
 import ahud.adaptivehud.JsonValidator;
-import ahud.adaptivehud.screens.elementscreen.widgets.CustomTextField;
-import ahud.adaptivehud.screens.elementscreen.widgets.CustomButton;
+import ahud.adaptivehud.screens.editscreen.EditScreen;
+import ahud.adaptivehud.screens.widgets.CustomTextField;
+import ahud.adaptivehud.screens.widgets.CustomButton;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -12,7 +13,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.text.Text;
 
@@ -62,17 +62,14 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
         public Entry(String item, int type) {
             this.setting = item;
             this.displayText = Text.translatable("adaptivehud.config.setting." + item);
-            if (type == 1 || type == 7 || type == 8) { // 1, 7 = Button
+            if (type == 1 || (type >= 6 && type <= 8)) { // 1, 6-8 = Button
                 this.button = CustomButton.customBuilder(Text.empty(), btn -> buttonPress(setting, this.button))
                     .dimensions(width / 2 + width / 4 - 50, 0, 100, 20)
                     .build();
                 this.button.type = type;
                 updateButtonValue(setting, button);
-            } else if ((type >= 2 && type <= 6) || type == 9) { // 2 - 6 = Text Field
+            } else if ((type >= 2 && type <= 5) || type == 9) { // 2 - 5 = Text Field
                 this.textField = new CustomTextField(textRenderer, width / 2 + width / 4 - 50, 0, 100, 20, Text.of(setting), SettingWidget.this);
-                if (type == 6) {
-                    textField.setMaxLength(1000);
-                }
                 this.textField.type = type;
                 textField.setChangedListener(newValue -> textFieldListener(newValue, setting, textField));
                 updateTextFieldText(setting, textField);
@@ -130,6 +127,10 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
             } else {
                 element.addProperty(setting, current == 1 ? 2 : 0);
             }
+        } else if (button.type == 6) {
+            // Open the value screen, this is like the first comment i've made, i'll start being better :((((
+            client.setScreen(new EditScreen(this));
+            return;
         }
         updateButtonValue(setting, button);
     }
@@ -155,6 +156,8 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
             } else {
                 button.setMessage(Text.translatable("adaptivehud.config.button.bottom"));
             }
+        } else if (button.type == 6) {
+            button.setMessage(Text.of("Change Value"));
         }
     }
 

@@ -1,4 +1,4 @@
-package ahud.adaptivehud.screens.elementscreen.widgets;
+package ahud.adaptivehud.screens.widgets;
 
 import ahud.adaptivehud.screens.elementscreen.ElementScreen;
 import ahud.adaptivehud.screens.elementscreen.SettingWidget;
