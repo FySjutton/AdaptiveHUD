@@ -56,9 +56,8 @@ public class EditorWidget extends ClickableWidget implements Drawable {
             y += 10;
         }
 
-        if (showCursor && this.isFocused()) {
-            context.fill(selectionStart + 5, (cursorY) * 10 + 5 - 2, selectionStart + 5 + 1, cursorY * 10 + 5 + 8, 0xFFFFFFFF);
-
+        if (showCursor && this.isFocused() && (scroll + maxVisibleLines > cursorY)) {
+            context.fill(selectionStart + 5, (cursorY - scroll) * 10 + 3, selectionStart + 6, (cursorY - scroll) * 10 + 13, 0xFFFFFFFF);
         }
         if (Util.getMeasuringTimeMs() > lastTime + 530) {
             lastTime = Util.getMeasuringTimeMs();
@@ -85,7 +84,6 @@ public class EditorWidget extends ClickableWidget implements Drawable {
             int thisLength = OrderedTextToString(lines.get(i)).length();
             if (length < cursorPosition && length + thisLength >= cursorPosition) {
                 cursorX = cursorPosition - length;
-                LOGGER.info("ah");
             }
             if (cursorPosition < length) {
                 cursorY = i;
@@ -99,20 +97,12 @@ public class EditorWidget extends ClickableWidget implements Drawable {
             cursorY = Math.max(lines.size() - 1, 0);
         }
 
-//        char[] currentLine = OrderedTextToString(lines.get(cursorY - 1)).toCharArray();
-//        int cursorDrawPos = 0;
-        LOGGER.info("a");
-        LOGGER.info(String.valueOf(selectionStart));
-        LOGGER.info(String.valueOf(cursorY));
-        LOGGER.info(String.valueOf(cursorX));
         if (!lines.isEmpty()) {
             String line = OrderedTextToString(lines.get(cursorY)).substring(0, cursorX);
             selectionStart = textRenderer.getWidth(line);
         } else {
             selectionStart = 0;
         }
-
-        LOGGER.info(String.valueOf(selectionStart));
 
         if (scroll + maxVisibleLines < cursorY + 1) {
             scroll = cursorY + 1 - maxVisibleLines;
@@ -160,6 +150,7 @@ public class EditorWidget extends ClickableWidget implements Drawable {
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
 
+
     @Override
     public boolean charTyped(char chr, int modifiers) {
         if (!this.isActive()) {
@@ -192,4 +183,55 @@ public class EditorWidget extends ClickableWidget implements Drawable {
         text = start + end;
         wrapLines();
     }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.isActive()) {
+            // Check if the click is within the text field boundaries
+            LOGGER.info("active");
+            if (mouseX >= this.getX() && mouseX <= this.getX() + this.width && mouseY >= this.getY() && mouseY <= this.getY() + this.height) {
+                // Calculate the clicked line based on the mouse Y position
+                LOGGER.info("in box!");
+
+                int adjustedMouseY = (int) (mouseY - this.getY() - 5);
+
+                // Beräkna den klickade raden, inklusive 1 pixel mellanrum mellan varje rad
+                int lineHeight = 10; // Textlinjehöjd (10px) + 1 pixel mellanrum = 11px
+                int clickedLine = (adjustedMouseY / lineHeight) + scroll;
+                LOGGER.info(String.valueOf(clickedLine));
+
+//                int clickedLine = (int) ((mouseY - this.getY()) / 10) + scroll;  // 10 is the line height in pixels
+//
+//                // Ensure the clicked line is within the bounds of the displayed text lines
+//                if (clickedLine >= 0 && clickedLine < lines.size()) {
+//                    OrderedText line = lines.get(clickedLine);
+//
+//                    // Calculate the clicked character in the line based on mouse X position
+//                    String lineText = OrderedTextToString(line);
+//                    int clickX = (int) (mouseX - this.getX() - 5);  // Subtract padding/margin
+//                    int charIndex = textRenderer.trimToWidth(lineText, clickX).length();
+//
+//                    // Set the cursor position to the clicked location
+//                    this.cursorY = clickedLine;
+//                    this.cursorX = charIndex;
+//                    this.cursorPosition = getCursorFromLineAndIndex(clickedLine, charIndex);
+//
+//                    // Update selection start for rendering the cursor
+//                    this.selectionStart = textRenderer.getWidth(lineText.substring(0, cursorX));
+//                    return true;
+//                }
+            }
+        }
+
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private int getCursorFromLineAndIndex(int lineNumber, int charIndex) {
+        int cursor = 0;
+        for (int i = 0; i < lineNumber; i++) {
+            cursor += OrderedTextToString(lines.get(i)).length();
+        }
+        return cursor + charIndex;
+    }
+
 }
