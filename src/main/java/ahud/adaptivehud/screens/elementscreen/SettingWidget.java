@@ -129,7 +129,7 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
             }
         } else if (button.type == 6) {
             // Open the value screen, this is like the first comment i've made, i'll start being better :((((
-            client.setScreen(new EditScreen(this));
+            client.setScreen(new EditScreen(this, element));
             return;
         }
         updateButtonValue(setting, button);
