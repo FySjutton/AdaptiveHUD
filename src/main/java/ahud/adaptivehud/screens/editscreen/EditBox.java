@@ -15,6 +15,8 @@ import net.minecraft.text.Style;
 import net.minecraft.util.StringHelper;
 import net.minecraft.util.math.MathHelper;
 
+
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 @Environment(EnvType.CLIENT)
 public class EditBox {
     public static final int UNLIMITED_LENGTH = Integer.MAX_VALUE;
@@ -102,6 +104,24 @@ public class EditBox {
 
     public Substring getSelection() {
         return new Substring(Math.min(this.selectionEnd, this.cursor), Math.max(this.selectionEnd, this.cursor));
+    }
+
+    public void surroundSelection(char opening, char closing) {
+        if (hasSelection()) {
+            int beforeIndex = getSelection().beginIndex;
+            int afterIndex = getSelection().endIndex;
+            replaceSelection(opening + getSelectedText() + closing);
+            moveCursor(CursorMovement.ABSOLUTE, beforeIndex + 1);
+            this.selectionEnd = afterIndex + 1;
+        } else {
+            if (this.cursor == this.text.length() || (this.cursor < this.text.length() && this.text.charAt(this.cursor) != closing)) {
+                replaceSelection(String.valueOf(opening) + closing);
+                moveCursor(CursorMovement.ABSOLUTE, getSelection().beginIndex - 1);
+                // DOESN'T WORK FOR % and (
+            } else {
+                replaceSelection(String.valueOf(opening));
+            }
+        }
     }
 
     public int getLineCount() {

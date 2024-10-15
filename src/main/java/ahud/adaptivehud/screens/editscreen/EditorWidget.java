@@ -86,7 +86,17 @@ public class EditorWidget extends ScrollableWidget {
 
     public boolean charTyped(char chr, int modifiers) {
         if (this.visible && this.isFocused() && StringHelper.isValidChar(chr)) {
-            this.editBox.replaceSelection(Character.toString(chr));
+            if (chr == '{') {
+                this.editBox.surroundSelection('{', '}');
+            } else if (chr == '[') {
+                this.editBox.surroundSelection('[', ']');
+            } else if (chr == '%') {
+                this.editBox.surroundSelection('%', '%');
+            } else if (chr == '(') {
+                this.editBox.surroundSelection('(', ')');
+            } else {
+                this.editBox.replaceSelection(Character.toString(chr));
+            }
             return true;
         } else {
             return false;
