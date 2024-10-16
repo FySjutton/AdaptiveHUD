@@ -212,18 +212,18 @@ public class ValueParser {
                 }
 
                 if (parseBooleanExpression(ifCondition)) {
-                    return ifValue.replaceAll("\\\\n", "\\\\\\\\n");
+                    return ifValue;
                 } else {
                     if (!elseIfs.isEmpty()) {
                         for (String x : elseIfs.substring(1).split("(?<!\\\\),")) {
                             String[] conVal = x.split("(?<!\\\\):");
                             if (parseBooleanExpression(conVal[0])) {
-                                return conVal[1].replaceAll("\\\\n", "\\\\\\\\n");
+                                return conVal[1];
                             }
                         }
                     }
 
-                    return elseValue.replaceAll("\\\\n", "\\\\\\\\n");
+                    return elseValue;
                 }
             } catch (Exception e) {
                 return null;

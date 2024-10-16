@@ -81,7 +81,7 @@ public class RenderHUD {
                     parsedText = x.get("name").getAsString();
                 }
 
-                ArrayList<String> texts = new ArrayList<>(Arrays.asList(parsedText.split("(?<!\\\\)\\\\n")));
+                ArrayList<String> texts = new ArrayList<>(Arrays.asList(parsedText.split("\n")));
                 texts.removeAll(Collections.singleton(""));
                 if (texts.isEmpty()) {
                     continue;

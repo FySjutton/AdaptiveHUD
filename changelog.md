@@ -1,7 +1,24 @@
+### Beta Version: v2.0.0-beta.3+1.21 changelog
+**Changes made since v2.0.0-beta.2+1.21**
+
+- .
+
 ### Beta Version: v2.0.0-beta.2+1.21 changelog
 **Changes made since v2.0.0-beta.1+1.21**
 
-- .
+- New element list widget in the main config screen
+- Added a search bar to the main config screen
+- Added developer support
+  - AdaptiveHudRegistry, variables, flags and attributes
+- Remade the flag system; now so developers can add their own
+- Added functionality for attributes
+  - For example, "{player.off_hand.count}". 
+- Added a multiline editor (beta, just to get some response)
+  - Color syntax for variables and conditions
+  - Utilities like copy, paste, move, ctrl+a, selections
+  - Quick surround, select a text and press {, [, (, %
+- Fixed delete-function bug when renaming elements
+- Made minor changes to the variable patterns
 
 ### Beta Version: v2.0.0-beta.1+1.21 changelog
 **Changes made since v1.0.1+XXX**
