@@ -32,7 +32,6 @@ import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 @Environment(EnvType.CLIENT)
 public class ConfigScreen extends Screen {
     public final List<JsonElement> BACKUP_ELEMENT_ARR = new ArrayList<>();
-    private final List<String> DELETED_FILES = new ArrayList<>();
     private final Screen PARENT;
 
     private final Identifier DISCORD_TEXTURE = Identifier.of("adaptivehud", "textures/gui/discord_logo.png");
@@ -163,7 +162,10 @@ public class ConfigScreen extends Screen {
 
     private void saveAndExit() {
         if (fileChanged) {
-            new ConfigFiles().saveElementFiles(elementArray, DELETED_FILES);
+            List<String> newNames = elementArray.stream().map(elm -> elm.getAsJsonObject().get("name").getAsString()).toList();
+            List<String> filesToDelete = BACKUP_ELEMENT_ARR.stream().map(elm -> !newNames.contains(elm.getAsJsonObject().get("name").getAsString()) ? elm.getAsJsonObject().get("name").getAsString() : null).toList();
+
+            new ConfigFiles().saveElementFiles(elementArray, filesToDelete);
         }
         close();
     }
@@ -200,8 +202,6 @@ public class ConfigScreen extends Screen {
 
     protected void deleteElement(JsonElement element) {
         elementArray.remove(element);
-        String deleted_file_name = element.getAsJsonObject().get("name").getAsString();
-        addDeletedFile(deleted_file_name);
         elementWidget.updateElementList(searchBar.getText());
         changesMade();
     }
@@ -220,13 +220,5 @@ public class ConfigScreen extends Screen {
         Path configDir = FabricLoader.getInstance().getConfigDir();
         File folder = new File(configDir + "/adaptivehud");
         Util.getOperatingSystem().open(folder);
-    }
-
-    protected void addDeletedFile(String oldFileName) {
-        if (!DELETED_FILES.contains(oldFileName)) {
-            if (BACKUP_ELEMENT_ARR.toString().contains("\"name\":\"" + oldFileName + "\",")) {
-                DELETED_FILES.add(oldFileName);
-            }
-        }
     }
 }

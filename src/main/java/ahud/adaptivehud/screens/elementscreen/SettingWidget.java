@@ -17,11 +17,13 @@ import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static ahud.adaptivehud.ConfigFiles.elementArray;
 
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
     public Screen PARENT;
     private final TextRenderer textRenderer = client.textRenderer;

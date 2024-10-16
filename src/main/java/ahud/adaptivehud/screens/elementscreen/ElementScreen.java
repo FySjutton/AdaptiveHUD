@@ -64,7 +64,7 @@ public class ElementScreen extends Screen {
         tabs[0] = new newTab(
             this, "general", null,
             new ArrayList<>(List.of("enabled", "name", "value", "textColor", "posX", "posY", "shadow")),
-            new ArrayList<>(List.of(1, 2, 6, 4, 5, 5, 1))
+            new ArrayList<>(List.of(1, 3, 6, 4, 5, 5, 1))
         );
         tabs[1] = new newTab(
             this, "background", "background",

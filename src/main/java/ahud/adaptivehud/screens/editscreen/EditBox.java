@@ -19,15 +19,12 @@ import net.minecraft.util.math.MathHelper;
 import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 @Environment(EnvType.CLIENT)
 public class EditBox {
-    public static final int UNLIMITED_LENGTH = Integer.MAX_VALUE;
-    private static final int CURSOR_WIDTH = 2;
     private final TextRenderer textRenderer;
     private final List<Substring> lines = Lists.newArrayList();
     private String text;
     private int cursor;
     private int selectionEnd;
     private boolean selecting;
-    private int maxLength = Integer.MAX_VALUE;
     private final int width;
     private Consumer<String> changeListener = (text) -> {
     };
@@ -40,22 +37,6 @@ public class EditBox {
         this.setText("");
     }
 
-    public int getMaxLength() {
-        return this.maxLength;
-    }
-
-    public void setMaxLength(int maxLength) {
-        if (maxLength < 0) {
-            throw new IllegalArgumentException("Character limit cannot be negative");
-        } else {
-            this.maxLength = maxLength;
-        }
-    }
-
-    public boolean hasMaxLength() {
-        return this.maxLength != Integer.MAX_VALUE;
-    }
-
     public void setChangeListener(Consumer<String> changeListener) {
         this.changeListener = changeListener;
     }
@@ -65,7 +46,7 @@ public class EditBox {
     }
 
     public void setText(String text) {
-        this.text = this.truncateForReplacement(text);
+        this.text = text;
         this.cursor = this.text.length();
         this.selectionEnd = this.cursor;
         this.onChange();
@@ -77,7 +58,7 @@ public class EditBox {
 
     public void replaceSelection(String string) {
         if (!string.isEmpty() || this.hasSelection()) {
-            String string2 = this.truncate(StringHelper.stripInvalidChars(string, true));
+            String string2 = string;
             Substring substring = this.getSelection();
             this.text = (new StringBuilder(this.text)).replace(substring.beginIndex, substring.endIndex, string2).toString();
             this.cursor = substring.beginIndex + string2.length();
@@ -117,7 +98,7 @@ public class EditBox {
             if (this.cursor == this.text.length() || (this.cursor < this.text.length() && this.text.charAt(this.cursor) != closing)) {
                 replaceSelection(String.valueOf(opening) + closing);
                 moveCursor(CursorMovement.ABSOLUTE, getSelection().beginIndex - 1);
-                // DOESN'T WORK FOR % and (
+                this.selectionEnd = cursor;
             } else {
                 replaceSelection(String.valueOf(opening));
             }
@@ -130,7 +111,7 @@ public class EditBox {
 
     public int getCurrentLineIndex() {
         for(int i = 0; i < this.lines.size(); ++i) {
-            Substring substring = (Substring)this.lines.get(i);
+            Substring substring = this.lines.get(i);
             if (this.cursor >= substring.beginIndex && this.cursor <= substring.endIndex) {
                 return i;
             }
@@ -140,7 +121,7 @@ public class EditBox {
     }
 
     public Substring getLine(int index) {
-        return (Substring)this.lines.get(MathHelper.clamp(index, 0, this.lines.size() - 1));
+        return this.lines.get(MathHelper.clamp(index, 0, this.lines.size() - 1));
     }
 
     public void moveCursor(CursorMovement movement, int amount) {
@@ -171,7 +152,7 @@ public class EditBox {
         int i = MathHelper.floor(x);
         Objects.requireNonNull(this.textRenderer);
         int j = MathHelper.floor(y / 9.0);
-        Substring substring = (Substring)this.lines.get(MathHelper.clamp(j, 0, this.lines.size() - 1));
+        Substring substring = this.lines.get(MathHelper.clamp(j, 0, this.lines.size() - 1));
         int k = this.textRenderer.trimToWidth(this.text.substring(substring.beginIndex, substring.endIndex), i).length();
         this.moveCursor(CursorMovement.ABSOLUTE, substring.beginIndex + k);
     }
@@ -194,84 +175,85 @@ public class EditBox {
             return true;
         } else {
             Substring substring;
-            switch (keyCode) {
-                case 257:
-                case 335:
+            return switch (keyCode) {
+                case 257, 335 -> {
                     this.replaceSelection("\n");
-                    return true;
-                case 259:
+                    yield true;
+                }
+                case 259 -> {
                     if (Screen.hasControlDown()) {
                         substring = this.getPreviousWordAtCursor();
                         this.delete(substring.beginIndex - this.cursor);
                     } else {
                         this.delete(-1);
                     }
-
-                    return true;
-                case 261:
+                    yield true;
+                }
+                case 261 -> {
                     if (Screen.hasControlDown()) {
                         substring = this.getNextWordAtCursor();
                         this.delete(substring.beginIndex - this.cursor);
                     } else {
                         this.delete(1);
                     }
-
-                    return true;
-                case 262:
+                    yield true;
+                }
+                case 262 -> {
                     if (Screen.hasControlDown()) {
                         substring = this.getNextWordAtCursor();
                         this.moveCursor(CursorMovement.ABSOLUTE, substring.beginIndex);
                     } else {
                         this.moveCursor(CursorMovement.RELATIVE, 1);
                     }
-
-                    return true;
-                case 263:
+                    yield true;
+                }
+                case 263 -> {
                     if (Screen.hasControlDown()) {
                         substring = this.getPreviousWordAtCursor();
                         this.moveCursor(CursorMovement.ABSOLUTE, substring.beginIndex);
                     } else {
                         this.moveCursor(CursorMovement.RELATIVE, -1);
                     }
-
-                    return true;
-                case 264:
+                    yield true;
+                }
+                case 264 -> {
                     if (!Screen.hasControlDown()) {
                         this.moveCursorLine(1);
                     }
-
-                    return true;
-                case 265:
+                    yield true;
+                }
+                case 265 -> {
                     if (!Screen.hasControlDown()) {
                         this.moveCursorLine(-1);
                     }
-
-                    return true;
-                case 266:
+                    yield true;
+                }
+                case 266 -> {
                     this.moveCursor(CursorMovement.ABSOLUTE, 0);
-                    return true;
-                case 267:
+                    yield true;
+                }
+                case 267 -> {
                     this.moveCursor(CursorMovement.END, 0);
-                    return true;
-                case 268:
+                    yield true;
+                }
+                case 268 -> {
                     if (Screen.hasControlDown()) {
                         this.moveCursor(CursorMovement.ABSOLUTE, 0);
                     } else {
                         this.moveCursor(CursorMovement.ABSOLUTE, this.getCurrentLine().beginIndex);
                     }
-
-                    return true;
-                case 269:
+                    yield true;
+                }
+                case 269 -> {
                     if (Screen.hasControlDown()) {
                         this.moveCursor(CursorMovement.END, 0);
                     } else {
                         this.moveCursor(CursorMovement.ABSOLUTE, this.getCurrentLine().endIndex);
                     }
-
-                    return true;
-                default:
-                    return false;
-            }
+                    yield true;
+                }
+                default -> false;
+            };
         }
     }
 
@@ -299,7 +281,7 @@ public class EditBox {
             int var10002 = this.cursor;
             throw new IllegalStateException("Cursor is not within text (cursor = " + var10002 + ", length = " + this.text.length() + ")");
         } else {
-            return (Substring)this.lines.get(MathHelper.clamp(i + offsetFromCurrent, 0, this.lines.size() - 1));
+            return this.lines.get(MathHelper.clamp(i + offsetFromCurrent, 0, this.lines.size() - 1));
         }
     }
 
@@ -366,25 +348,9 @@ public class EditBox {
         }
     }
 
-    private String truncateForReplacement(String value) {
-        return this.hasMaxLength() ? StringHelper.truncate(value, this.maxLength, false) : value;
-    }
-
-    private String truncate(String value) {
-        if (this.hasMaxLength()) {
-            int i = this.maxLength - this.text.length();
-            return StringHelper.truncate(value, i, false);
-        } else {
-            return value;
-        }
-    }
-
     @Environment(EnvType.CLIENT)
-    protected static record Substring(int beginIndex, int endIndex) {
+    protected record Substring(int beginIndex, int endIndex) {
         static final Substring EMPTY = new Substring(0, 0);
-
-        protected Substring {
-        }
 
         public int beginIndex() {
             return beginIndex;

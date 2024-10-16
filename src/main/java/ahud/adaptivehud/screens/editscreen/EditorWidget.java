@@ -37,10 +37,6 @@ public class EditorWidget extends ScrollableWidget {
         this.editBox.setCursorChangeListener(this::onCursorChange);
     }
 
-    public void setMaxLength(int maxLength) {
-        this.editBox.setMaxLength(maxLength);
-    }
-
     public void setChangeListener(Consumer<String> changeListener) {
         this.editBox.setChangeListener(changeListener);
     }
@@ -193,15 +189,9 @@ public class EditorWidget extends ScrollableWidget {
         }
     }
 
-    protected void renderOverlay(DrawContext context) {
-        super.renderOverlay(context);
-        if (this.editBox.hasMaxLength()) {
-            int i = this.editBox.getMaxLength();
-            Text text = Text.translatable("gui.multiLineEditBox.character_limit", this.editBox.getText().length(), i);
-            context.drawTextWithShadow(this.textRenderer, text, this.getX() + this.width - this.textRenderer.getWidth(text), this.getY() + this.height + 4, 10526880);
-        }
-
-    }
+//    protected void renderOverlay(DrawContext context) {
+//        super.renderOverlay(context);
+//    }
 
     public int getContentsHeight() {
         Objects.requireNonNull(this.textRenderer);

@@ -164,6 +164,9 @@ public class ConfigFiles {
         Path configDir = FabricLoader.getInstance().getConfigDir();
         int fails = 0;
         for (String fileName : deletedFiles) {
+            if (fileName == null) {
+                continue;
+            }
             try {
                 File delFile = new File(configDir + "/adaptivehud/elements/" + fileName + ".json");
                 if (delFile.exists()) {
