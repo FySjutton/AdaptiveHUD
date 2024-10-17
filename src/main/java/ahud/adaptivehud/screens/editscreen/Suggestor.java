@@ -47,7 +47,7 @@ public class Suggestor {
 
         // my amazing testing examples
         for (String x : List.of("abrabar", "bone", "cykel", "ckata", "björn", "bröd", "bakare", "brödrost", "abrööö", "broder", "brorsa", "brakar", "bäst", "byrne", "boskar", "brysk", "brask", "brösk")) {
-            if (x.contains(searchContent) && !searchContent.isEmpty()) {
+            if (x.contains(searchContent)) {
                 suggestions.add(x);
                 lengths.add(textRenderer.getWidth(x));
             }
@@ -65,13 +65,18 @@ public class Suggestor {
         int x = startX + 3;
 
         int displayedSuggestions = Math.min(suggestions.size(), maxSuggestions);
-
+        boolean scrollUp = scroll + displayedSuggestions < suggestions.size();
+        String seperatorString = ".".repeat((maxLength + 1) / textRenderer.getWidth("."));
 
 
         if (displayedSuggestions > 0) {
-            context.fill(x - 3, y, x + maxLength + 3, y - displayedSuggestions * 11 - 5, 0xcc000000);
+            context.fill(x - 3, y, x + maxLength + 3, y - displayedSuggestions * 11 - 5 - (scroll > 0 ? 5 : 0) - (scrollUp ? 5 : 0), 0xcc000000);
         }
 
+        if (scroll > 0) {
+            context.drawTextWithShadow(textRenderer, seperatorString, x, y - 11, 0xFFFFFFFF);
+            y -= 5;
+        }
 
         for (int i = 0; i < displayedSuggestions; i++) {
             if (i == highlight) {
@@ -80,6 +85,9 @@ public class Suggestor {
                 context.drawTextWithShadow(textRenderer, suggestions.get(i + scroll), x, y - 11, 0xFFFFFFFF);
             }
             y -= 11;
+        }
+        if (scrollUp) {
+            context.drawTextWithShadow(textRenderer, seperatorString, x, y - 10, 0xFFFFFFFF);
         }
     }
 
@@ -111,6 +119,7 @@ public class Suggestor {
     public void mouseClicked() {
         if (hovering) {
             textField.setText(suggestions.get(scroll + highlight));
+            highlight = 0;
         }
     }
 
@@ -118,6 +127,7 @@ public class Suggestor {
         if (keyCode == 258) {
             if (!suggestions.isEmpty()) {
                 textField.setText(suggestions.get(scroll + highlight));
+                highlight = 0;
                 return false;
             }
         } if (keyCode == 264) {

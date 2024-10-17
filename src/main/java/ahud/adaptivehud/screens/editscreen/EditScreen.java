@@ -23,6 +23,7 @@ public class EditScreen extends Screen {
     private final SettingWidget PARENT;
     private JsonObject element;
     private Suggestor suggestor;
+    private TextFieldWidget search;
 
     public EditScreen(SettingWidget parent, JsonObject element) {
         super(Text.of("AdaptiveHUD"));
@@ -43,6 +44,7 @@ public class EditScreen extends Screen {
         addDrawableChild(insertbtn);
 
         TextFieldWidget search = new TextFieldWidget(textRenderer, 0, height - 20, 100, 20, Text.of("test"));
+        this.search = search;
         addDrawableChild(search);
         search.setChangedListener(newValue -> {
             this.suggestor.updateSuggestions();
@@ -54,7 +56,9 @@ public class EditScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        this.suggestor.render(context, mouseX, mouseY);
+        if (search.isFocused()) {
+            this.suggestor.render(context, mouseX, mouseY);
+        }
     }
 
     @Override
