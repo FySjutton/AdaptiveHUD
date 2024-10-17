@@ -42,18 +42,13 @@ public class EditScreen extends Screen {
         ButtonWidget insertbtn = ButtonWidget.builder(Text.of("Test"), btn -> insertVariable()).dimensions(200, 100, 100, 50).build();
         addDrawableChild(insertbtn);
 
-        TextFieldWidget search = new TextFieldWidget(textRenderer, width / 2, height / 2, 100, 20, Text.of("test"));
+        TextFieldWidget search = new TextFieldWidget(textRenderer, 0, height - 20, 100, 20, Text.of("test"));
         addDrawableChild(search);
         search.setChangedListener(newValue -> {
-            this.suggestor.refresh();
-            this.suggestor.setWindowActive(true);
+            this.suggestor.updateSuggestions();
         });
 
-        suggestor = new Suggestor(client, this, search, textRenderer, 1, 5, true, -805306368);
-
-//        ChatInputSuggestor suggestor = new ChatInputSuggestor(client, this, search, textRenderer, true, true, 0, 20, true, 0xFFFFFFFF).SuggestionWindow();
-////        addDrawableChild(suggestor);
-//        new ChatInputSuggestor.SuggestionWindow(0, 0, List.of(), false);
+        suggestor = new Suggestor(search, textRenderer, 0, height - 20, 90);
     }
 
     @Override
@@ -63,34 +58,34 @@ public class EditScreen extends Screen {
     }
 
     @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        this.suggestor.mouseClicked();
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (this.suggestor.keyPressed(keyCode)) {
-            return true;
-        } else if (super.keyPressed(keyCode, scanCode, modifiers)) {
-            return true;
+            return super.keyPressed(keyCode, scanCode, modifiers);
         }
-        return true;
+        return false;
+    }
+
+    @Override
+    public void mouseMoved(double mouseX, double mouseY) {
+        this.suggestor.mouseMoved(mouseX, mouseY);
+        super.mouseMoved(mouseX, mouseY);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         verticalAmount = MathHelper.clamp(verticalAmount, -1.0, 1.0);
-        if (this.suggestor.mouseScrolled(verticalAmount)) {
-            return true;
-        }
+        this.suggestor.mouseScrolled(verticalAmount > 0, mouseX, mouseY);
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
-    }
-
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (this.suggestor.mouseClicked((int) mouseX, (int) mouseY, button)) {
-            return true;
-        }
-        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public void close() {
-        // parent.parent is ElementScreen.java
         client.setScreen(PARENT.PARENT);
     }
 
