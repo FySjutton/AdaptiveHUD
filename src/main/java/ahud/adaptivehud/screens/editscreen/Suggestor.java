@@ -46,7 +46,9 @@ public class Suggestor {
         List<Integer> lengths = new ArrayList<>(List.of(0));
 
         // my amazing testing examples
-        for (String x : List.of("abrabar", "bone", "cykel", "ckata", "björn", "bröd", "bakare", "brödrost", "abrööö", "broder", "brorsa", "brakar", "bäst", "byrne", "boskar", "brysk", "brask", "brösk")) {
+        List<String> options = new ArrayList<>(List.of("abrabar", "bone", "cykel", "ckata", "björn", "bröd", "bakare", "brödrost", "abrööö", "broder", "brorsa", "brakar", "bäst", "byrne", "boskar", "brysk", "brask", "brösk"));
+//        Collections.reverse(options);
+        for (String x : options) {
             if (x.contains(searchContent)) {
                 suggestions.add(x);
                 lengths.add(textRenderer.getWidth(x));
@@ -61,33 +63,34 @@ public class Suggestor {
     }
 
     public void render(DrawContext context, double mouseX, double mouseY) {
-        int y = startY;
+        int displayedSuggestions = Math.min(suggestions.size(), maxSuggestions);
+
+
+        int y = startY - displayedSuggestions * 11 - 11;
         int x = startX + 3;
 
-        int displayedSuggestions = Math.min(suggestions.size(), maxSuggestions);
         boolean scrollUp = scroll + displayedSuggestions < suggestions.size();
         String seperatorString = ".".repeat((maxLength + 1) / textRenderer.getWidth("."));
 
-
         if (displayedSuggestions > 0) {
-            context.fill(x - 3, y, x + maxLength + 3, y - displayedSuggestions * 11 - 5 - (scroll > 0 ? 5 : 0) - (scrollUp ? 5 : 0), 0xcc000000);
+            context.fill(x - 3, y, x + maxLength + 3, y + displayedSuggestions * 11 + 5 + (scroll > 0 ? 5 : 0) + (scrollUp ? 5 : 0), 0xcc000000);
         }
 
         if (scroll > 0) {
-            context.drawTextWithShadow(textRenderer, seperatorString, x, y - 11, 0xFFFFFFFF);
-            y -= 5;
+            context.drawTextWithShadow(textRenderer, seperatorString, x, y, 0xFFFFFFFF);
+            y += 10;
         }
 
         for (int i = 0; i < displayedSuggestions; i++) {
-            if (i == highlight) {
-                context.drawTextWithShadow(textRenderer, suggestions.get(i + scroll), x, y - 11, 0xffffe736);
+            if (displayedSuggestions - i - 1 == highlight) {
+                context.drawTextWithShadow(textRenderer, suggestions.get(i + scroll), x, y, 0xffffe736);
             } else {
-                context.drawTextWithShadow(textRenderer, suggestions.get(i + scroll), x, y - 11, 0xFFFFFFFF);
+                context.drawTextWithShadow(textRenderer, suggestions.get(i + scroll), x, y, 0xFFFFFFFF);
             }
-            y -= 11;
+            y += 11;
         }
         if (scrollUp) {
-            context.drawTextWithShadow(textRenderer, seperatorString, x, y - 10, 0xFFFFFFFF);
+            context.drawTextWithShadow(textRenderer, seperatorString, x, y, 0xFFFFFFFF);
         }
     }
 
