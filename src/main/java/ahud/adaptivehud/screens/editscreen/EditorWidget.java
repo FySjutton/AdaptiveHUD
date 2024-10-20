@@ -189,7 +189,7 @@ public class EditorWidget extends ScrollableWidget {
         }
     }
 
-//    protected void renderOverlay(DrawContext context) {
+    //    protected void renderOverlay(DrawContext context) {
 //        super.renderOverlay(context);
 //    }
 
@@ -206,6 +206,8 @@ public class EditorWidget extends ScrollableWidget {
         Objects.requireNonNull(this.textRenderer);
         return 9.0 / 2.0;
     }
+
+
 
     private void drawSelection(DrawContext context, int left, int top, int right, int bottom) {
         context.fill(RenderLayer.getGuiTextHighlight(), left, top, right, bottom, -16776961);

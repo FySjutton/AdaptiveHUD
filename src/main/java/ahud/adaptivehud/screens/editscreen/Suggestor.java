@@ -28,6 +28,8 @@ public class Suggestor {
     private final int startX;
     private final int startY;
 
+    public boolean visible = false;
+
     public Suggestor(TextFieldWidget textField, TextRenderer textRenderer, int startX, int startY, int maxHeight) {
         this.textField = textField;
         this.textRenderer = textRenderer;
@@ -47,7 +49,6 @@ public class Suggestor {
 
         // my amazing testing examples
         List<String> options = new ArrayList<>(List.of("abrabar", "bone", "cykel", "ckata", "björn", "bröd", "bakare", "brödrost", "abrööö", "broder", "brorsa", "brakar", "bäst", "byrne", "boskar", "brysk", "brask", "brösk"));
-//        Collections.reverse(options);
         for (String x : options) {
             if (x.contains(searchContent)) {
                 suggestions.add(x);
@@ -65,40 +66,47 @@ public class Suggestor {
     public void render(DrawContext context, double mouseX, double mouseY) {
         int displayedSuggestions = Math.min(suggestions.size(), maxSuggestions);
 
+        int y = startY - displayedSuggestions * 11 - 3;
+        int y2 = y + displayedSuggestions * 11 + 3;
+        int x = startX;
+        int x2 = x + 90;
 
-        int y = startY - displayedSuggestions * 11 - 11;
-        int x = startX + 3;
-
-        boolean scrollUp = scroll + displayedSuggestions < suggestions.size();
-        String seperatorString = ".".repeat((maxLength + 1) / textRenderer.getWidth("."));
-
-        if (displayedSuggestions > 0) {
-            context.fill(x - 3, y, x + maxLength + 3, y + displayedSuggestions * 11 + 5 + (scroll > 0 ? 5 : 0) + (scrollUp ? 5 : 0), 0xcc000000);
+        if (displayedSuggestions > 0)  {
+            context.fill(x, y, x2, y2, 0xcc000000);
         }
 
         if (scroll > 0) {
-            context.drawTextWithShadow(textRenderer, seperatorString, x, y, 0xFFFFFFFF);
-            y += 10;
+            for (int i = 0; i < x2 - x; i++) {
+                if (i % 2 == 0) {
+                    context.fill(x + i, y, x + i + 1, y + 1, -1);
+                }
+            }
         }
 
+        if (scroll + displayedSuggestions < suggestions.size()) {
+            for (int i = 0; i < x2 - x; i++) {
+                if (i % 2 == 0) {
+                    context.fill(x + i, y2 - 1, x + i + 1, y2, -1);
+                }
+            }
+        }
+
+        y += 2;
         for (int i = 0; i < displayedSuggestions; i++) {
-            if (displayedSuggestions - i - 1 == highlight) {
-                context.drawTextWithShadow(textRenderer, suggestions.get(i + scroll), x, y, 0xffffe736);
+            if (i == highlight) {
+                context.drawTextWithShadow(textRenderer, suggestions.get(i + scroll), x + 3, y + 1, 0xffffe736);
             } else {
-                context.drawTextWithShadow(textRenderer, suggestions.get(i + scroll), x, y, 0xFFFFFFFF);
+                context.drawTextWithShadow(textRenderer, suggestions.get(i + scroll), x + 3, y + 1, 0xFFFFFFFF);
             }
             y += 11;
-        }
-        if (scrollUp) {
-            context.drawTextWithShadow(textRenderer, seperatorString, x, y, 0xFFFFFFFF);
         }
     }
 
     public void mouseMoved(double mouseX, double mouseY) {
         int displayedSuggestions = Math.min(suggestions.size(), maxSuggestions);
-
-        if (startY - mouseY > 0 && mouseX > startX && startX + maxLength > mouseX && (startY - mouseY) / 11 < displayedSuggestions) {
-            highlight = (int) Math.ceil((startY - mouseY) / 11) - 1;
+        int y = startY - displayedSuggestions * 11 - 3;
+        if (mouseY > y && mouseY < y + displayedSuggestions * 11 + 3 && mouseX > startX && mouseX < startX + 90) {
+            highlight = (int) Math.floor((mouseY - y) / 11);
             hovering = true;
         } else {
             hovering = false;
@@ -111,9 +119,9 @@ public class Suggestor {
         int displayedSuggestions = Math.min(suggestions.size(), maxSuggestions);
 
         if (y - mouseY > 0 && mouseX > x && x + maxLength > mouseX && (y - mouseY) / 11 < displayedSuggestions) {
-            if (scroll < suggestions.size() - maxSuggestions && up) {
+            if (scroll < suggestions.size() - maxSuggestions && !up) {
                 scroll ++;
-            } else if (!up && scroll > 0) {
+            } else if (up && scroll > 0) {
                 scroll --;
             }
         }
@@ -134,17 +142,19 @@ public class Suggestor {
                 return false;
             }
         } if (keyCode == 264) {
-            if (highlight == 0 && scroll > 0) {
-                scroll --;
-            } else if (scroll > 0 && highlight > 0) {
-                highlight --;
+            int lines = Math.min(suggestions.size(), maxSuggestions);
+            if (highlight + 1 == lines && scroll + lines < suggestions.size()) {
+                scroll ++;
+            } else if (highlight + 1 < lines) {
+                highlight ++;
+
             }
             return false;
         } else if (keyCode == 265) {
-            if (highlight + scroll < suggestions.size() && highlight + 1 < maxSuggestions) {
-                highlight ++;
-            } else if (scroll + maxSuggestions < suggestions.size()) {
-                scroll ++;
+            if (highlight == 0 && scroll > 0) {
+                scroll --;
+            } else if (highlight > 0) {
+                highlight --;
             }
             return false;
         }
