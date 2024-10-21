@@ -27,7 +27,7 @@ public class ElementWidget extends ElementListWidget<ElementWidget.Entry> {
     private final int screenWidth;
 
     public ElementWidget(Screen parent, int width, int height) {
-        super(MinecraftClient.getInstance(), width / 2 - 17, height - 59, 52, 20);
+        super(MinecraftClient.getInstance(), width / 2 - 17, height - 59 - 11, 52, 20);
         this.setX(width / 2); // super doesn't take x?
 
         this.PARENT = (ConfigScreen) parent;

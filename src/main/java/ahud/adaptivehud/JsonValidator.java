@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static ahud.adaptivehud.ConfigFiles.elementArray;
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class JsonValidator {
     private static final Pattern COLOR_REGEX = Pattern.compile("^#?([0-9A-Fa-f]{6})([0-9A-Fa-f]{2})?$");
@@ -91,10 +92,13 @@ public class JsonValidator {
         }
     }
 
-    public String validateName(JsonObject beforeEdit, String name) {
+    public String validateName(JsonObject beforeEdit, String name, boolean newFile) {
+        LOGGER.info(name);
         if (!name.matches("[a-z_\\d]{1,16}")) {
             return Text.translatable("adaptivehud.config.error.invalid_name").getString();
         }
+
+        if (newFile) return null;
 
         List<JsonElement> deepCopyArray = elementArray.stream()
                 .map(JsonElement::deepCopy)
@@ -106,7 +110,7 @@ public class JsonValidator {
         return hasSameName ? Text.translatable("adaptivehud.config.error.invalid_name").getString() : null;
     }
 
-    public String validateElement(JsonObject elm) {
+    public String validateElement(JsonObject elm, boolean newFile) {
         try {
             JsonObject background = elm.getAsJsonObject("background");
             JsonObject alignment = elm.getAsJsonObject("alignment");
@@ -114,7 +118,7 @@ public class JsonValidator {
             JsonObject requirement = elm.getAsJsonObject("requirement");
 
             elm.get("enabled").getAsBoolean();
-            String name = validateName(elm, elm.get("name").getAsString());
+            String name = validateName(elm, elm.get("name").getAsString(), newFile);
             if (name != null) return name;
             elm.get("posX").getAsInt();
             elm.get("posY").getAsInt();

@@ -100,7 +100,7 @@ public class ConfigFiles {
                         LOGGER.warn("Element " + file.getName() + " was partially corrupted, the element has now been repaired!");
                         saveRepaired = true;
                     }
-                    String validated = new JsonValidator().validateElement(repairedElm.getAsJsonObject());
+                    String validated = new JsonValidator().validateElement(repairedElm.getAsJsonObject(), false);
 
                     if (validated == null) {
                         elementArray.add(repairedElm);
@@ -175,35 +175,43 @@ public class ConfigFiles {
         }
 
         for (JsonElement elm : elmArray) {
-            try {
-                JsonObject obj = elm.getAsJsonObject();
-                String fileName = obj.get("name").getAsString().toLowerCase() + ".json";
-                File elmFile = new File(configDir + "/adaptivehud/elements/" + fileName);
-                if (elmFile.exists()) {
-                    FileReader fileReader = new FileReader(elmFile);
-                    JsonElement parsed = JsonParser.parseReader(fileReader);
-                    fileReader.close();
-                    if (!parsed.equals(elm)) {
-                        FileWriter writer = new FileWriter(elmFile);
-                        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                        JsonWriter jsonWriter = gson.newJsonWriter(writer);
-                        gson.toJson(obj, jsonWriter);
-                        jsonWriter.flush();
-                    }
-                } else {
-                    Files.createDirectories(elmFile.getParentFile().toPath());
+            if (!saveElementFile(elm)) {
+                new Tools().sendToast("§cFailed to save file!", "§fCould not be saved.");
+                fails++;
+            }
+        }
+        new Tools().sendToast("§aChanges have been saved!", "§e" + fails + " errors encountered!");
+    }
+
+    public boolean saveElementFile(JsonElement elm) {
+        try {
+            Path configDir = FabricLoader.getInstance().getConfigDir();
+            JsonObject obj = elm.getAsJsonObject();
+            String fileName = obj.get("name").getAsString().toLowerCase() + ".json";
+            File elmFile = new File(configDir + "/adaptivehud/elements/" + fileName);
+            if (elmFile.exists()) {
+                FileReader fileReader = new FileReader(elmFile);
+                JsonElement parsed = JsonParser.parseReader(fileReader);
+                fileReader.close();
+                if (!parsed.equals(elm)) {
                     FileWriter writer = new FileWriter(elmFile);
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
                     JsonWriter jsonWriter = gson.newJsonWriter(writer);
                     gson.toJson(obj, jsonWriter);
                     jsonWriter.flush();
                 }
-            } catch (Exception e) {
-                LOGGER.error("Error saving element file: " + e.getMessage());
-                new Tools().sendToast("§cFailed to save file!", "§f" + e.getMessage());
-                fails++;
+            } else {
+                Files.createDirectories(elmFile.getParentFile().toPath());
+                FileWriter writer = new FileWriter(elmFile);
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                JsonWriter jsonWriter = gson.newJsonWriter(writer);
+                gson.toJson(obj, jsonWriter);
+                jsonWriter.flush();
             }
+        } catch (Exception e) {
+            LOGGER.error("Error saving element file: " + e.getMessage());
+            return false;
         }
-        new Tools().sendToast("§aChanges have been saved!", "§e" + fails + " errors encountered!");
+        return true;
     }
 }

@@ -166,7 +166,7 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
 
     private void textFieldListener(String newValue, String setting, CustomTextField textField) {
         if (textField.type == 3) {
-            String nameError = new JsonValidator().validateName(element, newValue);
+            String nameError = new JsonValidator().validateName(element, newValue, false);
             if (nameError != null) {
                 textField.setError(true, nameError);
                 return;

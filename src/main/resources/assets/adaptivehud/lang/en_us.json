@@ -18,7 +18,7 @@
   "adaptivehud.config.reloadElements": "Reload Elements",
   "adaptivehud.config.moveElements": "Move Elements",
   "adaptivehud.config.folder": "Folder",
-  "adaptivehud.config.defaultName": "NewElement",
+  "adaptivehud.config.defaultName": "newelement",
   "adaptivehud.config.unsavedChanges": "You have unsaved changes!",
   "adaptivehud.config.cancelWarning": "Your changes will not be saved!",
   "adaptivehud.config.editElement": "Edit element...",

@@ -1,11 +1,14 @@
 package ahud.adaptivehud.screens.configscreen;
 
 import ahud.adaptivehud.ConfigFiles;
+import ahud.adaptivehud.JsonValidator;
+import ahud.adaptivehud.Tools;
 import ahud.adaptivehud.screens.movescreen.MoveScreen;
 import ahud.adaptivehud.screens.widgets.SearchBar;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
@@ -14,16 +17,21 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static ahud.adaptivehud.ConfigFiles.configFile;
 import static ahud.adaptivehud.ConfigFiles.elementArray;
@@ -79,7 +87,7 @@ public class ConfigScreen extends Screen {
                 .dimensions(width / 16, height - 50, width / 16 * 3 - 3, 20)
                 .build();
         addDrawableChild(closeElm);
-        ButtonWidget saveAndExitElm = ButtonWidget.builder(Text.translatable("adaptivehud.config.done"), btn -> saveAndExit())
+        ButtonWidget saveAndExitElm = ButtonWidget.builder(Text.translatable("adaptivehud.config.done"), btn -> saveChanges(true))
                 .dimensions(width / 4 + 3, height - 50, width / 16 * 3 - 3, 20)
                 .build();
         addDrawableChild(saveAndExitElm);
@@ -111,6 +119,8 @@ public class ConfigScreen extends Screen {
             context.drawTexture(DISCORD_TEXTURE, width - discordWidth - 13, 12, 0, 0, 14, 14, 14, 14);
             context.drawText(textRenderer, DISCORD_TEXT, width - discordWidth + 6, (int) (15.5), 0xFFFFFF, true);
         }
+
+        context.drawCenteredTextWithShadow(textRenderer, "§oDrag and drop files to add them", width / 2 + ((width - 17) - width / 2) / 2, height - 11, 0x888888);
     }
 
     @Override
@@ -132,19 +142,46 @@ public class ConfigScreen extends Screen {
         return !fileChanged;
     }
 
+    @Override
+    public void filesDragged(List<Path> paths) {
+        int copyFails = 0;
+        for (Path path : paths) {
+            try {
+                if (!path.toString().endsWith(".json")) {
+                    continue;
+                }
+                FileReader fileReader = new FileReader(path.toFile());
+                JsonObject elm = JsonParser.parseReader(fileReader).getAsJsonObject();
+                fileReader.close();
+                String validated = new JsonValidator().validateElement(elm, true);
+                if (validated != null) {
+                    LOGGER.info(validated);
+                    new Tools().sendToast("§4Failed to validate!", "§fA file failed to validate.");
+                    continue;
+                }
+                String fileName = generateCounterName(elm.get("name").getAsString());
+                elm.addProperty("name", fileName);
+                new ConfigFiles().saveElementFile(elm);
+                saveChanges(false); // to save any changes
+                reloadElements(); // to load the copied file
+            } catch (Exception e) {
+                copyFails ++;
+                LOGGER.warn("Failed to copy " + path.toString());
+                e.printStackTrace();
+            }
+        }
+        if (copyFails > 0) {
+            SystemToast.addFileDropFailure(client, copyFails);
+        }
+    }
+
     private void createNewElement() {
         try {
             InputStream resource = ConfigFiles.class.getResourceAsStream("/assets/adaptivehud/premade/new_element.json");
             String jsonContent = IOUtils.toString(resource, "UTF-8");
             JsonElement newElement = JsonParser.parseString(jsonContent);
             JsonObject newObject = newElement.getAsJsonObject();
-            String newName = DEFAULT_NAME.getString().toLowerCase();
-            int counter = 1;
-            while (elementArray.toString().contains("\"name\":\"" + newName + "\",")) {
-                newName = DEFAULT_NAME.getString().toLowerCase() + counter;
-                counter++;
-            }
-            newObject.addProperty("name", newName);
+            newObject.addProperty("name", generateCounterName(DEFAULT_NAME.getString()));
             elementArray.add(newElement);
             elementWidget.updateElementList(null);
             searchBar.setText("");
@@ -155,19 +192,33 @@ public class ConfigScreen extends Screen {
         }
     }
 
+    private String generateCounterName(String newName) {
+        Set<String> names = elementArray.stream().map(elm -> elm.getAsJsonObject().get("name").getAsString()).collect(Collectors.toSet());
+        String baseValue = newName;
+
+        int counter = 1;
+        while (names.contains(newName)) {
+            newName = baseValue + counter;
+            counter++;
+        }
+        return newName;
+    }
+
     private void discardChanges() {
         elementArray = BACKUP_ELEMENT_ARR;
         close();
     }
 
-    private void saveAndExit() {
+    private void saveChanges(boolean exit) {
         if (fileChanged) {
             List<String> newNames = elementArray.stream().map(elm -> elm.getAsJsonObject().get("name").getAsString()).toList();
             List<String> filesToDelete = BACKUP_ELEMENT_ARR.stream().map(elm -> !newNames.contains(elm.getAsJsonObject().get("name").getAsString()) ? elm.getAsJsonObject().get("name").getAsString() : null).toList();
 
             new ConfigFiles().saveElementFiles(elementArray, filesToDelete);
         }
-        close();
+        if (exit) {
+            close();
+        }
     }
 
     private void reloadElements() {
