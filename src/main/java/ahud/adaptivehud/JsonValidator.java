@@ -5,8 +5,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import net.minecraft.text.Text;
 
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static ahud.adaptivehud.ConfigFiles.elementArray;
 
 public class JsonValidator {
     private static final Pattern COLOR_REGEX = Pattern.compile("^#?([0-9A-Fa-f]{6})([0-9A-Fa-f]{2})?$");
@@ -87,6 +91,21 @@ public class JsonValidator {
         }
     }
 
+    public String validateName(JsonObject beforeEdit, String name) {
+        if (!name.matches("[a-z_\\d]{1,16}")) {
+            return Text.translatable("adaptivehud.config.error.invalid_name").getString();
+        }
+
+        List<JsonElement> deepCopyArray = elementArray.stream()
+                .map(JsonElement::deepCopy)
+                .collect(Collectors.toList());
+
+        deepCopyArray.remove(beforeEdit);
+
+        boolean hasSameName = deepCopyArray.stream().anyMatch(elm -> elm.getAsJsonObject().get("name").getAsString().equals(name));
+        return hasSameName ? Text.translatable("adaptivehud.config.error.invalid_name").getString() : null;
+    }
+
     public String validateElement(JsonObject elm) {
         try {
             JsonObject background = elm.getAsJsonObject("background");
@@ -95,7 +114,8 @@ public class JsonValidator {
             JsonObject requirement = elm.getAsJsonObject("requirement");
 
             elm.get("enabled").getAsBoolean();
-            elm.get("name").getAsString();
+            String name = validateName(elm, elm.get("name").getAsString());
+            if (name != null) return name;
             elm.get("posX").getAsInt();
             elm.get("posY").getAsInt();
             elm.get("shadow").getAsBoolean();

@@ -85,7 +85,6 @@ public class ConfigFiles {
         elementArray.clear();
         File[] files = new File(FabricLoader.getInstance().getConfigDir() + "/adaptivehud/elements").listFiles();
         int fails = 0;
-        List<String> names = new ArrayList<>();
 
         if (files != null) {
             boolean saveRepaired = false;
@@ -104,15 +103,7 @@ public class ConfigFiles {
                     String validated = new JsonValidator().validateElement(repairedElm.getAsJsonObject());
 
                     if (validated == null) {
-                        String name = repairedElm.getAsJsonObject().get("name").getAsString();
-                        if (names.contains(name.toLowerCase())) {
-                            new Tools().sendToast("§c" + file.getName(), "§fKey name must be unique!");
-                            LOGGER.error("Failed to load element file " + file.getName() + "! The identifier (\"name\" key) must be unique!");
-                            fails += 1;
-                        } else {
-                            elementArray.add(repairedElm);
-                            names.add(name.toLowerCase());
-                        }
+                        elementArray.add(repairedElm);
                     } else {
                         LOGGER.error("Failed to load element file " + file.getName() + "! If you don't know what's wrong, please seek help in adaptivehud discord server! Error message: " + validated);
                         new Tools().sendToast("§c" + file.getName(), "§f" + validated);

@@ -5,7 +5,6 @@ import ahud.adaptivehud.screens.editscreen.EditScreen;
 import ahud.adaptivehud.screens.widgets.CustomTextField;
 import ahud.adaptivehud.screens.widgets.CustomButton;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -17,19 +16,14 @@ import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static ahud.adaptivehud.ConfigFiles.elementArray;
-
-import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
     public Screen PARENT;
     private final TextRenderer textRenderer = client.textRenderer;
-    private JsonObject element;
+    private final JsonObject element;
 
-    private JsonValidator validator = new JsonValidator();
+    private final JsonValidator validator = new JsonValidator();
 
     public SettingWidget(Screen parent, String tabInt, ArrayList<String> settings, ArrayList<Integer> types, JsonObject element, int width, int height) {
         super(MinecraftClient.getInstance(), width, height - 24 - 25 - 10, 24, 25);
@@ -73,8 +67,11 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
             } else if ((type >= 2 && type <= 5) || type == 9) { // 2 - 5 = Text Field
                 this.textField = new CustomTextField(textRenderer, width / 2 + width / 4 - 50, 0, 100, 20, Text.of(setting), SettingWidget.this);
                 this.textField.type = type;
-                textField.setChangedListener(newValue -> textFieldListener(newValue, setting, textField));
-                updateTextFieldText(setting, textField);
+                this.textField.setChangedListener(newValue -> textFieldListener(newValue, setting, this.textField));
+                if (type == 3) {
+                    this.textField.setMaxLength(16);
+                }
+                updateTextFieldText(setting, this.textField);
             }
         }
 
@@ -168,23 +165,10 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
     }
 
     private void textFieldListener(String newValue, String setting, CustomTextField textField) {
-        // FIX SO THE DONE BUTTON CAN'T BE PRESSED ON ERROR; INACTIVATE
         if (textField.type == 3) {
-            // IMPROVE HAHA, FEELS INEFFICIENT
-            if (newValue.contains(" ") || newValue.isEmpty()) {
-                textField.setError(true, Text.translatable("adaptivehud.config.error.invalid_name").getString());
-                return;
-            }
-            List<JsonElement> deepCopyArray = elementArray.stream()
-                    .map(JsonElement::deepCopy)
-                    .collect(Collectors.toList());
-
-            deepCopyArray.remove(element);
-
-            // Checks if there's already an element with that same name
-            boolean hasSameName = deepCopyArray.stream().anyMatch(elm -> elm.getAsJsonObject().get("name").getAsString().equals(newValue));
-            if (hasSameName) {
-                textField.setError(true, Text.translatable("adaptivehud.config.error.name_already_in_use").getString());
+            String nameError = new JsonValidator().validateName(element, newValue);
+            if (nameError != null) {
+                textField.setError(true, nameError);
                 return;
             }
         } else if (textField.type == 4) {
