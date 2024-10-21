@@ -25,7 +25,7 @@ public class Tools {
 
         for (int i = 0; i < toIndex; i++) {
             char v = chars[i];
-            int color = 0xFFFFFF;
+            int color = 0xFFFFFFFF;
             char last = openingChars.get(openingChars.size() - 1);
             String next = String.valueOf(i + 1 < chars.length ? chars[i + 1] : " ");
 
@@ -44,7 +44,10 @@ public class Tools {
                 }
             } else if (v == '}' && actualLast != '\\' && (last == '{' || last == '-' || last == '=' || last == '.')) {
                 color = 0xffffc766;
-                openingChars.remove(openingChars.size() - 1);
+                int del = openingChars.size() - openingChars.lastIndexOf('{');
+                for (int j = 0; j < del; j++) {
+                    openingChars.removeLast();
+                }
             } else if (last == '-' && v == '=') {
                 color = 0xffdcf043;
                 openingChars.add('=');
@@ -70,11 +73,12 @@ public class Tools {
                 color = 0x6bff8b;
             } else if (last == ':' && v == ',') {
                 color = 0xc46bff;
-                openingChars.remove(openingChars.size() - 1);
             } else if (last == ':') { // ]
                 color = 0xffffc766;
-                openingChars.remove(openingChars.size() - 1);
-                openingChars.remove(openingChars.size() - 1);
+                int del = openingChars.size() - openingChars.lastIndexOf('[');
+                for (int j = 0; j < del; j++) {
+                    openingChars.removeLast();
+                }
             }
 
             actualLast = v;
