@@ -27,7 +27,7 @@ public class ElementWidget extends ElementListWidget<ElementWidget.Entry> {
     private final int screenWidth;
 
     public ElementWidget(Screen parent, int width, int height) {
-        super(MinecraftClient.getInstance(), width / 2 - 17, height - 59, 52, 25);
+        super(MinecraftClient.getInstance(), width / 2 - 17, height - 59, 52, 20);
         this.setX(width / 2); // super doesn't take x?
 
         this.PARENT = (ConfigScreen) parent;
@@ -66,20 +66,21 @@ public class ElementWidget extends ElementListWidget<ElementWidget.Entry> {
         public ButtonWidget deleteBtn;
 
         public Entry(JsonObject element, ConfigScreen parent) {
-            ButtonWidget editButton = ButtonWidget.builder(Text.literal(element.getAsJsonObject().get("name").getAsString()), btn -> editElement(element))
-                    .dimensions(screenWidth / 2 + 5, 0, (screenWidth - 64) / 4, 20)
-                    .tooltip(Tooltip.of(Text.translatable("adaptivehud.config.editElement")))
-                    .build();
-            ButtonWidget toggleButton = ButtonWidget.builder(Text.literal((element.getAsJsonObject().get("enabled").getAsBoolean() ? ON_TEXT : OFF_TEXT)), btn -> switchEnabled(btn, element))
-                    .dimensions((3 * screenWidth) / 4 - 9, 0, screenWidth / 8 - 8, 20)
+            ButtonWidget toggleButton = ButtonWidget.builder(Text.literal((element.getAsJsonObject().get("enabled").getAsBoolean() ? "☑" : "☐")), btn -> switchEnabled(btn, element))
+                    .dimensions(screenWidth / 2 + 5, 0, 18, 18)
                     .tooltip(Tooltip.of(Text.translatable("adaptivehud.config.toggleElement")))
                     .build();
-            ButtonWidget deleteButton = ButtonWidget.builder(Text.literal("\uD83D\uDDD1"), btn -> parent.deleteElement(element))
-                    .dimensions((7 * screenWidth) / 8 - 14, 0, screenWidth / 8 - 8, 20)
+            ButtonWidget editButton = ButtonWidget.builder(Text.literal(element.getAsJsonObject().get("name").getAsString()), btn -> editElement(element))
+                    .dimensions(screenWidth / 2 + 5 + 18 + 2, 0, (screenWidth - 17 - 20 - 5 - 2) - (screenWidth / 2 + 5 + 18 + 2) , 18)
+                    .tooltip(Tooltip.of(Text.translatable("adaptivehud.config.editElement")))
+                    .build();
+
+            ButtonWidget deleteButton = ButtonWidget.builder(Text.literal("\uD83D\uDDD1").withColor(0xffff7c75), btn -> parent.deleteElement(element))
+                    .dimensions(screenWidth - 17 - 20 - 5, 0, 20, 18)
                     .tooltip(Tooltip.of(Text.translatable("adaptivehud.config.deleteElement")))
                     .build();
-            editBtn = editButton;
             toggleBtn = toggleButton;
+            editBtn = editButton;
             deleteBtn = deleteButton;
         }
 
@@ -102,14 +103,14 @@ public class ElementWidget extends ElementListWidget<ElementWidget.Entry> {
         }
 
         @Override
-        public void render(DrawContext drawContext, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             this.editBtn.setY(y);
             this.toggleBtn.setY(y);
             this.deleteBtn.setY(y);
 
-            this.editBtn.render(drawContext, mouseX, mouseY, tickDelta);
-            this.toggleBtn.render(drawContext, mouseX, mouseY, tickDelta);
-            this.deleteBtn.render(drawContext, mouseX, mouseY, tickDelta);
+            this.editBtn.render(context, mouseX, mouseY, tickDelta);
+            this.toggleBtn.render(context, mouseX, mouseY, tickDelta);
+            this.deleteBtn.render(context, mouseX, mouseY, tickDelta);
         }
     }
 
@@ -121,7 +122,7 @@ public class ElementWidget extends ElementListWidget<ElementWidget.Entry> {
         JsonObject new_object = element.getAsJsonObject();
 
         boolean current = new_object.get("enabled").getAsBoolean();
-        button.setMessage(Text.of(current ? OFF_TEXT : ON_TEXT));
+        button.setMessage(Text.of(current ? "☐" : "☑"));
         new_object.addProperty("enabled", !current);
 
         elementArray.set(elementArray.indexOf(element), new_object);
