@@ -26,7 +26,7 @@ public class Tools {
         for (int i = 0; i < toIndex; i++) {
             char v = chars[i];
             int color = 0xFFFFFFFF;
-            char last = openingChars.get(openingChars.size() - 1);
+            char last = openingChars.getLast();
             String next = String.valueOf(i + 1 < chars.length ? chars[i + 1] : " ");
 
             if (actualLast != '\\' && v == '{') {
@@ -39,7 +39,7 @@ public class Tools {
                 }
             } else if (v == '-' && actualLast != '\\' && (last == '{' || last == '-' || last == '=' || last == '.')) {
                 color = 0xffe942f5;
-                if (openingChars.get(openingChars.size() - 1) != '-') {
+                if (last != '-') {
                     openingChars.add('-');
                 }
             } else if (v == '}' && actualLast != '\\' && (last == '{' || last == '-' || last == '=' || last == '.')) {

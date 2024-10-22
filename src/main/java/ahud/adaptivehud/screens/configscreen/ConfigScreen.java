@@ -26,6 +26,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -167,7 +168,7 @@ public class ConfigScreen extends Screen {
             } catch (Exception e) {
                 copyFails ++;
                 LOGGER.warn("Failed to copy " + path.toString());
-                e.printStackTrace();
+                LOGGER.error(e.getMessage());
             }
         }
         if (copyFails > 0) {
@@ -178,7 +179,7 @@ public class ConfigScreen extends Screen {
     private void createNewElement() {
         try {
             InputStream resource = ConfigFiles.class.getResourceAsStream("/assets/adaptivehud/premade/new_element.json");
-            String jsonContent = IOUtils.toString(resource, "UTF-8");
+            String jsonContent = IOUtils.toString(resource, StandardCharsets.UTF_8);
             JsonElement newElement = JsonParser.parseString(jsonContent);
             JsonObject newObject = newElement.getAsJsonObject();
             newObject.addProperty("name", generateCounterName(DEFAULT_NAME.getString()));

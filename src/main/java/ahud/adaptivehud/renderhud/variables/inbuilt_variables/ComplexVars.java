@@ -10,7 +10,7 @@ import java.util.Calendar;
 import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class ComplexVars {
-    private FlagTools tools = new FlagTools();
+    private final FlagTools tools = new FlagTools();
     private long lastRun = 0;
 
     private double oldX = 0;

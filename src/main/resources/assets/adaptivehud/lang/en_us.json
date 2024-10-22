@@ -32,6 +32,7 @@
   "adaptivehud.config.button.right": "Right",
   "adaptivehud.config.button.top": "Top",
   "adaptivehud.config.button.bottom": "Bottom",
+  "adaptivehud.config.button.changeValue": "Change Value",
 
   "adaptivehud.config.title.general": "General",
   "adaptivehud.config.title.background": "Background",

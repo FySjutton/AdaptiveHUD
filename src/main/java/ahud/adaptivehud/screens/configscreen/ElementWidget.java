@@ -20,10 +20,6 @@ import static ahud.adaptivehud.ConfigFiles.elementArray;
 
 public class ElementWidget extends ElementListWidget<ElementWidget.Entry> {
     private final ConfigScreen PARENT;
-
-    private final String ON_TEXT = Text.translatable("adaptivehud.config.button.on").getString();
-    private final String OFF_TEXT = Text.translatable("adaptivehud.config.button.off").getString();
-
     private final int screenWidth;
 
     public ElementWidget(Screen parent, int width, int height) {

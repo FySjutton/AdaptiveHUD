@@ -43,7 +43,7 @@ public class MoveScreen extends Screen {
     private int alignX = 0;
     private int alignY = 0;
 
-    private boolean autoSave;
+    private final boolean autoSave;
 
     private final int itemAlignLineColor = new Tools().parseColor(configFile.getAsJsonObject().get("item_align_lines_color").getAsString());
     private final int snappingLineColor = new Tools().parseColor(configFile.getAsJsonObject().get("snapping_lines_color").getAsString());

@@ -156,7 +156,7 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
                 button.setMessage(Text.translatable("adaptivehud.config.button.bottom"));
             }
         } else if (button.type == 6) {
-            button.setMessage(Text.of("Change Value"));
+            button.setMessage(Text.translatable("adaptivehud.config.button.changeValue"));
         }
     }
 

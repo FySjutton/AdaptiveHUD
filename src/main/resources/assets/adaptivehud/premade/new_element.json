@@ -20,10 +20,8 @@
     "selfAlignY": 0,
     "textAlign": 0
   },
-  "requirement": {
-    "renderRequirement": ""
-  },
   "advanced": {
-    "scale": 0
+    "scale": 0,
+    "renderRequirement": ""
   }
 }

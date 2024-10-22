@@ -34,14 +34,12 @@ public class ElementScreen extends Screen {
 
     private ButtonWidget doneButton;
     private final TabManager tabManager = new TabManager(this::addDrawableChild, this::remove);
-    private JsonObject element;
-    private JsonObject backupElement;
+    private final JsonObject element;
 
     public ElementScreen(Screen PARENT, JsonObject element) {
         super(Text.of("AdaptiveHUD"));
         this.PARENT = PARENT;
         this.element = element;
-        this.backupElement = element.deepCopy();
     }
 
     @Override
@@ -50,7 +48,7 @@ public class ElementScreen extends Screen {
         this.addDrawableChild(doneBtn);
         this.doneButton = doneBtn;
 
-        Tab[] tabs = new Tab[5];
+        Tab[] tabs = new Tab[4];
         // Types:
         // 1: Boolean Button
         // 2: Text Field (no requirement)
@@ -63,8 +61,8 @@ public class ElementScreen extends Screen {
         // 9: Text Field (scale validation, min 0 max 10, 0 -> DEFAULT)
         tabs[0] = new newTab(
             this, "general", null,
-            new ArrayList<>(List.of("enabled", "name", "value", "textColor", "posX", "posY", "shadow")),
-            new ArrayList<>(List.of(1, 3, 6, 4, 5, 5, 1))
+            new ArrayList<>(List.of("name", "value", "textColor", "posX", "posY", "shadow")),
+            new ArrayList<>(List.of(3, 6, 4, 5, 5, 1))
         );
         tabs[1] = new newTab(
             this, "background", "background",
@@ -73,18 +71,13 @@ public class ElementScreen extends Screen {
         );
         tabs[2] = new newTab(
                 this, "alignment", "alignment",
-                new ArrayList<>(List.of("itemAlignX", "itemAlignY", "selfAlignX", "selfAlignY", "textAlign")),
-                new ArrayList<>(List.of(7, 8, 7, 8, 7))
+                new ArrayList<>(List.of("textAlign", "itemAlignX", "itemAlignY", "selfAlignX", "selfAlignY")),
+                new ArrayList<>(List.of(7, 7, 8, 7, 8))
         );
         tabs[3] = new newTab(
-                this, "requirement", "requirement",
-                new ArrayList<>(List.of("renderRequirement")),
-                new ArrayList<>(List.of(2))
-        );
-        tabs[4] = new newTab(
                 this, "advanced", "advanced",
-                new ArrayList<>(List.of("scale")),
-                new ArrayList<>(List.of(9))
+                new ArrayList<>(List.of("scale", "renderRequirement")),
+                new ArrayList<>(List.of(9, 2))
         );
 
         TabNavigationWidget tabNavigation = TabNavigationWidget.builder(this.tabManager, this.width).tabs(tabs).build();
@@ -124,10 +117,8 @@ public class ElementScreen extends Screen {
         doneButton.active = errors.isEmpty();
         if (!errors.isEmpty()) {
             doneButton.setMessage(Text.translatable("adaptivehud.config.save_error").append(Text.literal(errors.values().toArray()[0].toString())).withColor(0xFF4F4F));
-
-
         } else {
-            doneButton.setMessage(Text.translatable("adaptivehud.config.done").withColor(0xFFFFFFFF));
+            doneButton.setMessage(Text.translatable("adaptivehud.config.done"));
         }
     }
 }

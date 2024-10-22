@@ -1,22 +1,18 @@
 package ahud.adaptivehud.screens.editscreen;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import org.apache.commons.compress.utils.Lists;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
-public class Suggestor {
+public class Suggester {
     private final TextFieldWidget textField;
     private final TextRenderer textRenderer;
-    private List<String> suggestions = Lists.newArrayList();
+    private final List<String> suggestions = Lists.newArrayList();
     private int scroll = 0;
     private int highlight = 0;
     private final int maxSuggestions;
@@ -30,7 +26,7 @@ public class Suggestor {
 
     public boolean visible = false;
 
-    public Suggestor(TextFieldWidget textField, TextRenderer textRenderer, int startX, int startY, int maxHeight) {
+    public Suggester(TextFieldWidget textField, TextRenderer textRenderer, int startX, int startY, int maxHeight) {
         this.textField = textField;
         this.textRenderer = textRenderer;
         this.startX = startX;
@@ -63,7 +59,7 @@ public class Suggestor {
         maxLength = Collections.max(lengths);
     }
 
-    public void render(DrawContext context, double mouseX, double mouseY) {
+    public void render(DrawContext context) {
         int displayedSuggestions = Math.min(suggestions.size(), maxSuggestions);
 
         int y = startY - displayedSuggestions * 11 - 3;

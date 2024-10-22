@@ -75,9 +75,7 @@ public class ValueParser {
 
     public int renderCheck(String text) {
         try {
-            // Parse variables
-            // CHANGE PATTERN; (.attributes not included)!
-            Pattern pattern = Pattern.compile("\\{((?:\\w+)+(?: *-[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*(?: *--[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)}");
+            Pattern pattern = Pattern.compile("\\{(\\w+)((?:\\.\\w+)*)((?: *-[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)((?: *--[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)}");
             Matcher matcher = pattern.matcher(text);
             StringBuilder result = new StringBuilder();
 
@@ -88,7 +86,6 @@ public class ValueParser {
             }
             matcher.appendTail(result);
 
-            // Parse rest
             return !parseBooleanExpression(result.toString()) ? 0 : 1;
         } catch (Exception e) {
             return -1;
@@ -160,8 +157,8 @@ public class ValueParser {
                     if (attributes.length > 0) {
                         Object result = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), parameters);
                         AttributeResult parsedResult = new AttributeParser().parseAttributes(attributes, result);
-                        method = parsedResult.getMethod();
-                        Object resultText = parsedResult.getValue();
+                        method = parsedResult.method();
+                        Object resultText = parsedResult.value();
                         if (resultText instanceof String) {
                             varValue = String.valueOf(resultText);
                         } else {

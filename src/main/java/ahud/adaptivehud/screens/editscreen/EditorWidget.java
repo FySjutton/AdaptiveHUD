@@ -6,14 +6,12 @@ import java.util.Stack;
 import java.util.function.Consumer;
 
 import ahud.adaptivehud.Tools;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.MutableText;
@@ -47,10 +45,6 @@ public class EditorWidget extends ScrollableWidget {
 
     public String getText() {
         return this.editBox.getText();
-    }
-
-    public void appendClickableNarrations(NarrationMessageBuilder builder) {
-        builder.put(NarrationPart.TITLE, Text.translatable("gui.narrate.editBox", new Object[]{this.getMessage(), this.getText()}));
     }
 
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -189,10 +183,6 @@ public class EditorWidget extends ScrollableWidget {
         }
     }
 
-    //    protected void renderOverlay(DrawContext context) {
-//        super.renderOverlay(context);
-//    }
-
     public int getContentsHeight() {
         Objects.requireNonNull(this.textRenderer);
         return 9 * this.editBox.getLineCount();
@@ -206,8 +196,6 @@ public class EditorWidget extends ScrollableWidget {
         Objects.requireNonNull(this.textRenderer);
         return 9.0 / 2.0;
     }
-
-
 
     private void drawSelection(DrawContext context, int left, int top, int right, int bottom) {
         context.fill(RenderLayer.getGuiTextHighlight(), left, top, right, bottom, -16776961);
@@ -257,4 +245,7 @@ public class EditorWidget extends ScrollableWidget {
             this.lastSwitchFocusTime = Util.getMeasuringTimeMs();
         }
     }
+
+    @Override
+    protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
 }

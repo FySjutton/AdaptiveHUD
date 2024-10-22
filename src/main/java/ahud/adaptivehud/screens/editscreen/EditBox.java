@@ -12,11 +12,10 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.input.CursorMovement;
 import net.minecraft.text.Style;
-import net.minecraft.util.StringHelper;
 import net.minecraft.util.math.MathHelper;
 
-
 import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
+
 @Environment(EnvType.CLIENT)
 public class EditBox {
     private final TextRenderer textRenderer;
@@ -26,10 +25,8 @@ public class EditBox {
     private int selectionEnd;
     private boolean selecting;
     private final int width;
-    private Consumer<String> changeListener = (text) -> {
-    };
-    private Runnable cursorChangeListener = () -> {
-    };
+    private Consumer<String> changeListener = (text) -> {};
+    private Runnable cursorChangeListener = () -> {};
 
     public EditBox(TextRenderer textRenderer, int width) {
         this.textRenderer = textRenderer;
@@ -58,10 +55,9 @@ public class EditBox {
 
     public void replaceSelection(String string) {
         if (!string.isEmpty() || this.hasSelection()) {
-            String string2 = string;
             Substring substring = this.getSelection();
-            this.text = (new StringBuilder(this.text)).replace(substring.beginIndex, substring.endIndex, string2).toString();
-            this.cursor = substring.beginIndex + string2.length();
+            this.text = (new StringBuilder(this.text)).replace(substring.beginIndex, substring.endIndex, string).toString();
+            this.cursor = substring.beginIndex + string.length();
             this.selectionEnd = this.cursor;
             this.onChange();
         }

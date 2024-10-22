@@ -64,7 +64,7 @@ public class RenderHUD {
                 String parsedText;
 
                 if (this.USE_VALUE) {
-                    String renderReq = x.get("requirement").getAsJsonObject().get("renderRequirement").getAsString();
+                    String renderReq = x.get("advanced").getAsJsonObject().get("renderRequirement").getAsString();
                     if (!renderReq.isEmpty()) {
                         int render = parser.renderCheck(renderReq);
                         if (render == -1) {

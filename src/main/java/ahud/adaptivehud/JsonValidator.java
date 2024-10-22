@@ -52,11 +52,9 @@ public class JsonValidator {
         addDefaultProperty(alignment, "selfAlignY", new JsonPrimitive(0));
         addDefaultProperty(alignment, "textAlign", new JsonPrimitive(0));
 
-        JsonObject requirement = getOrCreateObject(obj, "requirement");
-        addDefaultProperty(requirement, "renderRequirement", new JsonPrimitive(""));
-
         JsonObject advanced = getOrCreateObject(obj, "advanced");
         addDefaultProperty(advanced, "scale", new JsonPrimitive(0));
+        addDefaultProperty(advanced, "renderRequirement", new JsonPrimitive(""));
 
         return elm;
     }
@@ -93,7 +91,6 @@ public class JsonValidator {
     }
 
     public String validateName(JsonObject beforeEdit, String name, boolean newFile) {
-        LOGGER.info(name);
         if (!name.matches("[a-z_\\d]{1,16}")) {
             return Text.translatable("adaptivehud.config.error.invalid_name").getString();
         }
@@ -115,7 +112,6 @@ public class JsonValidator {
             JsonObject background = elm.getAsJsonObject("background");
             JsonObject alignment = elm.getAsJsonObject("alignment");
             JsonObject advanced = elm.getAsJsonObject("advanced");
-            JsonObject requirement = elm.getAsJsonObject("requirement");
 
             elm.get("enabled").getAsBoolean();
             String name = validateName(elm, elm.get("name").getAsString(), newFile);
@@ -126,7 +122,7 @@ public class JsonValidator {
             background.get("enabled").getAsBoolean();
             background.get("paddingX").getAsInt();
             background.get("paddingY").getAsInt();
-            requirement.get("renderRequirement").getAsString();
+            advanced.get("renderRequirement").getAsString();
 
             String textColor = validateColor(elm.get("textColor").getAsString());
             if (textColor != null) return textColor;

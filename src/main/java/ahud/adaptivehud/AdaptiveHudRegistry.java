@@ -1,7 +1,5 @@
 package ahud.adaptivehud;
 
-import ahud.adaptivehud.renderhud.variables.inbuilt_variables.DefaultVariables;
-
 import java.lang.reflect.Method;
 import java.util.Set;
 
