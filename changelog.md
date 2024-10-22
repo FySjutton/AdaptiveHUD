@@ -1,7 +1,19 @@
 ### Beta Version: v2.0.0-beta.3+1.21 changelog
 **Changes made since v2.0.0-beta.2+1.21**
 
-- .
+- Improved the look of the main menu.
+  - Added check boxes (for enabling / disabling)
+  - Colored delete button
+- Fixed the colors not stopping in the multiline editor
+- Added ability to drop files on the main menu screen to add them.
+- Added automatic regeneration of the config file, if corrupted
+- Removed some unused code, and made some minor changes.
+  - Removed "enabling" inside the config screen
+  - Moved "renderRequirement" to advanced
+  - Improved name validation
+  - Made renderRequirement work with attributes
+  - Other minor changes
+- Started adding suggestions to variables. This does not work yet, but you can see it work-in-progress.
 
 ### Beta Version: v2.0.0-beta.2+1.21 changelog
 **Changes made since v2.0.0-beta.1+1.21**

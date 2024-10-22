@@ -127,8 +127,10 @@ public class ConfigFiles {
         new Tools().sendToast("§aElements Reloaded!", "§e" + (files.length - fails) + "/" + files.length + " elements have successfully been reloaded.");
     }
 
-    public void generateConfigArray() {
+    public void generateConfigArray(boolean reCall) {
         Path configDir = FabricLoader.getInstance().getConfigDir();
+        boolean error = false;
+        String errorMessage = "";
 
         try {
             File config = new File(configDir + "/adaptivehud/config.json5");
@@ -137,17 +139,28 @@ public class ConfigFiles {
             fileReader.close();
             String validated = new JsonValidator().validateConfig(elm.getAsJsonObject());
             if (validated != null) {
-                LOGGER.error(validated);
-                LOGGER.error("[CRITICAL] - Configuration file could not be read properly. This is most likely because of a missing key or similar, the file does not follow the required format. For help, please seek help in adaptivehud discord server.");
-                LOGGER.error("The game will now close because of the error above, invalid configuration file.");
-                MinecraftClient.getInstance().stop();
-                return;
+                error = true;
+            } else {
+                configFile = elm;
             }
-            configFile = elm;
         } catch (Exception e) {
-            LOGGER.error("AdaptiveHUD - Could not load configuration file, this is most likely because of the file not following proper json syntax, like a missing comma or similar. For help, please seek help in adaptivehud discord server.");
-            LOGGER.error(e.getMessage());
-            MinecraftClient.getInstance().stop();
+            error = true;
+            errorMessage = e.getMessage();
+        }
+
+        if (error) {
+            if (reCall) {
+                MinecraftClient.getInstance().stop();
+                LOGGER.error("AdaptiveHUD - An unknown error occurred while trying to generate a new config. Failed multiple times.");
+                if (!errorMessage.isEmpty()) {
+                    LOGGER.error(errorMessage);
+                }
+                MinecraftClient.getInstance().stop();
+            } else {
+                generateConfigFile();
+                generateConfigArray(true); // re-call this function
+                LOGGER.info("AdaptiveHUD - Corrupted configuration file detected, now regenerating a new one. Any previous options will be reset.");
+            }
         }
     }
 

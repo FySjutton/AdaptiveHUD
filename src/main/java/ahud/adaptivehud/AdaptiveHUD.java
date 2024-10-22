@@ -43,12 +43,6 @@ public class AdaptiveHUD implements ModInitializer {
 			GLFW.GLFW_KEY_UNKNOWN,
 			Text.translatable("adaptivehud.key.category").getString()
 	));
-	private static final KeyBinding reloadConfigKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-			Text.translatable("adaptivehud.key.reloadConfig").getString(),
-			InputUtil.Type.KEYSYM,
-			GLFW.GLFW_KEY_UNKNOWN,
-			Text.translatable("adaptivehud.key.category").getString()
-	));
 	private static final KeyBinding openConfigKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			Text.translatable("adaptivehud.key.openConfig").getString(),
 			InputUtil.Type.KEYSYM,
@@ -67,7 +61,7 @@ public class AdaptiveHUD implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		new ConfigFiles().CheckDefaultConfigs();
-		new ConfigFiles().generateConfigArray();
+		new ConfigFiles().generateConfigArray(false);
 		new ConfigFiles().GenerateElementArray();
 
 		hudRenderer = new RenderHUD(true);
@@ -76,9 +70,6 @@ public class AdaptiveHUD implements ModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (reloadElementsKeyBind.wasPressed()) {
 				new ConfigFiles().GenerateElementArray();
-			}
-			if (reloadConfigKeyBind.wasPressed()) {
-				new ConfigFiles().generateConfigArray();
 			}
 			if (openConfigKeyBind.wasPressed()) {
 				MinecraftClient.getInstance().setScreen(new ConfigScreen(null));
