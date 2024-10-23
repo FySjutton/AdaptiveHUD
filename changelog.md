@@ -1,3 +1,8 @@
+## Release: v1.0.1+1.21.2 changelog
+**Changes made since v1.0.0+XXX**
+
+- Updated to 1.21.2
+
 ## Release: v1.0.1+XXX changelog
 **Changes made since v1.0.0+XXX**
 

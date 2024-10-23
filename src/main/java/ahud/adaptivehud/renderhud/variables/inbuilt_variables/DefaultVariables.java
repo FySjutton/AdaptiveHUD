@@ -357,7 +357,7 @@ public class DefaultVariables {
     }
 
     public String snowing() {
-        return String.valueOf(client.world.isRaining() && (client.world.getBiome(player.getBlockPos()).value().getPrecipitation(player.getBlockPos()) == Biome.Precipitation.SNOW));
+        return String.valueOf(client.world.isRaining() && (client.world.getBiome(player.getBlockPos()).value().getPrecipitation(player.getBlockPos(), 63) == Biome.Precipitation.SNOW));
     }
 
     public String raining() {
@@ -568,7 +568,7 @@ public class DefaultVariables {
     }
 
     public String on_fire() {
-        return String.valueOf(player.wasOnFire);
+        return String.valueOf(player.isOnFire());
     }
 
     public String server_ip() {

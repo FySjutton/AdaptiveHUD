@@ -13,6 +13,8 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderLayers;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -99,7 +101,7 @@ public class ConfigScreen extends Screen {
         context.drawCenteredTextWithShadow(textRenderer, "AdaptiveHUD", width / 2, 20, 0xffffff);
 
         if (renderDiscordButton) {
-            context.drawTexture(DISCORD_TEXTURE, width - discordWidth - 5, 23, 0, 0, 14, 14, 14, 14);
+            context.drawTexture(RenderLayer::getGuiTextured, DISCORD_TEXTURE, width - discordWidth - 5, 23, 0, 0, 14, 14, 14, 14);
             context.drawText(textRenderer, DISCORD_TEXT, width - discordWidth + 14, (int) (26.5), 0xFFFFFF, true);
         }
     }
