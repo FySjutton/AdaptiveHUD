@@ -60,6 +60,8 @@ public class EditScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
+
+
         context.drawBorder(4, height - 82, width / 2 - 10 - 8, 72, 0xFFA0A0A0);
         context.fill(5, height - 81, width / 2 - 10 - 5, height - 11, 0xad000000);
 
@@ -67,6 +69,8 @@ public class EditScreen extends Screen {
         if (search.isFocused()) {
             this.suggester.render(context);
         }
+
+
 
     }
 

@@ -1,11 +1,10 @@
 package ahud.adaptivehud.screens.editscreen;
 
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Stack;
+import java.util.*;
 import java.util.function.Consumer;
 
 import ahud.adaptivehud.Tools;
+import com.google.common.collect.Lists;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.font.TextRenderer;
@@ -15,6 +14,7 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.StringHelper;
 import net.minecraft.util.Util;

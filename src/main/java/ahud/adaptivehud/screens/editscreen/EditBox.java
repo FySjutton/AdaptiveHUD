@@ -181,7 +181,17 @@ public class EditBox {
                         substring = this.getPreviousWordAtCursor();
                         this.delete(substring.beginIndex - this.cursor);
                     } else {
-                        this.delete(-1);
+                        // Deletes the next character too, if it's just like "{|}", cursor being |
+                        if (cursor > 0 && text.length() > cursor) {
+                            char beforeChar = text.charAt(cursor - 1);
+                            this.delete(-1);
+                            char afterChar = text.charAt(cursor);
+                            if ((beforeChar == '{' && afterChar == '}') || (beforeChar == '[' && afterChar == ']')) {
+                                this.delete(1);
+                            }
+                        } else {
+                            this.delete(-1);
+                        }
                     }
                     yield true;
                 }
