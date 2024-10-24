@@ -18,6 +18,7 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 public class ValueParser {
     public String parseValue(String text) {
         text = text.replaceAll("&(?=[\\da-fA-Fk-oK-OrR])", "§");
@@ -30,24 +31,38 @@ public class ValueParser {
         char actualLast = 0;
 
         for (int i = 0; i < text.length(); i++) {
-            if ((textList[i] == '{' || textList[i] == '[' || (textList[i] == '%' && lastCharacters.peek() != '%')) && actualLast != '\\' ) {
+            if (lastCharacters.peek() != '$' && (textList[i] == '{' || textList[i] == '[' || (textList[i] == '%' && lastCharacters.peek() != '%')) && actualLast != '\\') {
                 startPositions.push(i);
                 lastCharacters.push(textList[i]);
             }
+            else if (actualLast == '{' && textList[i] == '$') {
+                lastCharacters.pop();
+                lastCharacters.push('$');
+            }
             else if (((textList[i] == '}' && lastCharacters.peek() == '{') ||
                     (textList[i] == ']' && lastCharacters.peek() == '[') ||
+                    (textList[i] == '}' && lastCharacters.peek() == '$') ||
                     (textList[i] == '%')) && actualLast != '\\') {
                 char type = textList[i];
+                char lastChar = lastCharacters.peek();
                 lastCharacters.pop();
 
                 int startPos = startPositions.pop();
                 String innerContent = text.substring(startPos + 1, i);
                 String parsedResult;
                 if (type == '}') {
-                    parsedResult = parseVariable(innerContent);
-                    if (parsedResult == null) {
-                        return Text.translatable("adaptivehud.variable.variable_error").getString();
+                    if (lastChar == '{') {
+                        parsedResult = parseVariable(innerContent);
+                        if (parsedResult == null) {
+                            return Text.translatable("adaptivehud.variable.variable_error").getString();
+                        }
+                    } else {
+                        parsedResult = parseLoop(innerContent);
+//                        if (parsedResult == null) {
+//                            return "nuhuu";
+//                        }
                     }
+
                 } else if (type == ']') {
                     parsedResult = parseCondition(innerContent);
                     if (parsedResult == null) {
@@ -192,6 +207,19 @@ public class ValueParser {
             }
         }
         return null;
+    }
+
+    private String parseLoop(String text) {
+        Pattern pattern = Pattern.compile("\\$\"(.+)\" for ([a-z]+) of (\\w+)");
+        Matcher matcher = pattern.matcher(text);
+        if (matcher.matches()) {
+            String value = matcher.group(0);
+            String varName = matcher.group(1);
+            String ofValue = matcher.group(2);
+
+
+        }
+        return text;
     }
 
     private String parseCondition(String text) {
