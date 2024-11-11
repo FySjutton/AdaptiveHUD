@@ -223,7 +223,7 @@ public class ValueParser {
     }
 
     private String parseCondition(String text) {
-        Pattern conditionPattern = Pattern.compile("((?:[^:,\\\\]|\\\\.)+):((?:[^:,\\\\]|\\\\.)+)((?:,(?:[^:,\\\\]|\\\\.)+:(?:[^:,\\\\]|\\\\.)+)*)(?:,((?:[^:,\\\\]|\\\\.)+))?");
+        Pattern conditionPattern = Pattern.compile("((?:[^:,\\\\]|\\\\.)+): *\"((?:[^\"\\\\]|\\\\.)+)\" *((?:,(?:[^:,\\\\]|\\\\.)+: *\"(?:[^\":,\\\\]|\\\\.)+\")*)(?: *, *\"((?:[^\"\\\\]|\\\\.)+)\")?");
         Matcher matcher = conditionPattern.matcher(text);
 
         if (matcher.matches()) {
@@ -243,7 +243,7 @@ public class ValueParser {
                         for (String x : elseIfs.substring(1).split("(?<!\\\\),")) {
                             String[] conVal = x.split("(?<!\\\\):");
                             if (parseBooleanExpression(conVal[0])) {
-                                return conVal[1];
+                                return conVal[1].split("(?<!\\\\)\"")[1];
                             }
                         }
                     }
