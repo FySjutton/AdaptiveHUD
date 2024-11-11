@@ -145,8 +145,12 @@ public class DefaultVariables {
         return String.valueOf(client.chunkCullingEnabled);
     }
 
+    public String total_chunks() {
+        return this.client.world.getChunkManager().getDebugString().split(",")[0];
+    }
+
     public String loaded_chunks() {
-        return String.valueOf((int) client.worldRenderer.getChunkCount());
+        return String.valueOf(this.client.world.getChunkManager().getLoadedChunkCount());
     }
 
     public String rendered_chunks() {

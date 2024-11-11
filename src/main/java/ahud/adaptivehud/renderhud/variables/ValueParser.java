@@ -116,7 +116,6 @@ public class ValueParser {
                 Method method = new AdaptiveHudRegistry().loadVariable(varName);
 
                 if (method != null) {
-                    String[] attributes = matcher.group(2).substring(1).split("\\.");
                     String globalFlagString = matcher.group(3).replaceAll(" ", "");
                     String flagString = matcher.group(4).replaceAll(" ", ""); // WILL GET ERROR IF NULL?
 
@@ -169,7 +168,8 @@ public class ValueParser {
                     }
 
                     String varValue;
-                    if (attributes.length > 0) {
+                    if (!matcher.group(2).isEmpty()) {
+                        String[] attributes = matcher.group(2).substring(1).split("\\.");
                         Object result = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), parameters);
                         AttributeResult parsedResult = new AttributeParser().parseAttributes(attributes, result);
                         method = parsedResult.method();
@@ -203,6 +203,7 @@ public class ValueParser {
                     return varValue;
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 return null;
             }
         }
