@@ -66,10 +66,8 @@ public class RenderHUD {
                 if (this.USE_VALUE) {
                     String renderReq = x.get("advanced").getAsJsonObject().get("renderRequirement").getAsString();
                     if (!renderReq.isEmpty()) {
-                        int render = parser.renderCheck(renderReq);
-                        if (render == -1) {
-                            parsedText = Text.translatable("adaptivehud.variable.render_req_error").getString();
-                        } else if (render == 0) {
+                        boolean render = parser.renderCheck(renderReq);
+                        if (!render) {
                             continue;
                         } else {
                             parsedText = parser.parseValue(x.get("value").getAsString());
@@ -79,6 +77,9 @@ public class RenderHUD {
                     }
                 } else {
                     parsedText = x.get("name").getAsString();
+                }
+                if (parsedText.isEmpty()) {
+                    return;
                 }
 
                 ArrayList<String> texts = new ArrayList<>(Arrays.asList(parsedText.split("\n")));

@@ -27,7 +27,7 @@ dependencies {
 
 	modImplementation "com.terraformersmc:modmenu:11.0.2"
 
-	include implementation('com.udojava:EvalEx:2.7') // Adds math library, about +83kb to jar file
+	include implementation('com.ezylang:EvalEx:3.4.0') // Adds math library, about +138kb to jar file
 }
 
 processResources {

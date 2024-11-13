@@ -7,7 +7,7 @@ import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlag;
 import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlagCont;
 import ahud.adaptivehud.renderhud.variables.attributes.AttributeParser;
 import ahud.adaptivehud.renderhud.variables.attributes.AttributeResult;
-import com.udojava.evalex.Expression;
+import com.ezylang.evalex.Expression;
 import net.minecraft.text.Text;
 
 import java.lang.reflect.Method;
@@ -18,7 +18,6 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 public class ValueParser {
     public String parseValue(String text) {
         text = text.replaceAll("&(?=[\\da-fA-Fk-oK-OrR])", "§");
@@ -88,7 +87,7 @@ public class ValueParser {
         return text;
     }
 
-    public int renderCheck(String text) {
+    public boolean renderCheck(String text) {
         try {
             Pattern pattern = Pattern.compile("\\{(\\w+)((?:\\.\\w+)*)((?: *-[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)((?: *--[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)}");
             Matcher matcher = pattern.matcher(text);
@@ -101,9 +100,9 @@ public class ValueParser {
             }
             matcher.appendTail(result);
 
-            return !parseBooleanExpression(result.toString()) ? 0 : 1;
+            return parseBooleanExpression(result.toString());
         } catch (Exception e) {
-            return -1;
+            return false;
         }
     }
 
@@ -203,7 +202,6 @@ public class ValueParser {
                     return varValue;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
                 return null;
             }
         }
@@ -260,27 +258,25 @@ public class ValueParser {
 
     private String parseMath(String text) {
         try {
-            Expression exp = new Expression(text);
-            BigDecimal replacement = exp.eval();
-            return replacement.toPlainString();
+            return numberExpression(text).toPlainString();
         } catch (Exception e) {
             return null;
         }
     }
 
     private boolean parseBooleanExpression(String expression) {
-        Pattern stringPattern = Pattern.compile("\"([^\"]+)\"(?: *== *\"([^\"]+)\")?");
-        Matcher stringMatcher = stringPattern.matcher(expression.replaceAll("(\"null\"|\"false\"|\"Empty\")", "false"));
-        StringBuilder stringResult = new StringBuilder();
-        while (stringMatcher.find()) {
-            if (stringMatcher.group(2) != null) {
-                stringMatcher.appendReplacement(stringResult, String.valueOf(stringMatcher.group(1).equals(stringMatcher.group(2))));
-            } else {
-                stringMatcher.appendReplacement(stringResult, String.valueOf(!stringMatcher.group(1).isEmpty()));
-            }
+        try {
+            return new Expression(expression).evaluate().getBooleanValue();
+        } catch (Exception e ) {
+            return false;
         }
-        stringMatcher.appendTail(stringResult);
-        Expression expression_fr = new Expression(stringResult.toString());
-        return expression_fr.eval().intValue() != 0;
+    }
+
+    private BigDecimal numberExpression(String value) {
+        try {
+            return new Expression(value).evaluate().getNumberValue();
+        } catch (Exception e ) {
+            return BigDecimal.valueOf(0);
+        }
     }
 }
