@@ -1,7 +1,7 @@
-package ahud.adaptivehud.renderhud.variables;
+package ahud.adaptivehud.renderhud.element_values;
 
 import ahud.adaptivehud.AdaptiveHudRegistry;
-import ahud.adaptivehud.renderhud.variables.inbuilt_flags.DefaultFlags;
+import ahud.adaptivehud.renderhud.element_values.inbuilt_flags.DefaultFlags;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

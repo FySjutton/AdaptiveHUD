@@ -1,11 +1,11 @@
 package ahud.adaptivehud;
 
 import ahud.adaptivehud.renderhud.RenderHUD;
-import ahud.adaptivehud.renderhud.variables.attributes.attribute_classes.Item;
-import ahud.adaptivehud.renderhud.variables.attributes.attribute_classes.Player;
-import ahud.adaptivehud.renderhud.variables.inbuilt_flags.DefaultFlags;
-import ahud.adaptivehud.renderhud.variables.inbuilt_variables.ComplexVars;
-import ahud.adaptivehud.renderhud.variables.inbuilt_variables.DefaultVariables;
+import ahud.adaptivehud.renderhud.element_values.attributes.attribute_classes.Item;
+import ahud.adaptivehud.renderhud.element_values.attributes.attribute_classes.Player;
+import ahud.adaptivehud.renderhud.element_values.inbuilt_flags.DefaultFlags;
+import ahud.adaptivehud.renderhud.element_values.ComplexVars;
+import ahud.adaptivehud.renderhud.element_values.inbuilt_variables.*;
 import ahud.adaptivehud.screens.configscreen.ConfigScreen;
 import ahud.adaptivehud.screens.movescreen.MoveScreen;
 import net.fabricmc.api.ModInitializer;
@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AdaptiveHUD implements ModInitializer {
@@ -82,8 +83,13 @@ public class AdaptiveHUD implements ModInitializer {
 		// Register default variables
 
 		AdaptiveHudRegistry registry = new AdaptiveHudRegistry();
-		for (Method method : DefaultVariables.class.getDeclaredMethods()) {
-			registry.registerVariable(method.getName(), method, false);
+
+		List<Class<?>> classes = List.of(Coordinates.class, CurrentPlayer.class, Direction.class, Environment.class, Misc.class, Movement.class, PCInfo.class, Performence.class, ServerAndWorld.class, TechincalInfo.class);
+
+		for (Class<?> clazz : classes) {
+			for (Method method : clazz.getDeclaredMethods()) {
+				registry.registerVariable(method.getName(), method, false);
+			}
 		}
 
 		new DefaultFlags().loadNonValueFlags();

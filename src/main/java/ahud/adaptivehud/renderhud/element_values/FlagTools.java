@@ -1,4 +1,4 @@
-package ahud.adaptivehud.renderhud.variables;
+package ahud.adaptivehud.renderhud.element_values;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.hit.HitResult;

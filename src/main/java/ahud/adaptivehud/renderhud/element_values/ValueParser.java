@@ -1,12 +1,12 @@
-package ahud.adaptivehud.renderhud.variables;
+package ahud.adaptivehud.renderhud.element_values;
 
 import ahud.adaptivehud.AdaptiveHudRegistry;
-import ahud.adaptivehud.renderhud.variables.annotations.RequiresAttributes;
-import ahud.adaptivehud.renderhud.variables.annotations.LocalFlagName;
-import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlag;
-import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlagCont;
-import ahud.adaptivehud.renderhud.variables.attributes.AttributeParser;
-import ahud.adaptivehud.renderhud.variables.attributes.AttributeResult;
+import ahud.adaptivehud.renderhud.element_values.annotations.RequiresAttributes;
+import ahud.adaptivehud.renderhud.element_values.annotations.LocalFlagName;
+import ahud.adaptivehud.renderhud.element_values.annotations.SetDefaultGlobalFlag;
+import ahud.adaptivehud.renderhud.element_values.annotations.SetDefaultGlobalFlagCont;
+import ahud.adaptivehud.renderhud.element_values.attributes.AttributeParser;
+import ahud.adaptivehud.renderhud.element_values.attributes.AttributeResult;
 import com.ezylang.evalex.Expression;
 import net.minecraft.text.Text;
 

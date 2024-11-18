@@ -1,6 +1,6 @@
 package ahud.adaptivehud.renderhud;
 
-import ahud.adaptivehud.renderhud.variables.ValueParser;
+import ahud.adaptivehud.renderhud.element_values.ValueParser;
 import ahud.adaptivehud.Tools;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -8,7 +8,6 @@ import ahud.adaptivehud.ConfigFiles;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
 
 import java.util.*;
 

@@ -1,13 +1,11 @@
-package ahud.adaptivehud.renderhud.variables.inbuilt_flags;
+package ahud.adaptivehud.renderhud.element_values.inbuilt_flags;
 
 import ahud.adaptivehud.AdaptiveHudRegistry;
-import ahud.adaptivehud.renderhud.variables.FlagTools;
+import ahud.adaptivehud.renderhud.element_values.FlagTools;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
-
-import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class DefaultFlags {
     private final FlagTools tools = new FlagTools();

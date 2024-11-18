@@ -1,4 +1,4 @@
-package ahud.adaptivehud.renderhud.variables.attributes.attribute_classes;
+package ahud.adaptivehud.renderhud.element_values.attributes.attribute_classes;
 
 import net.minecraft.item.ItemStack;
 

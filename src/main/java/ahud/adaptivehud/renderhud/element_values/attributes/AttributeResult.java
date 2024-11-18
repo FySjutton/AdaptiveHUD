@@ -1,4 +1,4 @@
-package ahud.adaptivehud.renderhud.variables.attributes;
+package ahud.adaptivehud.renderhud.element_values.attributes;
 
 import java.lang.reflect.Method;
 

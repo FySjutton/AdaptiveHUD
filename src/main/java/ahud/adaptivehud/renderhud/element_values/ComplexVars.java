@@ -1,13 +1,10 @@
-package ahud.adaptivehud.renderhud.variables.inbuilt_variables;
+package ahud.adaptivehud.renderhud.element_values;
 
-import ahud.adaptivehud.renderhud.variables.FlagTools;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.util.hit.HitResult;
 
 import java.util.Calendar;
-
-import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class ComplexVars {
     private final FlagTools tools = new FlagTools();
@@ -17,12 +14,12 @@ public class ComplexVars {
     private double oldY = 0;
     private double oldZ = 0;
 
-    protected double changeX;
-    protected double changeY;
-    protected double changeZ;
+    public double changeX;
+    public double changeY;
+    public double changeZ;
 
-    protected HitResult targetBlock;
-    protected HitResult targetBlockFluid;
+    public HitResult targetBlock;
+    public HitResult targetBlockFluid;
 
     public void generateCommon() {
         // ALL ELEMENTS ARE LOADED EACH FRAME; EVEN IF THEY WONT BE USED LATER: PERFORMENCE ISSUE!!! FIX

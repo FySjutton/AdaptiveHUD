@@ -1,19 +1,9 @@
-package ahud.adaptivehud.renderhud.variables.attributes;
-
-import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlag;
-import ahud.adaptivehud.renderhud.variables.attributes.attribute_classes.Item;
-import ahud.adaptivehud.renderhud.variables.attributes.attribute_classes.Player;
-
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
+package ahud.adaptivehud.renderhud.element_values.attributes;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 import static ahud.adaptivehud.AdaptiveHUD.ATTRIBUTE_CLASSES;
-import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class AttributeParser {
     public AttributeResult parseAttributes(String[] attributes, Object value) {

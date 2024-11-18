@@ -1,4 +1,4 @@
-package ahud.adaptivehud.renderhud.variables.annotations;
+package ahud.adaptivehud.renderhud.element_values.annotations;
 
 import java.lang.annotation.*;
 
