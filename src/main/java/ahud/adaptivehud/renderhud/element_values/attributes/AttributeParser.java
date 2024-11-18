@@ -15,7 +15,7 @@ public class AttributeParser {
                 }
 
                 Method method = customClass.getMethod(attributes[i]);
-                Constructor<?> constructor =  customClass.getDeclaredConstructor(value.getClass());
+                Constructor<?> constructor = customClass.getDeclaredConstructor(value.getClass());
                 value = method.invoke(constructor.newInstance(value));
 
                 if (i == attributes.length - 1) {

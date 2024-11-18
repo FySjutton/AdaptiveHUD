@@ -29,8 +29,11 @@ import org.lwjgl.glfw.GLFW;
 import static ahud.adaptivehud.AdaptiveHUD.complexVARS;
 
 public class DefaultVariables {
-//    MinecraftClient client = MinecraftClient.getInstance();
-//    PlayerEntity player = MinecraftClient.getInstance().player;
+    MinecraftClient client = MinecraftClient.getInstance();
+    PlayerEntity player = MinecraftClient.getInstance().player;
+
+    public void testing() {
+    }
 //    BlockPos playerPos = client.player.getBlockPos();
 //
 //    @RequiresAttributes

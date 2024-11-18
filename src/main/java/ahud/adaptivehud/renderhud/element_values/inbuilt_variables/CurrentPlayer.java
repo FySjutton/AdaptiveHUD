@@ -1,10 +1,18 @@
 package ahud.adaptivehud.renderhud.element_values.inbuilt_variables;
 
+import ahud.adaptivehud.renderhud.element_values.annotations.RequiresAttributes;
+import ahud.adaptivehud.renderhud.element_values.attributes.attribute_classes.Player;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 
 public class CurrentPlayer {
     private final MinecraftClient client = MinecraftClient.getInstance();
+
+    @RequiresAttributes
+    public PlayerEntity player() {
+        return client.player;
+    }
 
     public String display_name() {
         Text displayName = client.player.getDisplayName();
@@ -38,5 +46,4 @@ public class CurrentPlayer {
     public String spectator() {
         return String.valueOf(client.interactionManager.getCurrentGameMode().getId() == 3);
     }
-
 }
