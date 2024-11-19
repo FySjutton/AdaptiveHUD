@@ -109,7 +109,7 @@ public class Player {
     }
 
     public String creative() {
-        return String.valueOf(player.isSpectator());
+        return String.valueOf(player.isCreative());
     }
 
     public String sprinting() {
@@ -196,10 +196,12 @@ public class Player {
         return String.valueOf(player.getJumpBoostVelocityModifier());
     }
 
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String yaw() {
         return String.valueOf(player.getYaw());
     }
 
+    @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String pitch() {
         return String.valueOf(player.getPitch());
     }
