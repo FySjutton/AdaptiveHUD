@@ -6,6 +6,7 @@ import net.minecraft.SharedConstants;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
+import net.minecraft.entity.Entity;
 import org.lwjgl.glfw.GLFW;
 
 public class Misc {
@@ -54,5 +55,9 @@ public class Misc {
             return String.valueOf(!client.currentScreen.getTitle().getString().isBlank() ? client.currentScreen.getTitle().getString() : "null");
         }
         return null;
+    }
+
+    public Iterable<Entity> loaded_entities() {
+        return client.world.getEntities();
     }
 }

@@ -13,10 +13,14 @@ import net.minecraft.text.Text;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class ValueParser {
     public String parseValue(String text) {
@@ -29,33 +33,52 @@ public class ValueParser {
         Stack<Integer> startPositions = new Stack<>();
         char actualLast = 0;
 
+        Stack<Character> lastNotToUseCharacters = new Stack<>();
+
+//        LOGGER.info("new");
         for (int i = 0; i < text.length(); i++) {
-            if (lastCharacters.peek() != '$' && (textList[i] == '{' || textList[i] == '[' || (textList[i] == '%' && lastCharacters.peek() != '%')) && actualLast != '\\') {
-                startPositions.push(i);
-                lastCharacters.push(textList[i]);
-            }
-            else if (actualLast == '{' && textList[i] == '$') {
+//            LOGGER.info("b");
+//            LOGGER.info(String.valueOf(actualLast));
+//            LOGGER.info(String.valueOf(textList[i]));
+            if (actualLast == '$' && textList[i] == '{') {
+//                LOGGER.info("found");
                 lastCharacters.pop();
                 lastCharacters.push('$');
-            }
-            else if (((textList[i] == '}' && lastCharacters.peek() == '{') ||
+                startPositions.push(i);
+            } else if (lastCharacters.peek() != '$' && (textList[i] == '{' || textList[i] == '[' || (textList[i] == '%' && lastCharacters.peek() != '%')) && actualLast != '\\') {
+//                LOGGER.info("ADDING to start");
+                startPositions.push(i);
+                lastCharacters.push(textList[i]);
+            } else if (lastCharacters.peek() == '$' && textList[i] == '{') {
+                lastNotToUseCharacters.push('{');
+            } else if (lastCharacters.peek() == '$' && textList[i] == '}' && !lastNotToUseCharacters.isEmpty()) {
+                lastNotToUseCharacters.pop();
+            } else if (((textList[i] == '}' && lastCharacters.peek() == '{') ||
                     (textList[i] == ']' && lastCharacters.peek() == '[') ||
                     (textList[i] == '}' && lastCharacters.peek() == '$') ||
                     (textList[i] == '%')) && actualLast != '\\') {
+//                LOGGER.info(String.valueOf(lastCharacters.peek()));
                 char type = textList[i];
                 char lastChar = lastCharacters.peek();
                 lastCharacters.pop();
 
                 int startPos = startPositions.pop();
                 String innerContent = text.substring(startPos + 1, i);
-                String parsedResult;
+                String parsedResult = null;
                 if (type == '}') {
                     if (lastChar == '{') {
-                        parsedResult = parseVariable(innerContent);
+//                        LOGGER.info("looking up var " + innerContent);
+                        Object result = parseVariable(innerContent);
+                        if (result instanceof String) {
+                            parsedResult = String.valueOf(result);
+                        } else {
+//                            LOGGER.info("error");
+                        }
                         if (parsedResult == null) {
                             return Text.translatable("adaptivehud.variable.variable_error").getString();
                         }
                     } else {
+//                        LOGGER.info("parsing loop " + innerContent);
                         parsedResult = parseLoop(innerContent);
 //                        if (parsedResult == null) {
 //                            return "nuhuu";
@@ -95,8 +118,10 @@ public class ValueParser {
 
             while (matcher.find()) {
                 String variableString = matcher.group(1);
-                String varValue = parseVariable(variableString);
-                matcher.appendReplacement(result, varValue); // wont be null cuz of the regex above
+                Object varValue = parseVariable(variableString);
+                if (varValue instanceof String) {
+                    matcher.appendReplacement(result, String.valueOf(varValue)); // wont be null cuz of the regex above
+                }
             }
             matcher.appendTail(result);
 
@@ -106,7 +131,7 @@ public class ValueParser {
         }
     }
 
-    private String parseVariable(String text) {
+    private Object parseVariable(String text) {
         Pattern variablePattern = Pattern.compile("(\\w+)((?:\\.\\w+)*)((?: *-[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)((?: *--[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)");
         Matcher matcher = variablePattern.matcher(text);
         if (matcher.matches()) {
@@ -176,10 +201,15 @@ public class ValueParser {
                         if (resultText instanceof String) {
                             varValue = String.valueOf(resultText);
                         } else {
-                            return null;
+                            return resultText;
                         }
                     } else if (!method.isAnnotationPresent(RequiresAttributes.class)) {
-                        varValue = String.valueOf(method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), parameters));
+                        Object value = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), parameters);
+                        if (value instanceof String) {
+                            varValue = String.valueOf(value);
+                        } else {
+                            return value;
+                        }
                     } else {
                         return null;
                     }
@@ -209,16 +239,45 @@ public class ValueParser {
     }
 
     private String parseLoop(String text) {
-        Pattern pattern = Pattern.compile("\\$\"(.+)\" for ([a-z]+) of (\\w+)");
+        Pattern pattern = Pattern.compile("\" *(.+)\" *for *(\\w+) *in *\\{(\\w+)}(?: *if *\"(\\w+)\"(?: *else *\"(.+)\")*)*");
         Matcher matcher = pattern.matcher(text);
+        StringBuilder builder = new StringBuilder();
+
         if (matcher.matches()) {
-            String value = matcher.group(0);
-            String varName = matcher.group(1);
-            String ofValue = matcher.group(2);
+            String value = matcher.group(1);
+            String varName = matcher.group(2);
+            String ofValue = matcher.group(3);
+            String ifValue = matcher.group(4);
+            String elseValue = matcher.group(5);
 
+            String finishedResult = "";
 
+            Object iterableRes = parseVariable(ofValue);
+            if (iterableRes instanceof Iterable<?> iterable) {
+                for (Object item : iterable) {
+                    String processedValue = value;
+
+                    Pattern attribute_finder = Pattern.compile("\\{" + varName + "\\.([.\\w]+)}");
+                    Matcher attribute_matcher = attribute_finder.matcher(processedValue);
+                    StringBuilder entityBuilder = new StringBuilder();
+
+                    while (attribute_matcher.find()) {
+                        String attributes = attribute_matcher.group(1);
+                        AttributeResult replaceValue = new AttributeParser().parseAttributes(attributes.split("\\."), item);
+
+                        String replacement = (replaceValue != null && replaceValue.value() != null)
+                                ? String.valueOf(replaceValue.value())
+                                : "null";
+
+                        attribute_matcher.appendReplacement(entityBuilder, Matcher.quoteReplacement(replacement));
+                    }
+
+                    attribute_matcher.appendTail(entityBuilder);
+                    builder.append(entityBuilder);
+                }
+            }
         }
-        return text;
+        return builder.toString();
     }
 
     private String parseCondition(String text) {

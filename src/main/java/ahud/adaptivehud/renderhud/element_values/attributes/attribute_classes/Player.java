@@ -2,6 +2,7 @@ package ahud.adaptivehud.renderhud.element_values.attributes.attribute_classes;
 
 import ahud.adaptivehud.renderhud.element_values.annotations.LocalFlagName;
 import ahud.adaptivehud.renderhud.element_values.annotations.SetDefaultGlobalFlag;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;

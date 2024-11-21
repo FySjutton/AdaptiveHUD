@@ -17,6 +17,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -95,7 +96,7 @@ public class AdaptiveHUD implements ModInitializer {
 		new DefaultFlags().loadNonValueFlags();
 
 		registry.registerAttribute(ItemStack.class, Item.class);
-		registry.registerAttribute(PlayerEntity.class, Player.class); // idk seem to need both
-		registry.registerAttribute(ClientPlayerEntity.class, Player.class);
+		registry.registerAttribute(PlayerEntity.class, Player.class);
+		registry.registerAttribute(Entity.class, ahud.adaptivehud.renderhud.element_values.attributes.attribute_classes.Entity.class);
 	}
 }
