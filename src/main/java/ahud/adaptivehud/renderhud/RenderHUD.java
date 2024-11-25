@@ -69,10 +69,10 @@ public class RenderHUD {
                         if (!render) {
                             continue;
                         } else {
-                            parsedText = parser.parseValue(x.get("value").getAsString());
+                            parsedText = parser.parseValue(x.get("value").getAsString(), null, null);
                         }
                     } else {
-                        parsedText = parser.parseValue(x.get("value").getAsString());
+                        parsedText = parser.parseValue(x.get("value").getAsString(), null, null);
                     }
                 } else {
                     parsedText = x.get("name").getAsString();

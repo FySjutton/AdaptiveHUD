@@ -1,6 +1,13 @@
 ### Beta Version: v2.0.0-beta.4+1.21 changelog
 **Changes made since v2.0.0-beta.3+1.21**
 - Updated the conditions syntax, it now requires " " around each value, this is so trailing spaces will be included.
+- New license
+- More utilities in the editor
+- Made non-attribute variables work again
+- Added a lot of new variables and classes.
+- Fixed some existing variables.
+- Added support for loops.
+- Upgraded math library, adding about ~50 new functions.
 
 ### Beta Version: v2.0.0-beta.3+1.21 changelog
 **Changes made since v2.0.0-beta.2+1.21**

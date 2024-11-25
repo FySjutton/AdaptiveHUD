@@ -8,6 +8,7 @@ import ahud.adaptivehud.renderhud.element_values.annotations.SetDefaultGlobalFla
 import ahud.adaptivehud.renderhud.element_values.attributes.AttributeParser;
 import ahud.adaptivehud.renderhud.element_values.attributes.AttributeResult;
 import com.ezylang.evalex.Expression;
+import com.ezylang.evalex.config.ExpressionConfiguration;
 import net.minecraft.text.Text;
 
 import java.lang.reflect.Method;
@@ -23,7 +24,7 @@ import java.util.regex.Pattern;
 import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class ValueParser {
-    public String parseValue(String text) {
+    public String parseValue(String text, String loopVarName, Object loopValue) {
         text = text.replaceAll("&(?=[\\da-fA-Fk-oK-OrR])", "§");
 
         char[] textList = text.toCharArray();
@@ -35,18 +36,12 @@ public class ValueParser {
 
         Stack<Character> lastNotToUseCharacters = new Stack<>();
 
-//        LOGGER.info("new");
         for (int i = 0; i < text.length(); i++) {
-//            LOGGER.info("b");
-//            LOGGER.info(String.valueOf(actualLast));
-//            LOGGER.info(String.valueOf(textList[i]));
             if (actualLast == '$' && textList[i] == '{') {
-//                LOGGER.info("found");
                 lastCharacters.pop();
                 lastCharacters.push('$');
                 startPositions.push(i);
             } else if (lastCharacters.peek() != '$' && (textList[i] == '{' || textList[i] == '[' || (textList[i] == '%' && lastCharacters.peek() != '%')) && actualLast != '\\') {
-//                LOGGER.info("ADDING to start");
                 startPositions.push(i);
                 lastCharacters.push(textList[i]);
             } else if (lastCharacters.peek() == '$' && textList[i] == '{') {
@@ -57,7 +52,6 @@ public class ValueParser {
                     (textList[i] == ']' && lastCharacters.peek() == '[') ||
                     (textList[i] == '}' && lastCharacters.peek() == '$') ||
                     (textList[i] == '%')) && actualLast != '\\') {
-//                LOGGER.info(String.valueOf(lastCharacters.peek()));
                 char type = textList[i];
                 char lastChar = lastCharacters.peek();
                 lastCharacters.pop();
@@ -67,22 +61,15 @@ public class ValueParser {
                 String parsedResult = null;
                 if (type == '}') {
                     if (lastChar == '{') {
-//                        LOGGER.info("looking up var " + innerContent);
-                        Object result = parseVariable(innerContent);
+                        Object result = parseVariable(innerContent, loopVarName, loopValue);
                         if (result instanceof String) {
                             parsedResult = String.valueOf(result);
-                        } else {
-//                            LOGGER.info("error");
                         }
                         if (parsedResult == null) {
                             return Text.translatable("adaptivehud.variable.variable_error").getString();
                         }
                     } else {
-//                        LOGGER.info("parsing loop " + innerContent);
                         parsedResult = parseLoop(innerContent);
-//                        if (parsedResult == null) {
-//                            return "nuhuu";
-//                        }
                     }
 
                 } else if (type == ']') {
@@ -118,7 +105,7 @@ public class ValueParser {
 
             while (matcher.find()) {
                 String variableString = matcher.group(1);
-                Object varValue = parseVariable(variableString);
+                Object varValue = parseVariable(variableString, null, null);
                 if (varValue instanceof String) {
                     matcher.appendReplacement(result, String.valueOf(varValue)); // wont be null cuz of the regex above
                 }
@@ -131,7 +118,7 @@ public class ValueParser {
         }
     }
 
-    private Object parseVariable(String text) {
+    private Object parseVariable(String text, String loopVarName, Object loopValue) {
         Pattern variablePattern = Pattern.compile("(\\w+)((?:\\.\\w+)*)((?: *-[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)((?: *--[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)");
         Matcher matcher = variablePattern.matcher(text);
         if (matcher.matches()) {
@@ -194,7 +181,12 @@ public class ValueParser {
                     String varValue;
                     if (!matcher.group(2).isEmpty()) {
                         String[] attributes = matcher.group(2).substring(1).split("\\.");
-                        Object result = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), parameters);
+                        Object result;
+                        if (loopVarName != null) {
+                            result = loopValue;
+                        } else {
+                            result = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), parameters);
+                        }
                         AttributeResult parsedResult = new AttributeParser().parseAttributes(attributes, result);
                         method = parsedResult.method();
                         Object resultText = parsedResult.value();
@@ -239,7 +231,7 @@ public class ValueParser {
     }
 
     private String parseLoop(String text) {
-        Pattern pattern = Pattern.compile("\" *(.+)\" *for *(\\w+) *in *\\{(\\w+)}(?: *if *\"(\\w+)\"(?: *else *\"(.+)\")*)*");
+        Pattern pattern = Pattern.compile("\" *(.+)\" *for *(\\w+) *in *\\{(\\w+)}(?: *if *\"([^\"]+)\"(?: *else *\"(.+)\")*)*");
         Matcher matcher = pattern.matcher(text);
         StringBuilder builder = new StringBuilder();
 
@@ -250,30 +242,23 @@ public class ValueParser {
             String ifValue = matcher.group(4);
             String elseValue = matcher.group(5);
 
-            String finishedResult = "";
-
-            Object iterableRes = parseVariable(ofValue);
+            Object iterableRes = parseVariable(ofValue, null, null);
             if (iterableRes instanceof Iterable<?> iterable) {
-                for (Object item : iterable) {
-                    String processedValue = value;
-
-                    Pattern attribute_finder = Pattern.compile("\\{" + varName + "\\.([.\\w]+)}");
-                    Matcher attribute_matcher = attribute_finder.matcher(processedValue);
-                    StringBuilder entityBuilder = new StringBuilder();
-
-                    while (attribute_matcher.find()) {
-                        String attributes = attribute_matcher.group(1);
-                        AttributeResult replaceValue = new AttributeParser().parseAttributes(attributes.split("\\."), item);
-
-                        String replacement = (replaceValue != null && replaceValue.value() != null)
-                                ? String.valueOf(replaceValue.value())
-                                : "null";
-
-                        attribute_matcher.appendReplacement(entityBuilder, Matcher.quoteReplacement(replacement));
+                for (Object obj : iterable) {
+                    String responseValue = "";
+                    boolean useValue = true;
+                    if (ifValue != null) {
+                        String parsedIfValue = parseValue(ifValue, varName, obj);
+//                        LOGGER.info(parsedIfValue);
+                        useValue = parseBooleanExpression(parsedIfValue);
+//                        LOGGER.info(String.valueOf(useValue));
                     }
-
-                    attribute_matcher.appendTail(entityBuilder);
-                    builder.append(entityBuilder);
+                    if (useValue) {
+                        responseValue = parseValue(value, varName, obj);
+                    } else if (elseValue != null) {
+                        responseValue = parseValue(elseValue, varName, obj);
+                    }
+                    builder.append(responseValue);
                 }
             }
         }
@@ -325,7 +310,9 @@ public class ValueParser {
 
     private boolean parseBooleanExpression(String expression) {
         try {
-            return new Expression(expression).evaluate().getBooleanValue();
+            ExpressionConfiguration configuration = ExpressionConfiguration.builder().singleQuoteStringLiteralsAllowed(true).build();
+
+            return new Expression(expression, configuration).evaluate().getBooleanValue();
         } catch (Exception e ) {
             return false;
         }
@@ -333,7 +320,8 @@ public class ValueParser {
 
     private BigDecimal numberExpression(String value) {
         try {
-            return new Expression(value).evaluate().getNumberValue();
+            ExpressionConfiguration configuration = ExpressionConfiguration.builder().singleQuoteStringLiteralsAllowed(true).build();
+            return new Expression(value, configuration).evaluate().getNumberValue();
         } catch (Exception e ) {
             return BigDecimal.valueOf(0);
         }
