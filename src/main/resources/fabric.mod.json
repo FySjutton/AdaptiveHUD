@@ -12,7 +12,7 @@
 		"sources": "https://github.com/FySjutton/AdaptiveHUD",
 		"issues": "https://discord.gg/6gBT2CgqQj"
 	},
-	"license": "CC0-1.0",
+	"license": "AdaptiveHUD License",
 	"icon": "assets/adaptivehud/mod_icon.png",
 	"environment": "client",
 	"entrypoints": {
