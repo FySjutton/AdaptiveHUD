@@ -85,7 +85,7 @@ public class EditScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (this.suggester.keyPressed(keyCode)) {
+        if (!this.suggester.visible || this.suggester.keyPressed(keyCode)) {
             return super.keyPressed(keyCode, scanCode, modifiers);
         }
         return false;

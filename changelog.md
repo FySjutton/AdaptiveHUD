@@ -1,3 +1,7 @@
+### Beta Version: v2.0.0-beta.5+1.21 changelog
+**Changes made since v2.0.0-beta.4+1.21**
+- Fixed the up / down button in the editor
+
 ### Beta Version: v2.0.0-beta.4+1.21 changelog
 **Changes made since v2.0.0-beta.3+1.21**
 - Updated the conditions syntax, it now requires " " around each value, this is so trailing spaces will be included.

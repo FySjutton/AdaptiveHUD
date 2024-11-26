@@ -143,7 +143,6 @@ public class Suggester {
                 scroll ++;
             } else if (highlight + 1 < lines) {
                 highlight ++;
-
             }
             return false;
         } else if (keyCode == 265) {
