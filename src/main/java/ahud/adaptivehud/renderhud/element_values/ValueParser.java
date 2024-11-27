@@ -14,10 +14,7 @@ import net.minecraft.text.Text;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Stack;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -119,7 +116,7 @@ public class ValueParser {
     }
 
     private Object parseVariable(String text, String loopVarName, Object loopValue) {
-        Pattern variablePattern = Pattern.compile("(\\w+)((?:\\.\\w+)*)((?: *-[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)((?: *--[a-zA-Z]+(?:=(?:[^\\-\\\\]|\\\\.)+)?)*)");
+        Pattern variablePattern = Pattern.compile("(\\w+)((?:\\.\\w+)*)((?: *- *[a-zA-Z]+(?: *= *\"(?:[^\\-\\\\]|\\\\.)+\")?)*)((?: *-- *[a-zA-Z]+(?: *= *\"(?:[^\\-\\\\]|\\\\.)+\")?)*)");
         Matcher matcher = variablePattern.matcher(text);
         if (matcher.matches()) {
             String varName = matcher.group(1);
@@ -131,31 +128,39 @@ public class ValueParser {
                     String flagString = matcher.group(4).replaceAll(" ", ""); // WILL GET ERROR IF NULL?
 
                     // Global Variables:
-                    HashMap<String, String[]> flags = new HashMap<>();
+                    HashMap<String, List<String>> flags = new HashMap<>();
 
                     if (!globalFlagString.isEmpty()) {
                         for (String x : globalFlagString.split("-")) {
-                            if (!x.isEmpty()) {
+                            if (!x.replace(" ", "").isEmpty()) {
                                 if (x.contains("=")) {
                                     String[] valueFlag = x.split("=");
-                                    flags.put(valueFlag[0], valueFlag[1].split("(?<!\\\\);"));
+                                    List<String> values = Arrays.stream(valueFlag[1].split("(?<!\\\\);")).map(
+                                            val -> val.substring(val.indexOf("\"") + 1, val.lastIndexOf("\""))
+                                    ).toList();
+                                    flags.put(valueFlag[0], values);
                                 } else {
-                                    flags.put(x, null);
+                                    flags.put(x.replace(" ", ""), null);
                                 }
                             }
                         }
                     }
 
                     // Local flags (variable specific)
-                    HashMap<String, String> localFlags = new HashMap<>();
+                    HashMap<String, List<String>> localFlags = new HashMap<>();
 
                     if (!flagString.isEmpty()) {
                         for (String flag : flagString.split("--")) {
-                            if (flag.contains("=")) {
-                                String[] values = flag.split("=");
-                                localFlags.put(values[0], values[1]);
-                            } else {
-                                localFlags.put(flag, null);
+                            if (!flag.replace(" ", "").isEmpty()) {
+                                if (flag.contains("=")) {
+                                    String[] values = flag.split("=");
+                                    List<String> mappedVals = Arrays.stream(values[1].split("(?<!\\\\);")).map(
+                                            val -> val.substring(val.indexOf("\"") + 1, val.lastIndexOf("\""))
+                                    ).toList();
+                                    localFlags.put(values[0], mappedVals);
+                                } else {
+                                    localFlags.put(flag.replace(" ", ""), null);
+                                }
                             }
                         }
                     }
@@ -168,12 +173,7 @@ public class ValueParser {
                         if (param.isAnnotationPresent(LocalFlagName.class)) {
                             String keyName = param.getAnnotation(LocalFlagName.class).value();
                             if (localFlags.containsKey(keyName)) {
-                                boolean paramBoolean = param.getType() == Boolean.class;
-                                if (localFlags.get(keyName) != null) {
-                                    parameters[i] = paramBoolean ? false : localFlags.get(keyName);
-                                } else {
-                                    parameters[i] = paramBoolean ? true : "1";
-                                }
+                                parameters[i] = localFlags.get(keyName);
                             }
                         }
                     }
@@ -209,12 +209,12 @@ public class ValueParser {
                     if (method.isAnnotationPresent(SetDefaultGlobalFlag.class)) {
                         SetDefaultGlobalFlag annFlag = method.getAnnotation(SetDefaultGlobalFlag.class);
                         if (!flags.containsKey(annFlag.flag())) {
-                            flags.put(annFlag.flag(), annFlag.values());
+                            flags.put(annFlag.flag(), Arrays.stream(annFlag.values()).toList());
                         }
                     } else if (method.isAnnotationPresent(SetDefaultGlobalFlagCont.class)) {
                         for (SetDefaultGlobalFlag x : method.getAnnotation(SetDefaultGlobalFlagCont.class).value()) {
                             if (!flags.containsKey(x.flag())) {
-                                flags.put(x.flag(), x.values());
+                                flags.put(x.flag(), Arrays.stream(x.values()).toList());
                             }
                         }
                     }

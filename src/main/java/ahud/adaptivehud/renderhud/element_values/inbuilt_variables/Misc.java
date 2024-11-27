@@ -9,13 +9,15 @@ import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.entity.Entity;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.List;
+
 public class Misc {
     private final MinecraftClient client = MinecraftClient.getInstance();
 
-    public String key_pressed(@LocalFlagName("KEY") String scancode) {
+    public String key_pressed(@LocalFlagName("key") List<String> scancode) {
         // All scancodes can be found at "https://www.glfw.org/docs/3.3/group__keys.html".
         // For example, "R" is 82.
-        return String.valueOf(GLFW.glfwGetKey(client.getWindow().getHandle(), Integer.parseInt(scancode)) == GLFW.GLFW_PRESS);
+        return String.valueOf(GLFW.glfwGetKey(client.getWindow().getHandle(), Integer.parseInt(scancode.getFirst())) == GLFW.GLFW_PRESS);
     }
 
     public String client_mod_name() {

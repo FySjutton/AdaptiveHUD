@@ -1,6 +1,7 @@
 package ahud.adaptivehud;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Set;
 
 import static ahud.adaptivehud.AdaptiveHUD.*;
@@ -41,7 +42,7 @@ public class AdaptiveHudRegistry {
             return false;
         }
         if (method.getParameters().length == 2) {
-            if (method.getParameters()[0].getType() == String.class && method.getParameters()[1].getType() == String[].class) {
+            if (method.getParameters()[0].getType() == String.class && method.getParameters()[1].getType() == List.class) {
                 FLAGS.put(name, method);
                 return true;
             }

@@ -9,13 +9,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
+import java.util.List;
+
 public class Player {
     private final PlayerEntity player;
 
     public Player(PlayerEntity player) {
         this.player = player;
     }
-    public Player(ClientPlayerEntity player) {this.player = player; }
 
     public String display_name() {
         Text displayName = player.getDisplayName();
@@ -73,8 +74,8 @@ public class Player {
         return String.valueOf(player.experienceProgress);
     }
 
-    public ItemStack slot(@LocalFlagName("SLOT") String slot) {
-        return player.playerScreenHandler.slots.get(Integer.parseInt(slot)).getStack();
+    public ItemStack slot(@LocalFlagName("slot") List<String> slot) {
+        return player.playerScreenHandler.slots.get(Integer.parseInt(slot.getFirst())).getStack();
     }
 
     public ItemStack main_hand() {
