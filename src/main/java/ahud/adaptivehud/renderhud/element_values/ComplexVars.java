@@ -5,6 +5,12 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.util.hit.HitResult;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class ComplexVars {
     private final FlagTools tools = new FlagTools();
@@ -20,6 +26,9 @@ public class ComplexVars {
 
     public HitResult targetBlock;
     public HitResult targetBlockFluid;
+
+    private final HashMap<Integer, Integer> cpsCounter = new HashMap<>();
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public void generateCommon() {
         // ALL ELEMENTS ARE LOADED EACH FRAME; EVEN IF THEY WONT BE USED LATER: PERFORMENCE ISSUE!!! FIX
@@ -39,5 +48,16 @@ public class ComplexVars {
         oldX = player.getX();
         oldY = player.getY();
         oldZ = player.getZ();
+    }
+
+    public void cpsClick(int scancode) {
+        cpsCounter.put(scancode, cpsCounter.getOrDefault(scancode, 0) + 1);
+        scheduler.schedule(() -> {
+            cpsCounter.put(scancode, cpsCounter.get(scancode) - 1);
+        }, 1, TimeUnit.SECONDS);
+    }
+
+    public int getCPSClicks(int scancode) {
+        return cpsCounter.getOrDefault(scancode, 0);
     }
 }

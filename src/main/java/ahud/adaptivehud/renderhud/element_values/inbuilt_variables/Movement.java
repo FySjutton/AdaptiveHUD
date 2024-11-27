@@ -43,8 +43,19 @@ public class Movement {
         return String.valueOf(player.getAbilities().flying);
     }
 
+    public String sprinting() {
+        return String.valueOf(player.isSprinting());
+    }
+
     public String sneaking() {
         return String.valueOf(client.player.isSneaking());
     }
 
+    public String swimming() {
+        return String.valueOf(player.isSwimming());
+    }
+
+    public String swimming_pose() {
+        return String.valueOf(player.isInSwimmingPose());
+    }
 }

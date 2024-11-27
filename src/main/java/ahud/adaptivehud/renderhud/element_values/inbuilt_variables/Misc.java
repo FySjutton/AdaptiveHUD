@@ -10,6 +10,7 @@ import net.minecraft.entity.Entity;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
+import static ahud.adaptivehud.AdaptiveHUD.complexVARS;
 
 public class Misc {
     private final MinecraftClient client = MinecraftClient.getInstance();
@@ -18,6 +19,10 @@ public class Misc {
         // All scancodes can be found at "https://www.glfw.org/docs/3.3/group__keys.html".
         // For example, "R" is 82.
         return String.valueOf(GLFW.glfwGetKey(client.getWindow().getHandle(), Integer.parseInt(scancode.getFirst())) == GLFW.GLFW_PRESS);
+    }
+
+    public String cps(@LocalFlagName("key") List<String> scancode) {
+        return String.valueOf(complexVARS.getCPSClicks(Integer.parseInt(scancode.getFirst())));
     }
 
     public String client_mod_name() {
@@ -59,7 +64,7 @@ public class Misc {
         return null;
     }
 
-    public Iterable<Entity> loaded_entities() {
+    public Iterable<Entity> entities() {
         return client.world.getEntities();
     }
 }

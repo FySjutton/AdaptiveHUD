@@ -71,4 +71,7 @@ public class PCInfo {
         return System.getProperty("java.version");
     }
 
+    public String java_bit() {
+        return System.getProperty("sun.arch.data.model");
+    }
 }
