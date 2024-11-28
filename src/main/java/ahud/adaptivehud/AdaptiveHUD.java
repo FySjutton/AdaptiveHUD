@@ -85,7 +85,7 @@ public class AdaptiveHUD implements ModInitializer {
 
 		AdaptiveHudRegistry registry = new AdaptiveHudRegistry();
 
-		List<Class<?>> classes = List.of(Coordinates.class, CurrentPlayer.class, Direction.class, Environment.class, Misc.class, Movement.class, PCInfo.class, Performence.class, ServerAndWorld.class, TechincalInfo.class);
+		List<Class<?>> classes = List.of(ClockAndTime.class, Coordinates.class, CurrentPlayer.class, Direction.class, Environment.class, Misc.class, Movement.class, PCInfo.class, Performence.class, ServerAndWorld.class, TechincalInfo.class);
 
 		for (Class<?> clazz : classes) {
 			for (Method method : clazz.getDeclaredMethods()) {

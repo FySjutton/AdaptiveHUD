@@ -18,8 +18,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
-
 public class ValueParser {
     public String parseValue(String text, String loopVarName, Object loopValue) {
         text = text.replaceAll("&(?=[\\da-fA-Fk-oK-OrR])", "§");
@@ -166,7 +164,7 @@ public class ValueParser {
                     }
 
                     Parameter[] params = method.getParameters();
-                    Object[] parameters = new Object[params.length];
+                    List<String>[] parameters = new List[params.length];
 
                     for (int i = 0; i < params.length; i++) {
                         Parameter param = params[i];
@@ -249,9 +247,7 @@ public class ValueParser {
                     boolean useValue = true;
                     if (ifValue != null) {
                         String parsedIfValue = parseValue(ifValue, varName, obj);
-//                        LOGGER.info(parsedIfValue);
                         useValue = parseBooleanExpression(parsedIfValue);
-//                        LOGGER.info(String.valueOf(useValue));
                     }
                     if (useValue) {
                         responseValue = parseValue(value, varName, obj);

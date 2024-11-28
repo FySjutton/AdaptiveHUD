@@ -184,8 +184,8 @@ public class EditBox {
                         // Deletes the next character too, if it's just like "{|}", cursor being |
                         if (cursor > 0 && text.length() > cursor) {
                             char beforeChar = text.charAt(cursor - 1);
-                            this.delete(-1);
                             char afterChar = text.charAt(cursor);
+                            this.delete(-1);
                             if ((beforeChar == '{' && afterChar == '}') || (beforeChar == '[' && afterChar == ']')) {
                                 this.delete(1);
                             }
