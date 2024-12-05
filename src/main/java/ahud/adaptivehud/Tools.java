@@ -9,6 +9,7 @@ import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
@@ -17,6 +18,7 @@ import java.util.regex.Pattern;
 import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class Tools {
+    // This color-editor is very early beta, and the code may not be ideal. Will hopefully be improved in the future.
     public MutableText colorTextRenderer(String text, int toIndex, Stack<Character> openingChars) {
         MutableText displayText = Text.empty();
         char actualLast = '0';
@@ -29,82 +31,66 @@ public class Tools {
             char last = openingChars.getLast();
             String next = String.valueOf(i + 1 < chars.length ? chars[i + 1] : " ");
 
-            if (actualLast != '\\' && last == '"' && v == '"') {
-                openingChars.removeLast();
-                color = 0xff39d453;
-            } else if (actualLast != '\\' && v == '"') {
-                openingChars.add(v);
-                color = 0xff39d453;
-            } else if (actualLast != '\\' && v == '{') {
+            if (actualLast != '\\' && v == '{') {
                 openingChars.add(v);
                 color = 0xffffc766;
-            } else if (actualLast != '\\' && v == '}' && last == '{') {
-                openingChars.removeLast();
-                color = 0xffffc766;
-            } else if (actualLast != '\\' && v == '.' && (openingChars.contains('{'))) {
-                if (!openingChars.contains('.')) {
+            } else if (v == '.' && actualLast != '\\' && (last == '{' || last == '.')) {
+                color = 0xff8c8c8c;
+                if (last != '.') {
                     openingChars.add('.');
                 }
-                color = 0xff6b6b6b;
-            } else if (last == '{') {
-                color = 0xff399bd4;
-            } else if (last == '"') {
-                color = 0xff39d453;
+            } else if (v == '-' && actualLast != '\\' && (last == '{' || last == '-' || last == '=' || last == '.')) {
+                color = 0xffe942f5;
+                if (last != '-') {
+                    openingChars.add('-');
+                }
+            } else if (v == '}' && actualLast != '\\' && (last == '{' || last == '-' || last == '=' || last == '.')) {
+                color = 0xffffc766;
+                int del = openingChars.size() - openingChars.lastIndexOf('{');
+                for (int j = 0; j < del; j++) {
+                    openingChars.removeLast();
+                }
+            } else if (last == '-' && v == '=') {
+                color = 0xffdcf043;
+                openingChars.add('=');
+            } else if (last == '=') {
+                color = 0xff43f051;
+            } else if (last == '-') {
+                color = 0xff8f44eb;
             } else if (last == '.') {
-                color = 0xff85caff;
+                color = 0xff6ba4ff;
+            } else if (last == '{') {
+                color = 0xff4287f5;
+            } else if (actualLast != '\\' && v == '[') {
+                openingChars.add(v);
+                color = 0xffffc766;
+            } else if ((openingChars.contains('[') || openingChars.contains('%')) && List.of('(', ')', '=', '<', '>', '&', '|', '+', '-', '/', '*', '^').contains(v)) {
+                color = 0xff8c8c8c;
+            } else if ((openingChars.contains('[') || openingChars.contains('%')) && (String.valueOf(v).matches("\\d") || (v == '-' && next.matches("\\d")) || (v == '.' && String.valueOf(actualLast).matches("\\d") && next.matches("\\d")))) {
+                color = 0x6bffd3;
+            } else if (last == '[' && v == ':') {
+                openingChars.add(v);
+                color = 0xff6be1;
+            } else if (openingChars.contains('[') && (v != ']' && v != ',')) {
+                color = 0x6bff8b;
+            } else if (last == ':' && v == ',') {
+                color = 0xc46bff;
+                openingChars.removeLast();
+            } else if (openingChars.contains('[') && v == ']') {
+                color = 0xffffc766;
+                int del = openingChars.size() - openingChars.lastIndexOf('[');
+                for (int j = 0; j < del; j++) {
+                    openingChars.removeLast();
+                }
+            } else if (actualLast != '\\' && v == '%' && !openingChars.contains('%')) {
+                openingChars.add('%');
+                color = 0xffffc766;
+            } else if (actualLast != '\\' && v == '%') {
+                color = 0xffffc766;
+                openingChars.remove(openingChars.lastIndexOf('%'));
+            } else if (last == '%') {
+                color = 0xffb5eeff;
             }
-
-//            if (actualLast != '\\' && v == '{') {
-//                openingChars.add(v);
-//                color = 0xffffc766;
-//            } else if (v == '.' && actualLast != '\\' && (last == '{' || last == '.')) {
-//                color = 0xff8c8c8c;
-//                if (last != '.') {
-//                    openingChars.add('.');
-//                }
-//            } else if (v == '-' && actualLast != '\\' && (last == '{' || last == '-' || last == '=' || last == '.')) {
-//                color = 0xffe942f5;
-//                if (last != '-') {
-//                    openingChars.add('-');
-//                }
-//            } else if (v == '}' && actualLast != '\\' && (last == '{' || last == '-' || last == '=' || last == '.')) {
-//                color = 0xffffc766;
-//                int del = openingChars.size() - openingChars.lastIndexOf('{');
-//                for (int j = 0; j < del; j++) {
-//                    openingChars.removeLast();
-//                }
-//            } else if (last == '-' && v == '=') {
-//                color = 0xffdcf043;
-//                openingChars.add('=');
-//            } else if (last == '=') {
-//                color = 0xff43f051;
-//            } else if (last == '-') {
-//                color = 0xff8f44eb;
-//            } else if (last == '.') {
-//                color = 0xff6ba4ff;
-//            } else if (last == '{') {
-//                color = 0xff4287f5;
-//            } else if (actualLast != '\\' && v == '[') {
-//                openingChars.add(v);
-//                color = 0xffffc766;
-//            } else if (last == '[' && (v == '(' || v == ')' || v == '=' || v == '<' || v == '>' || v == '&' || v == '|')) {
-//                color = 0xff8c8c8c;
-//            } else if (last == '[' && (String.valueOf(v).matches("\\d") || (v == '-' && next.matches("\\d")) || (v == '.' && String.valueOf(actualLast).matches("\\d") && next.matches("\\d")))) {
-//                color = 0x6bffd3;
-//            } else if (last == '[' && v == ':') {
-//                openingChars.add(v);
-//                color = 0xff6be1;
-//            } else if (last == ':' && v != ']' && v != ',') {
-//                color = 0x6bff8b;
-//            } else if (last == ':' && v == ',') {
-//                color = 0xc46bff;
-//            } else if (last == ':') { // ]
-//                color = 0xffffc766;
-//                int del = openingChars.size() - openingChars.lastIndexOf('[');
-//                for (int j = 0; j < del; j++) {
-//                    openingChars.removeLast();
-//                }
-//            }
 
             actualLast = v;
             displayText.append(Text.literal(String.valueOf(v)).withColor(color));

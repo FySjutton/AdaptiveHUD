@@ -1,6 +1,14 @@
 ### Beta Version: v2.0.0-beta.5+1.21 changelog
 **Changes made since v2.0.0-beta.4+1.21**
 - Fixed the up / down button in the editor
+- Changed logo of the mod
+- Fixed the license
+- Updated flags to use quotes ("), and take multiple values
+  - This is also the case for the developer support, now takes List\<String>
+- Added even more variables
+- Started simplifying the new editor.
+  - It takes far too much time to fix everything planned, so the first release of v2 will only include a very simple editor, basic color syntax and multiline text field.
+- Fixed a bug that makes the game crash in the editor
 
 ### Beta Version: v2.0.0-beta.4+1.21 changelog
 **Changes made since v2.0.0-beta.3+1.21**
