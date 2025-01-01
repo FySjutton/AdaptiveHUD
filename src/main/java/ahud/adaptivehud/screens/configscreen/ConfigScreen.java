@@ -17,6 +17,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -114,10 +115,10 @@ public class ConfigScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(textRenderer, "AdaptiveHUD", width / 2, 15, 0xffffff);
-        context.drawGuiTexture(SEARCH_ICON, width / 2 + 1, 34, 12, 12);
+        context.drawGuiTexture(RenderLayer::getGuiTextured, SEARCH_ICON, width / 2 + 1, 34, 12, 12);
 
         if (renderDiscordButton) {
-            context.drawTexture(DISCORD_TEXTURE, width - discordWidth - 13, 12, 0, 0, 14, 14, 14, 14);
+            context.drawTexture(RenderLayer::getGuiTextured, DISCORD_TEXTURE, width - discordWidth - 13, 12, 0, 0, 14, 14, 14, 14);
             context.drawText(textRenderer, DISCORD_TEXT, width - discordWidth + 6, (int) (15.5), 0xFFFFFF, true);
         }
 
@@ -144,7 +145,7 @@ public class ConfigScreen extends Screen {
     }
 
     @Override
-    public void filesDragged(List<Path> paths) {
+    public void onFilesDropped(List<Path> paths) {
         int copyFails = 0;
         for (Path path : paths) {
             try {

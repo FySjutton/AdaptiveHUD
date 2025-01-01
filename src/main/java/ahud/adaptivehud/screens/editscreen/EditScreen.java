@@ -30,7 +30,7 @@ public class EditScreen extends Screen {
 
     @Override
     protected void init() {
-        EditorWidget editor = new EditorWidget(textRenderer, 10, 10, width - 20, height - 20, Text.of("Editor"));
+        EditorWidget editor = new EditorWidget(textRenderer, 10, 10, width - 20, height - 20, Text.empty(), Text.of("Editor"));
         editor.setText(element.get("value").getAsString());
         editor.setChangeListener(x -> {
             element.addProperty("value", editor.getText());

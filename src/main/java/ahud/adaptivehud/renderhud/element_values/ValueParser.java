@@ -66,7 +66,6 @@ public class ValueParser {
                     } else {
                         parsedResult = parseLoop(innerContent);
                     }
-
                 } else if (type == ']') {
                     parsedResult = parseCondition(innerContent);
                     if (parsedResult == null) {
@@ -183,7 +182,7 @@ public class ValueParser {
                         if (loopVarName != null) {
                             result = loopValue;
                         } else {
-                            result = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), parameters);
+                            result = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), (Object[]) parameters);
                         }
                         AttributeResult parsedResult = new AttributeParser().parseAttributes(attributes, result);
                         method = parsedResult.method();
@@ -194,7 +193,7 @@ public class ValueParser {
                             return resultText;
                         }
                     } else if (!method.isAnnotationPresent(RequiresAttributes.class)) {
-                        Object value = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), parameters);
+                        Object value = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), (Object[]) parameters);
                         if (value instanceof String) {
                             varValue = String.valueOf(value);
                         } else {

@@ -43,7 +43,7 @@ public class Environment {
     }
 
     public String snowing() {
-        return String.valueOf(client.world.isRaining() && (client.world.getBiome(player.getBlockPos()).value().getPrecipitation(player.getBlockPos()) == Biome.Precipitation.SNOW));
+        return String.valueOf(client.world.isRaining() && (client.world.getBiome(player.getBlockPos()).value().getPrecipitation(player.getBlockPos(), 63) == Biome.Precipitation.SNOW));
     }
 
     public String raining() {

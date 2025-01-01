@@ -29,10 +29,10 @@
 	"depends": {
 		"fabricloader": ">=0.14.0",
 		"fabric": "*",
-		"minecraft": ">=1.21"
+		"minecraft": ">=1.21.4"
 	},
 	"recommends": {
-		"modmenu": ">=11.0.0"
+		"modmenu": ">=13.0.0"
 	},
 	"custom": {
 		"modmenu": {
