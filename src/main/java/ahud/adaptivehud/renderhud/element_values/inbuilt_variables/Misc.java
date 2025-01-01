@@ -1,6 +1,7 @@
 package ahud.adaptivehud.renderhud.element_values.inbuilt_variables;
 
 import ahud.adaptivehud.renderhud.element_values.annotations.LocalFlagName;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
@@ -16,6 +17,8 @@ import net.minecraft.stat.Stats;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import static ahud.adaptivehud.AdaptiveHUD.complexVARS;
 import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
@@ -111,5 +114,13 @@ public class Misc {
 
     public Iterable<Entity> entities() {
         return client.world.getEntities();
+    }
+
+    public String loaded_entities() {
+        return String.valueOf(Iterables.size(client.world.getEntities()));
+    }
+
+    public String loaded_particles() {
+        return String.valueOf(client.particleManager.particles.values().stream().mapToInt(Collection::size).sum());
     }
 }

@@ -23,6 +23,7 @@
 			"ahud.adaptivehud.ModMenuIntegration"
 		]
 	},
+	"accessWidener": "adaptivehud.accesswidener",
 	"mixins": [
 		"adaptivehud.mixins.json"
 	],

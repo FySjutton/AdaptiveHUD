@@ -12,6 +12,9 @@ import java.util.concurrent.TimeUnit;
 
 import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
+import oshi.hardware.CentralProcessor;
+import oshi.SystemInfo;
+
 public class ComplexVars {
     private final FlagTools tools = new FlagTools();
     private long lastRun = 0;
@@ -20,9 +23,12 @@ public class ComplexVars {
     private double oldY = 0;
     private double oldZ = 0;
 
+    private long[] prevTicks = new long[CentralProcessor.TickType.values().length];
+
     public double changeX;
     public double changeY;
     public double changeZ;
+    public double cpuLoad;
 
     public HitResult targetBlock;
     public HitResult targetBlockFluid;
@@ -48,6 +54,9 @@ public class ComplexVars {
         oldX = player.getX();
         oldY = player.getY();
         oldZ = player.getZ();
+        CentralProcessor cpu = new SystemInfo().getHardware().getProcessor();
+        cpuLoad = cpu.getSystemCpuLoadBetweenTicks(prevTicks) * 100;
+        prevTicks = cpu.getSystemCpuLoadTicks();
     }
 
     public void cpsClick(int scancode) {

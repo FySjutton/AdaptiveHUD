@@ -3,6 +3,12 @@ package ahud.adaptivehud.renderhud.element_values.inbuilt_variables;
 import ahud.adaptivehud.renderhud.element_values.annotations.SetDefaultGlobalFlag;
 import com.mojang.blaze3d.platform.GlDebugInfo;
 import net.minecraft.client.MinecraftClient;
+import oshi.SystemInfo;
+
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+
+import static ahud.adaptivehud.AdaptiveHUD.complexVARS;
 
 public class PCInfo {
     private final MinecraftClient client = MinecraftClient.getInstance();
@@ -18,6 +24,11 @@ public class PCInfo {
     @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String gpu() {
         return String.valueOf(client.getGpuUtilizationPercentage());
+    }
+
+    @SetDefaultGlobalFlag(flag = "round", values = {"0"})
+    public String cpu() { // this is just a personal beta, public 1.21.4 might not include it
+        return String.valueOf(complexVARS.cpuLoad);
     }
 
     public String display_vendor() {
