@@ -1,5 +1,6 @@
 package ahud.adaptivehud.screens.movescreen;
 
+import ahud.adaptivehud.AdaptiveHUD;
 import ahud.adaptivehud.ConfigFiles;
 import ahud.adaptivehud.renderhud.CoordCalculators;
 import ahud.adaptivehud.renderhud.RenderHUD;
@@ -20,6 +21,7 @@ import java.util.List;
 import static ahud.adaptivehud.AdaptiveHUD.renderElements;
 import static ahud.adaptivehud.ConfigFiles.configFile;
 import static ahud.adaptivehud.ConfigFiles.elementArray;
+import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 
 @Environment(EnvType.CLIENT)
 public class MoveScreen extends Screen {
@@ -120,6 +122,20 @@ public class MoveScreen extends Screen {
 
             if (!foundX) {
                 snapX = 0;
+
+                int actualX = new CoordCalculators().getActualCords(dragged, (int) ((mouseX - offsetX)), client.getWindow().getScaledWidth(), width, 0, "X");
+                JsonObject alignElm = dragged.get("alignment").getAsJsonObject();
+                if (alignElm.get("itemAlignXMode").getAsInt() == 0) {
+                    if (actualX < client.getWindow().getScaledWidth() / 3) {
+                        alignElm.addProperty("itemAlignX", 0);
+                    } else if (actualX > client.getWindow().getScaledWidth() / 3 * 2) {
+                        alignElm.addProperty("itemAlignX", 2);
+                    } else {
+                        alignElm.addProperty("itemAlignX", 1);
+                    }
+                    updateAlignment();
+                }
+
                 dragged.addProperty("posX", new CoordCalculators().getRelativeCords(dragged, (int) ((mouseX - offsetX)), client.getWindow().getScaledWidth(), width, "X"));
             }
             if (!foundY) {
@@ -158,43 +174,47 @@ public class MoveScreen extends Screen {
                         }
                     }
 
-                    JsonObject align = dragged.get("alignment").getAsJsonObject();
-                    int PitemAlignX = align.get("itemAlignX").getAsInt();
-                    if (PitemAlignX == 0) {
-                        itemAlignX = 0;
-                    } else if (PitemAlignX == 1) {
-                        itemAlignX = client.currentScreen.width / 2;
-                    } else {
-                        itemAlignX = client.currentScreen.width;
-                    }
-                    int PitemAlignY = align.get("itemAlignY").getAsInt();
-                    if (PitemAlignY == 0) {
-                        itemAlignY = 0;
-                    } else if (PitemAlignY == 1) {
-                        itemAlignY = client.currentScreen.height / 2 - 1;
-                    } else {
-                        itemAlignY = client.currentScreen.height - 2;
-                    }
-                    int PalignX = align.get("selfAlignX").getAsInt();
-                    if (PalignX == 0) {
-                        alignX = 0;
-                    } else if (PalignX == 1) {
-                        alignX = width / 2;
-                    } else {
-                        alignX = width;
-                    }
-                    int PalignY = align.get("selfAlignY").getAsInt();
-                    if (PalignY == 0) {
-                        alignY = 0;
-                    } else if (PalignY == 1) {
-                        alignY = height / 2;
-                    } else {
-                        alignY = height;
-                    }
+                    updateAlignment();
                 }
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private void updateAlignment() {
+        JsonObject align = dragged.get("alignment").getAsJsonObject();
+        int PitemAlignX = align.get("itemAlignX").getAsInt();
+        if (PitemAlignX == 0) {
+            itemAlignX = 0;
+        } else if (PitemAlignX == 1) {
+            itemAlignX = client.currentScreen.width / 2;
+        } else {
+            itemAlignX = client.currentScreen.width;
+        }
+        int PitemAlignY = align.get("itemAlignY").getAsInt();
+        if (PitemAlignY == 0) {
+            itemAlignY = 0;
+        } else if (PitemAlignY == 1) {
+            itemAlignY = client.currentScreen.height / 2 - 1;
+        } else {
+            itemAlignY = client.currentScreen.height - 2;
+        }
+        int PalignX = align.get("selfAlignX").getAsInt();
+        if (PalignX == 0) {
+            alignX = 0;
+        } else if (PalignX == 1) {
+            alignX = width / 2;
+        } else {
+            alignX = width;
+        }
+        int PalignY = align.get("selfAlignY").getAsInt();
+        if (PalignY == 0) {
+            alignY = 0;
+        } else if (PalignY == 1) {
+            alignY = height / 2;
+        } else {
+            alignY = height;
+        }
     }
 
     @Override

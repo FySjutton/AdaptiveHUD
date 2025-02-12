@@ -55,6 +55,10 @@ jar {
 	}
 }
 
+loom {
+	accessWidenerPath = file("src/main/resources/adaptivehud.accesswidener")
+}
+
 // Source sets configuration
 sourceSets {
 	main {

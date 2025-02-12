@@ -3,6 +3,8 @@ package ahud.adaptivehud.renderhud.element_values;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.util.hit.HitResult;
+import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -23,9 +25,12 @@ public class ComplexVars {
     public double changeX;
     public double changeY;
     public double changeZ;
+    public double cpuLoad;
 
     public HitResult targetBlock;
     public HitResult targetBlockFluid;
+
+    private long[] prevTicks = new long[CentralProcessor.TickType.values().length];
 
     private final HashMap<Integer, Integer> cpsCounter = new HashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -48,6 +53,10 @@ public class ComplexVars {
         oldX = player.getX();
         oldY = player.getY();
         oldZ = player.getZ();
+
+        CentralProcessor cpu = new SystemInfo().getHardware().getProcessor();
+        cpuLoad = cpu.getSystemCpuLoadBetweenTicks(prevTicks) * 100;
+        prevTicks = cpu.getSystemCpuLoadTicks();
     }
 
     public void cpsClick(int scancode) {

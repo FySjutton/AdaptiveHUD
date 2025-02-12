@@ -4,6 +4,8 @@ import ahud.adaptivehud.renderhud.element_values.annotations.SetDefaultGlobalFla
 import com.mojang.blaze3d.platform.GlDebugInfo;
 import net.minecraft.client.MinecraftClient;
 
+import static ahud.adaptivehud.AdaptiveHUD.complexVARS;
+
 public class PCInfo {
     private final MinecraftClient client = MinecraftClient.getInstance();
 
@@ -34,6 +36,11 @@ public class PCInfo {
 
     public String cpu_name() {
         return GlDebugInfo.getCpuInfo();
+    }
+
+    @SetDefaultGlobalFlag(flag = "round", values = {"0"})
+    public String cpu() {
+        return String.valueOf(complexVARS.cpuLoad);
     }
 
     public String memory_allocated() {

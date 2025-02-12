@@ -16,6 +16,7 @@ import static ahud.adaptivehud.AdaptiveHUD.LOGGER;
 public class JsonValidator {
     private static final Pattern COLOR_REGEX = Pattern.compile("^#?([0-9A-Fa-f]{6})([0-9A-Fa-f]{2})?$");
     private static final Set<Integer> ALLOWED_POS = Set.of(0, 1, 2);
+    private static final Set<Integer> ALLOWED_MODE_POS = Set.of(0, 1, 2, 3);
 
     private void addDefaultProperty(JsonObject obj, String key, JsonElement defaultValue) {
         if (!obj.has(key)) {
@@ -51,6 +52,11 @@ public class JsonValidator {
         addDefaultProperty(alignment, "selfAlignX", new JsonPrimitive(0));
         addDefaultProperty(alignment, "selfAlignY", new JsonPrimitive(0));
         addDefaultProperty(alignment, "textAlign", new JsonPrimitive(0));
+        addDefaultProperty(alignment, "itemAlignXMode", new JsonPrimitive(0));
+        addDefaultProperty(alignment, "itemAlignYMode", new JsonPrimitive(0));
+        addDefaultProperty(alignment, "selfAlignXMode", new JsonPrimitive(0));
+        addDefaultProperty(alignment, "selfAlignYMode", new JsonPrimitive(0));
+        addDefaultProperty(alignment, "textAlignMode", new JsonPrimitive(0));
 
         JsonObject advanced = getOrCreateObject(obj, "advanced");
         addDefaultProperty(advanced, "scale", new JsonPrimitive(0));
@@ -68,10 +74,15 @@ public class JsonValidator {
 
     private String validateAlignment(JsonObject alignment) {
         if (!ALLOWED_POS.contains(alignment.get("itemAlignX").getAsInt()) ||
-                !ALLOWED_POS.contains(alignment.get("itemAlignY").getAsInt()) ||
-                !ALLOWED_POS.contains(alignment.get("selfAlignX").getAsInt()) ||
-                !ALLOWED_POS.contains(alignment.get("selfAlignY").getAsInt()) ||
-                !ALLOWED_POS.contains(alignment.get("textAlign").getAsInt())
+            !ALLOWED_POS.contains(alignment.get("itemAlignY").getAsInt()) ||
+            !ALLOWED_POS.contains(alignment.get("selfAlignX").getAsInt()) ||
+            !ALLOWED_POS.contains(alignment.get("selfAlignY").getAsInt()) ||
+            !ALLOWED_POS.contains(alignment.get("textAlign").getAsInt()) ||
+            !ALLOWED_MODE_POS.contains(alignment.get("itemAlignXMode").getAsInt()) ||
+            !ALLOWED_MODE_POS.contains(alignment.get("itemAlignYMode").getAsInt()) ||
+            !ALLOWED_MODE_POS.contains(alignment.get("selfAlignXMode").getAsInt()) ||
+            !ALLOWED_MODE_POS.contains(alignment.get("selfAlignYMode").getAsInt()) ||
+            !ALLOWED_MODE_POS.contains(alignment.get("textAlignMode").getAsInt())
         ){
             return Text.translatable("adaptivehud.config.error.invalid_alignment").getString();
         }

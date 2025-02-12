@@ -56,13 +56,13 @@ public class ElementScreen extends Screen {
         // 4: Text Field (color validation)
         // 5: Text Field (int validation)
         // 6: Button (Open value screen)
-        // 7: Button (left - center - right)
-        // 8: Button (top - center - bottom)
+        // 7: Button (auto - left - center - right)
+        // 8: Button (auto - top - center - bottom)
         // 9: Text Field (scale validation, min 0 max 10, 0 -> DEFAULT)
         tabs[0] = new newTab(
             this, "general", null,
-            new ArrayList<>(List.of("name", "value", "textColor", "posX", "posY", "shadow")),
-            new ArrayList<>(List.of(3, 6, 4, 5, 5, 1))
+            new ArrayList<>(List.of("name", "value", "textColor", "shadow")),
+            new ArrayList<>(List.of(3, 6, 4, 1))
         );
         tabs[1] = new newTab(
             this, "background", "background",
@@ -71,7 +71,7 @@ public class ElementScreen extends Screen {
         );
         tabs[2] = new newTab(
                 this, "alignment", "alignment",
-                new ArrayList<>(List.of("textAlign", "itemAlignX", "itemAlignY", "selfAlignX", "selfAlignY")),
+                new ArrayList<>(List.of("textAlignMode", "itemAlignXMode", "itemAlignYMode", "selfAlignXMode", "selfAlignYMode")),
                 new ArrayList<>(List.of(7, 7, 8, 7, 8))
         );
         tabs[3] = new newTab(

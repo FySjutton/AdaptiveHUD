@@ -14,6 +14,12 @@
     "backgroundColor": "#0000004c"
   },
   "alignment": {
+    "itemAlignXMode": 0,
+    "itemAlignYMode": 0,
+    "selfAlignXMode": 0,
+    "selfAlignYMode": 0,
+    "textAlignMode": 0,
+
     "itemAlignX": 0,
     "itemAlignY": 0,
     "selfAlignX": 0,

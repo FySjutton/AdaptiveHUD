@@ -89,7 +89,7 @@ public class ValueParser {
             }
         }
 
-        return text;
+        return text.replaceAll("(?<!\\\\)\\\\", "");
     }
 
     public boolean renderCheck(String text) {

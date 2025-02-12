@@ -118,13 +118,21 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
         if (button.type == 1) {
             element.addProperty(setting, !element.get(setting).getAsBoolean());
         } else if (button.type == 7 || button.type == 8) {
-            // [7] 0: Left, 1: Center, 2: Right
+            // [7] 0: Auto, 1: Left, 2: Center, 3: Right
             // [8] 0: Top, 1: Center, 2: Bottom
             int current = element.get(setting).getAsInt();
+            String substring = setting.substring(0, setting.length() - 4);
             if (current == 0) {
+                element.addProperty(substring, 0);
                 element.addProperty(setting, 1);
+            } else if (current == 1) {
+                element.addProperty(substring, 1);
+                element.addProperty(setting, 2);
+            } else if (current == 2) {
+                element.addProperty(substring, 2);
+                element.addProperty(setting, 3);
             } else {
-                element.addProperty(setting, current == 1 ? 2 : 0);
+                element.addProperty(setting, 0);
             }
         } else if (button.type == 6) {
             // Open the value screen, this is like the first comment i've made, i'll start being better :((((
@@ -140,8 +148,10 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
         } else if (button.type == 7) {
             int current = element.get(setting).getAsInt();
             if (current == 0) {
-                button.setMessage(Text.translatable("adaptivehud.config.button.left"));
+                button.setMessage(Text.translatable("adaptivehud.config.button.auto"));
             } else if (current == 1) {
+                button.setMessage(Text.translatable("adaptivehud.config.button.left"));
+            } else if (current == 2) {
                 button.setMessage(Text.translatable("adaptivehud.config.button.center"));
             } else {
                 button.setMessage(Text.translatable("adaptivehud.config.button.right"));
@@ -149,8 +159,10 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
         } else if (button.type == 8) {
             int current = element.get(setting).getAsInt();
             if (current == 0) {
-                button.setMessage(Text.translatable("adaptivehud.config.button.top"));
+                button.setMessage(Text.translatable("adaptivehud.config.button.auto"));
             } else if (current == 1) {
+                button.setMessage(Text.translatable("adaptivehud.config.button.top"));
+            } else if (current == 2) {
                 button.setMessage(Text.translatable("adaptivehud.config.button.center"));
             } else {
                 button.setMessage(Text.translatable("adaptivehud.config.button.bottom"));
