@@ -2,7 +2,7 @@ package ahud.adaptivehud.renderhud.variables.inbuilt_variables;
 
 import ahud.adaptivehud.renderhud.variables.annotations.SetDefaultGlobalFlag;
 import ahud.adaptivehud.renderhud.variables.annotations.SpecialFlagName;
-import com.mojang.blaze3d.platform.GlDebugInfo;
+import com.mojang.blaze3d.platform.GLX;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.ClientBrandRetriever;
@@ -24,6 +24,9 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionTypes;
 import org.apache.commons.lang3.text.WordUtils;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
+import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
 
 import static ahud.adaptivehud.AdaptiveHUD.complexVARS;
 
@@ -40,15 +43,15 @@ public class DefaultVariables {
 
     // ----- BETA.3 BELOW
     public String gpu_version() {
-        return GlDebugInfo.getVersion();
+        return GL11.glGetString(GL11.GL_VERSION);
     }
 
-    public String gpu_name() {
-        return GlDebugInfo.getRenderer();
+    public String getGpuName() {
+        return GL11.glGetString(GL11.GL_RENDERER);
     }
 
-    public String display_vendor() {
-        return GlDebugInfo.getVendor();
+    public String getDisplayVendor() {
+        return GL11.glGetString(GL11.GL_VENDOR);
     }
 
     public String display_height() {
@@ -59,8 +62,10 @@ public class DefaultVariables {
         return String.valueOf(MinecraftClient.getInstance().getWindow().getFramebufferWidth());
     }
 
-    public String cpu_name() {
-        return GlDebugInfo.getCpuInfo();
+    public String getCpuName() {
+        SystemInfo systemInfo = new SystemInfo();
+        CentralProcessor processor = systemInfo.getHardware().getProcessor();
+        return processor.getProcessorIdentifier().getName();
     }
 
     public String memory_allocated() {
@@ -437,23 +442,23 @@ public class DefaultVariables {
     }
 
     public String gamemode() {
-        return client.interactionManager.getCurrentGameMode().getName();
+        return client.interactionManager.getCurrentGameMode().getId();
     }
 
     public String survival() {
-        return String.valueOf(client.interactionManager.getCurrentGameMode().getId() == 0);
+        return String.valueOf(client.interactionManager.getCurrentGameMode().getId().equals("survival"));
     }
 
     public String creative() {
-        return String.valueOf(client.interactionManager.getCurrentGameMode().getId() == 1);
+        return String.valueOf(client.interactionManager.getCurrentGameMode().getId().equals("creative"));
     }
 
     public String adventure() {
-        return String.valueOf(client.interactionManager.getCurrentGameMode().getId() == 2);
+        return String.valueOf(client.interactionManager.getCurrentGameMode().getId().equals("adventure"));
     }
 
     public String spectator() {
-        return String.valueOf(client.interactionManager.getCurrentGameMode().getId() == 3);
+        return String.valueOf(client.interactionManager.getCurrentGameMode().getId().equals("spectator"));
     }
 
     public String chat_open() {

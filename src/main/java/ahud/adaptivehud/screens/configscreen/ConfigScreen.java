@@ -89,7 +89,7 @@ public class ConfigScreen extends Screen {
             addDrawableChild(discordButton);
         }
 
-        scrollableList = new ScrollableList(height, width, this);
+        scrollableList = new ScrollableList(client, height, width, this);
         addDrawableChild(scrollableList);
 
         changesMade();
@@ -137,7 +137,7 @@ public class ConfigScreen extends Screen {
             }
             newObject.addProperty("name", newName);
             elementArray.add(newElement);
-            scrollableList.updateElementList(width);
+            scrollableList.updateEntries();
             changesMade();
         } catch (Exception e) {
             LOGGER.error("Failed to create new element!");
@@ -163,7 +163,7 @@ public class ConfigScreen extends Screen {
         for (JsonElement elm : elementArray) {
             BACKUP_ELEMENT_ARR.add(elm.deepCopy());
         }
-        scrollableList.updateElementList(width);
+        scrollableList.updateEntries();
     }
 
     private void moveElements() {
@@ -186,11 +186,11 @@ public class ConfigScreen extends Screen {
         saveButtonElm.setMessage(Text.translatable("adaptivehud.config." + (fileChanged ? "save" : "done")));
     }
 
-    public void deleteElement(JsonElement element, int width) {
+    public void deleteElement(JsonElement element) {
         elementArray.remove(element);
         String deleted_file_name = element.getAsJsonObject().get("name").getAsString();
         addDeletedFile(deleted_file_name);
-        scrollableList.updateElementList(width);
+        scrollableList.updateEntries();
         changesMade();
     }
 

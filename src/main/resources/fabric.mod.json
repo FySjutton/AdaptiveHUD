@@ -10,7 +10,7 @@
 	"contact": {
 		"issues": "https://discord.gg/6gBT2CgqQj"
 	},
-	"license": "CC0-1.0",
+	"license": "AdaptiveHUD License",
 	"icon": "assets/adaptivehud/mod_icon.png",
 	"environment": "client",
 	"entrypoints": {
@@ -25,12 +25,12 @@
 		"adaptivehud.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.14.0",
+		"fabricloader": ">=0.16.0",
 		"fabric": "*",
-		"minecraft": ">=1.21.2"
+		"minecraft": ">=1.21.5"
 	},
 	"recommends": {
-		"modmenu": ">=12.0.0"
+		"modmenu": ">=14.0.0-"
 	},
 	"custom": {
 		"adaptivehud": {
