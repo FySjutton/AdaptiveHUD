@@ -1,5 +1,6 @@
 package avox.adaptivehud;
 
+import com.google.gson.JsonObject;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -12,5 +13,7 @@ public class AdaptiveHUD implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Hello Fabric world!");
+
+		ElementManager.addElement(new TextElement(null, AnchorPoint.TopLeft));
 	}
 }
