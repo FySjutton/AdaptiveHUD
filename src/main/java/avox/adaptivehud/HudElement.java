@@ -1,5 +1,6 @@
 package avox.adaptivehud;
 
+import avox.adaptivehud.anchor.AnchorPoint;
 import com.google.gson.JsonObject;
 import net.minecraft.client.gui.DrawContext;
 
@@ -7,8 +8,8 @@ public abstract class HudElement {
     public String name;
 
     public HudElement(JsonObject savedData, AnchorPoint anchorPoint, String name) {
-        this.anchorPoint = anchorPoint;
         this.name = name;
+        this.anchorPoint = anchorPoint;
     }
 
     public AnchorPoint anchorPoint;

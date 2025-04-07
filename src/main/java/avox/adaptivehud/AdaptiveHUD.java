@@ -1,6 +1,7 @@
 package avox.adaptivehud;
 
-import com.google.gson.JsonObject;
+import avox.adaptivehud.anchor.AnchorMode;
+import avox.adaptivehud.anchor.AnchorPoint;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -27,7 +28,7 @@ public class AdaptiveHUD implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Hello Fabric world!");
 
-		ElementManager.addElement(new TextElement(null, AnchorPoint.TopLeft, "TestingElm1"));
+		ElementManager.addElement(new TextElement(null, new AnchorPoint(), "TestingElm1"));
 
 		ClientTickEvents.START_CLIENT_TICK.register(client -> {
 			if (moveScreenKeyBind.wasPressed()) {
