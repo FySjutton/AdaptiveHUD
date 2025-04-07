@@ -6,8 +6,9 @@ import net.minecraft.client.gui.DrawContext;
 public abstract class HudElement {
     public String name;
 
-    public HudElement(JsonObject savedData, AnchorPoint anchorPoint) {
+    public HudElement(JsonObject savedData, AnchorPoint anchorPoint, String name) {
         this.anchorPoint = anchorPoint;
+        this.name = name;
     }
 
     public AnchorPoint anchorPoint;

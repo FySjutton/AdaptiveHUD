@@ -8,9 +8,10 @@ public class TextElement extends HudElement {
     private final MinecraftClient client;
     public String content;
 
-    public TextElement(JsonObject savedData, AnchorPoint anchorPoint) {
-        super(savedData, anchorPoint);
+    public TextElement(JsonObject savedData, AnchorPoint anchorPoint, String name) {
+        super(savedData, anchorPoint, name);
         client = MinecraftClient.getInstance();
+        content = "Testing wehoo!";
     }
 
     @Override
