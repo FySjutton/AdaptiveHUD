@@ -1,7 +1,5 @@
 package avox.adaptivehud;
 
-import avox.adaptivehud.anchor.AnchorMode;
-import avox.adaptivehud.anchor.AnchorPoint;
 import com.google.gson.JsonObject;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;

@@ -1,8 +1,5 @@
 package avox.adaptivehud;
 
-import avox.adaptivehud.anchor.AnchorMode;
-import avox.adaptivehud.anchor.AnchorPointX;
-import avox.adaptivehud.anchor.AnchorPointY;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -58,24 +55,45 @@ public class MoveScreen extends Screen {
             int elementHeight = draggedElement.getEstimatedHeight();
 
             // Auto anchor based on screen position
-            if (draggedElement.anchorPoint.mode.equals(AnchorMode.Auto)) {
+            if (draggedElement.anchorPoint.mode.equals(AnchorPoint.Mode.AUTO)) {
                 int centerX = draggedElement.x + elementWidth / 2;
                 int centerY = draggedElement.y + elementHeight / 2;
 
                 if (centerX < windowWidth / 3) {
-                    draggedElement.anchorPoint.x = AnchorPointX.Left;
+                    draggedElement.anchorPoint.x = AnchorPoint.X.LEFT;
                 } else if (centerX > windowWidth / 3 * 2) {
-                    draggedElement.anchorPoint.x = AnchorPointX.Right;
+                    draggedElement.anchorPoint.x = AnchorPoint.X.RIGHT;
                 } else {
-                    draggedElement.anchorPoint.x = AnchorPointX.Center;
+                    draggedElement.anchorPoint.x = AnchorPoint.X.CENTER;
                 }
 
                 if (centerY < windowHeight / 3) {
-                    draggedElement.anchorPoint.y = AnchorPointY.Top;
+                    draggedElement.anchorPoint.y = AnchorPoint.Y.TOP;
                 } else if (centerY > windowHeight / 3 * 2) {
-                    draggedElement.anchorPoint.y = AnchorPointY.Bottom;
+                    draggedElement.anchorPoint.y = AnchorPoint.Y.BOTTOM;
                 } else {
-                    draggedElement.anchorPoint.y = AnchorPointY.Middle;
+                    draggedElement.anchorPoint.y = AnchorPoint.Y.MIDDLE;
+                }
+            }
+
+            if (draggedElement.anchorPoint.mode.equals(AnchorPoint.Mode.AUTO)) {
+                int centerX = draggedElement.x + elementWidth / 2;
+                int centerY = draggedElement.y + elementHeight / 2;
+
+                if (centerX < windowWidth / 3) {
+                    draggedElement.anchorPoint.x = AnchorPoint.X.LEFT;
+                } else if (centerX > windowWidth / 3 * 2) {
+                    draggedElement.anchorPoint.x = AnchorPoint.X.RIGHT;
+                } else {
+                    draggedElement.anchorPoint.x = AnchorPoint.X.CENTER;
+                }
+
+                if (centerY < windowHeight / 3) {
+                    draggedElement.anchorPoint.y = AnchorPoint.Y.TOP;
+                } else if (centerY > windowHeight / 3 * 2) {
+                    draggedElement.anchorPoint.y = AnchorPoint.Y.BOTTOM;
+                } else {
+                    draggedElement.anchorPoint.y = AnchorPoint.Y.MIDDLE;
                 }
             }
 

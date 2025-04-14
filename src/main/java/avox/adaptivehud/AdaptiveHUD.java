@@ -1,7 +1,5 @@
 package avox.adaptivehud;
 
-import avox.adaptivehud.anchor.AnchorMode;
-import avox.adaptivehud.anchor.AnchorPoint;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
