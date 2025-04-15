@@ -8,8 +8,8 @@ public class TextElement extends HudElement {
     private final MinecraftClient client;
     public String content;
 
-    public TextElement(JsonObject savedData, AnchorPoint anchorPoint, String name) {
-        super(savedData, anchorPoint, name);
+    public TextElement(JsonObject savedData, Alignment alignment, String name) {
+        super(savedData, alignment, name);
         client = MinecraftClient.getInstance();
         content = "Testing wehoo!";
     }

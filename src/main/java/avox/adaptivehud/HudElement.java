@@ -6,12 +6,13 @@ import net.minecraft.client.gui.DrawContext;
 public abstract class HudElement {
     public String name;
 
-    public HudElement(JsonObject savedData, AnchorPoint anchorPoint, String name) {
+    public HudElement(JsonObject savedData, Alignment alignment, String name) {
         this.name = name;
-        this.anchorPoint = anchorPoint;
+        this.alignment = alignment;
+        this.alignment.element = this;
     }
 
-    public AnchorPoint anchorPoint;
+    public Alignment alignment;
 
     public int x;
     public int y;

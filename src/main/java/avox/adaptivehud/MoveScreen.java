@@ -26,8 +26,10 @@ public class MoveScreen extends Screen {
             context.drawCenteredTextWithShadow(client.textRenderer, hudElement.name, (hudElement.x + hudElement.getEstimatedWidth() / 2), hudElement.y + (hudElement.getEstimatedHeight() / 2) - client.textRenderer.fontHeight / 2, 0xFFFFFFFF);
         }
         if (draggedElement != null) {
-            context.fill(draggedElement.anchorPoint.getX(), draggedElement.anchorPoint.getY() - 1, draggedElement.x, draggedElement.anchorPoint.getY() + 1, 0xFFFFFFFF);
-            context.fill(draggedElement.x, draggedElement.anchorPoint.getY(), draggedElement.x + 1, draggedElement.y, 0xFFFFFFFF);
+            Position screenOrigin = draggedElement.alignment.getScreenOrigin();
+            Position elementOrigin = draggedElement.alignment.getElementOrigin();
+            context.fill(screenOrigin.x(), screenOrigin.y(), elementOrigin.x(), screenOrigin.y() + 1, 0xFFFFFFFF);
+            context.fill(elementOrigin.x(), screenOrigin.y(), elementOrigin.x() + 1, elementOrigin.y(), 0xFFFFFFFF);
         }
     }
 
@@ -49,75 +51,61 @@ public class MoveScreen extends Screen {
             draggedElement.x = Math.clamp((int) (mouseX + relativeX), 0, client.getWindow().getScaledWidth() - draggedElement.getEstimatedWidth());
             draggedElement.y = Math.clamp((int) (mouseY + relativeY), 0, client.getWindow().getScaledHeight() - draggedElement.getEstimatedHeight());
 
+
             int windowWidth = client.getWindow().getScaledWidth();
             int windowHeight = client.getWindow().getScaledHeight();
             int elementWidth = draggedElement.getEstimatedWidth();
             int elementHeight = draggedElement.getEstimatedHeight();
 
             // Auto anchor based on screen position
-            if (draggedElement.anchorPoint.mode.equals(AnchorPoint.Mode.AUTO)) {
+            if (draggedElement.alignment.anchorPoint.mode.equals(Alignment.AnchorPoint.Mode.AUTO)) {
                 int centerX = draggedElement.x + elementWidth / 2;
                 int centerY = draggedElement.y + elementHeight / 2;
 
                 if (centerX < windowWidth / 3) {
-                    draggedElement.anchorPoint.x = AnchorPoint.X.LEFT;
+                    draggedElement.alignment.anchorPoint.x = Alignment.X.LEFT;
                 } else if (centerX > windowWidth / 3 * 2) {
-                    draggedElement.anchorPoint.x = AnchorPoint.X.RIGHT;
+                    draggedElement.alignment.anchorPoint.x = Alignment.X.RIGHT;
                 } else {
-                    draggedElement.anchorPoint.x = AnchorPoint.X.CENTER;
+                    draggedElement.alignment.anchorPoint.x = Alignment.X.CENTER;
                 }
 
                 if (centerY < windowHeight / 3) {
-                    draggedElement.anchorPoint.y = AnchorPoint.Y.TOP;
+                    draggedElement.alignment.anchorPoint.y = Alignment.Y.TOP;
                 } else if (centerY > windowHeight / 3 * 2) {
-                    draggedElement.anchorPoint.y = AnchorPoint.Y.BOTTOM;
+                    draggedElement.alignment.anchorPoint.y = Alignment.Y.BOTTOM;
                 } else {
-                    draggedElement.anchorPoint.y = AnchorPoint.Y.MIDDLE;
+                    draggedElement.alignment.anchorPoint.y = Alignment.Y.MIDDLE;
                 }
             }
 
-            if (draggedElement.anchorPoint.mode.equals(AnchorPoint.Mode.AUTO)) {
+            if (draggedElement.alignment.selfAlign.mode.equals(Alignment.SelfAlign.Mode.AUTO)) {
                 int centerX = draggedElement.x + elementWidth / 2;
                 int centerY = draggedElement.y + elementHeight / 2;
 
                 if (centerX < windowWidth / 3) {
-                    draggedElement.anchorPoint.x = AnchorPoint.X.LEFT;
+                    draggedElement.alignment.selfAlign.x = Alignment.X.LEFT;
                 } else if (centerX > windowWidth / 3 * 2) {
-                    draggedElement.anchorPoint.x = AnchorPoint.X.RIGHT;
+                    draggedElement.alignment.selfAlign.x = Alignment.X.RIGHT;
                 } else {
-                    draggedElement.anchorPoint.x = AnchorPoint.X.CENTER;
+                    draggedElement.alignment.selfAlign.x = Alignment.X.CENTER;
                 }
 
                 if (centerY < windowHeight / 3) {
-                    draggedElement.anchorPoint.y = AnchorPoint.Y.TOP;
+                    draggedElement.alignment.selfAlign.y = Alignment.Y.TOP;
                 } else if (centerY > windowHeight / 3 * 2) {
-                    draggedElement.anchorPoint.y = AnchorPoint.Y.BOTTOM;
+                    draggedElement.alignment.selfAlign.y = Alignment.Y.BOTTOM;
                 } else {
-                    draggedElement.anchorPoint.y = AnchorPoint.Y.MIDDLE;
+                    draggedElement.alignment.selfAlign.y = Alignment.Y.MIDDLE;
                 }
             }
 
-//            // Auto origin based on grab position inside element
-//            if (draggedElement.selfAlign.mode == SelfAlignMode.Auto) {
-//                double localX = mouseX - draggedElement.x;
-//                double localY = mouseY - draggedElement.y;
-//
-//                if (localX < (double) elementWidth / 3) {
-//                    draggedElement.selfAlign.x = SelfAlignX.Left;
-//                } else if (localX > (double) elementWidth / 3 * 2) {
-//                    draggedElement.selfAlign.x = SelfAlignX.Right;
-//                } else {
-//                    draggedElement.selfAlign.x = SelfAlignX.Center;
-//                }
-//
-//                if (localY < (double) elementHeight / 3) {
-//                    draggedElement.selfAlign.y = SelfAlignY.Top;
-//                } else if (localY > (double) elementHeight / 3 * 2) {
-//                    draggedElement.selfAlign.y = SelfAlignY.Bottom;
-//                } else {
-//                    draggedElement.selfAlign.y = SelfAlignY.Middle;
-//                }
-//            }
+            Position relativeCord = draggedElement.alignment.getRelativeCords(
+                    new Position(draggedElement.x, draggedElement.y),
+                    new Position(draggedElement.getEstimatedWidth(), draggedElement.getEstimatedHeight())
+            );
+            draggedElement.relativeX = relativeCord.x();
+            draggedElement.relativeY = relativeCord.y();
         }
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
