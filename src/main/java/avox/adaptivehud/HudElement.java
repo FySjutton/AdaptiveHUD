@@ -19,6 +19,8 @@ public abstract class HudElement {
     public int relativeX;
     public int relativeY;
 
+    public float scale = 1;
+
     // The estimated width of the element, the width it will have on the moving screen
     public abstract int getEstimatedWidth();
     public abstract int getEstimatedHeight();

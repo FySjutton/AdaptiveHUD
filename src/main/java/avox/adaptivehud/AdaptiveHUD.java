@@ -24,8 +24,6 @@ public class AdaptiveHUD implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Hello Fabric world!");
-
 		ElementManager.addElement(new TextElement(null, new Alignment(new Alignment.AnchorPoint(), new Alignment.SelfAlign()), "TestingElm1"));
 
 		ClientTickEvents.START_CLIENT_TICK.register(client -> {

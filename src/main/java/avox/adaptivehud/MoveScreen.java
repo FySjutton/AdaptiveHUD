@@ -6,16 +6,23 @@ import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 
+import static avox.adaptivehud.AdaptiveHUD.LOGGER;
+
 public class MoveScreen extends Screen {
     private final ArrayList<HudElement> hudElements;
     private HudElement draggedElement;
+    private HudElement hoveredElement;
     private double relativeX;
     private double relativeY;
+
+    private final ScaleWidget scaleWidget;
 
     public MoveScreen(Text title) {
         super(title);
 
         hudElements = ElementManager.getHudElements();
+        scaleWidget = new ScaleWidget();
+        addSelectableChild(scaleWidget);
     }
 
     @Override
@@ -28,21 +35,45 @@ public class MoveScreen extends Screen {
         if (draggedElement != null) {
             Position screenOrigin = draggedElement.alignment.getScreenOrigin();
             Position elementOrigin = draggedElement.alignment.getElementOrigin();
-            context.fill(screenOrigin.x(), screenOrigin.y(), elementOrigin.x(), screenOrigin.y() + 1, 0xFFFFFFFF);
+            context.fill(screenOrigin.x(), screenOrigin.y(), elementOrigin.x(), screenOrigin.y() + (draggedElement.alignment.anchorPoint.y.equals(Alignment.Y.BOTTOM) ? -1 : 1), 0xFFFFFFFF);
             context.fill(elementOrigin.x(), screenOrigin.y(), elementOrigin.x() + 1, elementOrigin.y(), 0xFFFFFFFF);
         }
+        scaleWidget.render(context, mouseX, mouseY, deltaTicks);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        for (HudElement hudElement : hudElements) {
-            if (mouseX > hudElement.x && mouseX < hudElement.x + hudElement.getEstimatedWidth() && mouseY > hudElement.y && mouseY < hudElement.y + hudElement.getEstimatedHeight()) {
-                draggedElement = hudElement;
-                relativeX = hudElement.x - mouseX;
-                relativeY = hudElement.y - mouseY;
+        if (!scaleWidget.isHovered(mouseX, mouseY)) {
+            draggedElement = hoveredElement;
+//        hoveredElement = null;
+            relativeX = draggedElement.x - mouseX;
+            relativeY = draggedElement.y - mouseY;
+        }
+
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public void mouseMoved(double mouseX, double mouseY) {
+        HudElement hovered = null;
+        if (draggedElement == null) {
+            for (HudElement hudElement : hudElements) {
+                if (mouseX > hudElement.x && mouseX < hudElement.x + hudElement.getEstimatedWidth() && mouseY > hudElement.y && mouseY < hudElement.y + hudElement.getEstimatedHeight()) {
+                    hovered = hudElement;
+                }
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+
+        if (hoveredElement != hovered) {
+            hoveredElement = hovered;
+            if (hoveredElement != null) {
+                scaleWidget.setVisible(hoveredElement.x, hoveredElement.y, hoveredElement.getEstimatedWidth(), hoveredElement.getEstimatedHeight());
+            } else {
+                scaleWidget.disableVisibility();
+            }
+        }
+
+        super.mouseMoved(mouseX, mouseY);
     }
 
     @Override
@@ -100,12 +131,14 @@ public class MoveScreen extends Screen {
                 }
             }
 
-            Position relativeCord = draggedElement.alignment.getRelativeCords(
-                    new Position(draggedElement.x, draggedElement.y),
-                    new Position(draggedElement.getEstimatedWidth(), draggedElement.getEstimatedHeight())
-            );
+            Position relativeCord = draggedElement.alignment.getRelativeCords(new Position(draggedElement.x, draggedElement.y));
             draggedElement.relativeX = relativeCord.x();
             draggedElement.relativeY = relativeCord.y();
+
+            LOGGER.info("Anchor point: " + "X: " + draggedElement.alignment.anchorPoint.x.name() + " Y: " + draggedElement.alignment.anchorPoint.y.name());
+            LOGGER.info("Self Align: " + "X: " + draggedElement.alignment.selfAlign.x.name() + " Y: " + draggedElement.alignment.selfAlign.y.name());
+        } else {
+            scaleWidget.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
         }
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }

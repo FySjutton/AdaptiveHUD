@@ -44,10 +44,10 @@ public class Alignment {
         );
     }
     
-    public Position getRelativeCords(Position cord, Position size) {
+    public Position getRelativeCords(Position cord) {
         return new Position(
-            cord.x() - getAlignX(anchorPoint.x, client.getWindow().getScaledWidth()) + getAlignX(selfAlign.x, size.x()),
-            cord.y() - getAlignY(anchorPoint.y, client.getWindow().getScaledHeight() + getAlignY(selfAlign.y, size.y()))
+            cord.x() - getAlignX(anchorPoint.x, client.getWindow().getScaledWidth()),
+            cord.y() - getAlignY(anchorPoint.y, client.getWindow().getScaledHeight())
         );
     }
 
