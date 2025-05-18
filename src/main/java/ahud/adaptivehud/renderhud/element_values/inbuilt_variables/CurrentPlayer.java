@@ -28,22 +28,22 @@ public class CurrentPlayer {
     }
 
     public String gamemode() {
-        return client.interactionManager.getCurrentGameMode().getName();
+        return client.interactionManager.getCurrentGameMode().getId();
     }
 
     public String survival() {
-        return String.valueOf(client.interactionManager.getCurrentGameMode().getId() == 0);
+        return String.valueOf(client.interactionManager.getCurrentGameMode().getId().equals("survival"));
     }
 
     public String creative() {
-        return String.valueOf(client.interactionManager.getCurrentGameMode().getId() == 1);
+        return String.valueOf(client.interactionManager.getCurrentGameMode().getId().equals("creative"));
     }
 
     public String adventure() {
-        return String.valueOf(client.interactionManager.getCurrentGameMode().getId() == 2);
+        return String.valueOf(client.interactionManager.getCurrentGameMode().getId().equals("adventure"));
     }
 
     public String spectator() {
-        return String.valueOf(client.interactionManager.getCurrentGameMode().getId() == 3);
+        return String.valueOf(client.interactionManager.getCurrentGameMode().getId().equals("spectator"));
     }
 }

@@ -1,12 +1,12 @@
 package ahud.adaptivehud.renderhud.element_values.inbuilt_variables;
 
 import ahud.adaptivehud.renderhud.element_values.annotations.SetDefaultGlobalFlag;
-import com.mojang.blaze3d.platform.GlDebugInfo;
-import net.minecraft.client.MinecraftClient;
-import oshi.SystemInfo;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
+import net.minecraft.client.MinecraftClient;
+import org.lwjgl.opengl.GL11;
+import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
+
 
 import static ahud.adaptivehud.AdaptiveHUD.complexVARS;
 
@@ -14,11 +14,11 @@ public class PCInfo {
     private final MinecraftClient client = MinecraftClient.getInstance();
 
     public String gpu_version() {
-        return GlDebugInfo.getVersion();
+        return GL11.glGetString(GL11.GL_VERSION);
     }
 
     public String gpu_name() {
-        return GlDebugInfo.getRenderer();
+        return GL11.glGetString(GL11.GL_RENDERER);
     }
 
     @SetDefaultGlobalFlag(flag = "round", values = {"1"})
@@ -32,7 +32,7 @@ public class PCInfo {
     }
 
     public String display_vendor() {
-        return GlDebugInfo.getVendor();
+        return GL11.glGetString(GL11.GL_VENDOR);
     }
 
     public String display_height() {
@@ -44,7 +44,9 @@ public class PCInfo {
     }
 
     public String cpu_name() {
-        return GlDebugInfo.getCpuInfo();
+        SystemInfo systemInfo = new SystemInfo();
+        CentralProcessor processor = systemInfo.getHardware().getProcessor();
+        return processor.getProcessorIdentifier().getName();
     }
 
     public String memory_allocated() {

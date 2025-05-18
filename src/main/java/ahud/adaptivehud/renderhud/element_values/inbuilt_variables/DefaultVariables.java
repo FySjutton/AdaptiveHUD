@@ -3,7 +3,7 @@ package ahud.adaptivehud.renderhud.element_values.inbuilt_variables;
 import ahud.adaptivehud.renderhud.element_values.annotations.RequiresAttributes;
 import ahud.adaptivehud.renderhud.element_values.annotations.LocalFlagName;
 import ahud.adaptivehud.renderhud.element_values.annotations.SetDefaultGlobalFlag;
-import com.mojang.blaze3d.platform.GlDebugInfo;
+//import com.mojang.blaze3d.platform.GlDebugInfo;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.ClientBrandRetriever;
