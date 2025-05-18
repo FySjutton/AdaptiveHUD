@@ -64,13 +64,11 @@ public class MoveScreen extends Screen {
             }
         }
 
-        if (hoveredElement != hovered) {
-            hoveredElement = hovered;
-            if (hoveredElement != null) {
-                scaleWidget.setVisible(hoveredElement.x, hoveredElement.y, hoveredElement.getEstimatedWidth(), hoveredElement.getEstimatedHeight());
-            } else {
-                scaleWidget.disableVisibility();
-            }
+        hoveredElement = hovered;
+        if (hoveredElement != null) {
+            scaleWidget.setVisible(hoveredElement.x, hoveredElement.y, hoveredElement.getEstimatedWidth(), hoveredElement.getEstimatedHeight());
+        } else {
+            scaleWidget.disableVisibility();
         }
 
         super.mouseMoved(mouseX, mouseY);

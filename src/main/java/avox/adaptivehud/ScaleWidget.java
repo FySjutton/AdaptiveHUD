@@ -16,6 +16,8 @@ public class ScaleWidget implements Drawable, Element, Selectable {
     public int elmWidth;
     public int elmHeight;
 
+    private final int scaleButtonSize = 2;
+
     public void disableVisibility() {
         visible = false;
     }
@@ -45,7 +47,7 @@ public class ScaleWidget implements Drawable, Element, Selectable {
             if (x < mouseX && x + 2 > mouseX && y < mouseY && y + 2 > mouseY) {
                 hovered = true;
             }
-            if (x + elmWidth < mouseX && x + elmWidth - 2 > mouseX && y < mouseY && y + 2 > mouseY) {
+            if (x + elmWidth - 2 < mouseX && x + elmWidth > mouseX && y < mouseY && y + 2 > mouseY) {
                 hovered = true;
             }
             if (x + elmWidth < mouseX && x + elmWidth - 2 > mouseX && y + elmHeight < mouseY && y + elmHeight - 2 > mouseY) {
@@ -55,6 +57,7 @@ public class ScaleWidget implements Drawable, Element, Selectable {
                 hovered = true;
             }
         }
+        LOGGER.info(String.valueOf(hovered));
         return hovered;
     }
 
