@@ -128,7 +128,7 @@ public class DefaultVariables {
     }
 
     public String queued_tasks() {
-        return String.valueOf(client.worldRenderer.getChunkBuilder().getToBatchCount());
+        return String.valueOf(client.worldRenderer.getChunkBuilder().getScheduledTaskCount());
     }
 
     public String render_distance() {
@@ -438,7 +438,7 @@ public class DefaultVariables {
     }
 
     public String version() {
-        return SharedConstants.getGameVersion().getName();
+        return SharedConstants.getGameVersion().name();
     }
 
     public String gamemode() {

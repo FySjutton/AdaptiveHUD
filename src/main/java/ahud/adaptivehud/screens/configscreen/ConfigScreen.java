@@ -9,6 +9,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -98,11 +99,11 @@ public class ConfigScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredTextWithShadow(textRenderer, "AdaptiveHUD", width / 2, 20, 0xffffff);
+        context.drawCenteredTextWithShadow(textRenderer, "AdaptiveHUD", width / 2, 20, 0xFFFFFFFF);
 
         if (renderDiscordButton) {
-            context.drawTexture(RenderLayer::getGuiTextured, DISCORD_TEXTURE, width - discordWidth - 5, 23, 0, 0, 14, 14, 14, 14);
-            context.drawText(textRenderer, DISCORD_TEXT, width - discordWidth + 14, (int) (26.5), 0xFFFFFF, true);
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, DISCORD_TEXTURE, width - discordWidth - 5, 23, 0, 0, 14, 14, 14, 14);
+            context.drawText(textRenderer, DISCORD_TEXT, width - discordWidth + 14, (int) (26.5), 0xFFFFFFFF, true);
         }
     }
 

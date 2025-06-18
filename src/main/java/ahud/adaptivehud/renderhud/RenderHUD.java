@@ -9,6 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import org.joml.Matrix3x2fStack;
 
 import java.util.*;
 
@@ -49,7 +50,7 @@ public class RenderHUD {
         }
 
         ValueParser parser = new ValueParser();
-        MatrixStack matrices = drawContext.getMatrices();
+        Matrix3x2fStack matrices = drawContext.getMatrices();
 
         for (JsonElement element : ConfigFiles.elementArray) {
             JsonObject x = element.getAsJsonObject();
@@ -90,7 +91,7 @@ public class RenderHUD {
                 int posX;
                 int posY;
 
-                matrices.push();
+                matrices.pushMatrix();
                 float setScale = x.get("advanced").getAsJsonObject().get("scale").getAsFloat();
                 float trueScale = 1;
                 if (setScale != 0) {
@@ -99,10 +100,10 @@ public class RenderHUD {
                     float itemHeight = 9 + x.get("background").getAsJsonObject().get("paddingY").getAsInt() * 2;
                     int wantedHeight = Math.round(itemHeight * defaultScale);
                     trueScale = wantedHeight / itemHeight;
-                    matrices.scale(trueScale, trueScale, 1);
+                    matrices.scale(trueScale, trueScale);
                 } else {
                     trueScale = configFile.getAsJsonObject().get("default_size").getAsFloat();
-                    matrices.scale(trueScale, trueScale, 1);
+                    matrices.scale(trueScale, trueScale);
                 }
 
                 Tools tools = new Tools();
@@ -138,7 +139,7 @@ public class RenderHUD {
                     extra += 11;
                 }
 
-                matrices.pop();
+                matrices.popMatrix();
             }
         }
     }

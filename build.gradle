@@ -25,7 +25,7 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation "com.terraformersmc:modmenu:14.0.0-rc.1"
+	modImplementation "com.terraformersmc:modmenu:15.0.0-beta.2"
 
 	include implementation('com.udojava:EvalEx:2.7') // Adds math library, about +83kb to jar file
 }
