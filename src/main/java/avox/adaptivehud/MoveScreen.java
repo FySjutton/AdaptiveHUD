@@ -2,6 +2,7 @@ package avox.adaptivehud;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ public class MoveScreen extends Screen {
     private HudElement hoveredElement;
     private double relativeX;
     private double relativeY;
+
+
 
     private final ScaleWidget scaleWidget;
 
@@ -30,7 +33,13 @@ public class MoveScreen extends Screen {
         super.render(context, mouseX, mouseY, deltaTicks);
         for (HudElement hudElement : hudElements) {
             context.fill(hudElement.x, hudElement.y, hudElement.x + hudElement.getEstimatedWidth(), hudElement.y + hudElement.getEstimatedHeight(), 0xFF000000);
-            context.drawCenteredTextWithShadow(client.textRenderer, hudElement.name, (hudElement.x + hudElement.getEstimatedWidth() / 2), hudElement.y + (hudElement.getEstimatedHeight() / 2) - client.textRenderer.fontHeight / 2, 0xFFFFFFFF);
+
+            MatrixStack matrixStack = context.getMatrices();
+            matrixStack.push();
+            matrixStack.scale(hudElement.scale, hudElement.scale, 1);
+            float reverseScale = 1 / hudElement.scale;
+            context.drawCenteredTextWithShadow(client.textRenderer, hudElement.name, (int) ((hudElement.x + (float) hudElement.getEstimatedWidth() / 2) * reverseScale), (int) ((hudElement.y + ((float) hudElement.getEstimatedHeight() / 2) - (float) client.textRenderer.fontHeight / 2) * reverseScale), 0xFFFFFFFF);
+            matrixStack.pop();
         }
         if (draggedElement != null) {
             Position screenOrigin = draggedElement.alignment.getScreenOrigin();
@@ -43,11 +52,12 @@ public class MoveScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (!scaleWidget.isHovered(mouseX, mouseY)) {
+        if (!scaleWidget.isHovered(mouseX, mouseY) && hoveredElement != null) {
             draggedElement = hoveredElement;
 //        hoveredElement = null;
             relativeX = draggedElement.x - mouseX;
             relativeY = draggedElement.y - mouseY;
+
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
@@ -66,7 +76,7 @@ public class MoveScreen extends Screen {
 
         hoveredElement = hovered;
         if (hoveredElement != null) {
-            scaleWidget.setVisible(hoveredElement.x, hoveredElement.y, hoveredElement.getEstimatedWidth(), hoveredElement.getEstimatedHeight());
+            scaleWidget.setVisible(hoveredElement, hoveredElement.x, hoveredElement.y);
         } else {
             scaleWidget.disableVisibility();
         }

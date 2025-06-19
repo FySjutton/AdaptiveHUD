@@ -21,9 +21,17 @@ public abstract class HudElement {
 
     public float scale = 1;
 
+    public int getEstimatedWidth() {
+        return (int) (getEstimatedWidthWithoutScale() * scale);
+    }
+
+    public int getEstimatedHeight() {
+        return (int) (getEstimatedHeightWithoutScale() * scale);
+    }
+
     // The estimated width of the element, the width it will have on the moving screen
-    public abstract int getEstimatedWidth();
-    public abstract int getEstimatedHeight();
+    public abstract int getEstimatedWidthWithoutScale();
+    public abstract int getEstimatedHeightWithoutScale();
 
     public abstract void render(DrawContext context);
 

@@ -11,54 +11,63 @@ import static avox.adaptivehud.AdaptiveHUD.LOGGER;
 
 public class ScaleWidget implements Drawable, Element, Selectable {
     public boolean visible = false;
-    public int x;
-    public int y;
-    public int elmWidth;
-    public int elmHeight;
+    public int x = 0;
+    public int y = 0;
+    public HudElement hudElement;
+
+    private int originalWidth;
+    private int originalHeight;
+
 
     private final int scaleButtonSize = 2;
+
+    private DragCorner activeCorner = DragCorner.NONE;
 
     public void disableVisibility() {
         visible = false;
     }
 
-    public void setVisible(int x, int y, int width, int height) {
+    public void setVisible(HudElement hudElement, int x, int y) {
         this.x = x;
         this.y = y;
-        this.elmWidth = width;
-        this.elmHeight = height;
+        this.hudElement = hudElement;
+        originalWidth = hudElement.getEstimatedWidthWithoutScale();
+        originalHeight = hudElement.getEstimatedHeightWithoutScale();
         visible = true;
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         if (visible) {
+            int elmWidth = hudElement.getEstimatedWidth();
+            int elmHeight = hudElement.getEstimatedHeight();
 //            LOGGER.info("render");
-            context.fill(x, y, x + 2, y + 2, 0xFF4287f5);
-            context.fill(x + elmWidth, y, x + elmWidth - 2, y + 2, 0xFF4287f5);
-            context.fill(x + elmWidth, y + elmHeight, x + elmWidth - 2, y + elmHeight - 2, 0xFF4287f5);
-            context.fill(x, y + elmHeight, x + 2, y + elmHeight - 2, 0xFF4287f5);
+            context.fill(x, y, x + scaleButtonSize, y + scaleButtonSize, 0xFF4287f5);
+            context.fill(x + elmWidth, y, x + elmWidth - scaleButtonSize, y + scaleButtonSize, 0xFF4287f5);
+            context.fill(x + elmWidth, y + elmHeight, x + elmWidth - scaleButtonSize, y + elmHeight - scaleButtonSize, 0xFF4287f5);
+            context.fill(x, y + elmHeight, x + scaleButtonSize, y + elmHeight - scaleButtonSize, 0xFF4287f5);
         }
     }
 
     public boolean isHovered(double mouseX, double mouseY) {
-        boolean hovered = false;
-        if (visible) {
-            if (x < mouseX && x + 2 > mouseX && y < mouseY && y + 2 > mouseY) {
-                hovered = true;
-            }
-            if (x + elmWidth - 2 < mouseX && x + elmWidth > mouseX && y < mouseY && y + 2 > mouseY) {
-                hovered = true;
-            }
-            if (x + elmWidth < mouseX && x + elmWidth - 2 > mouseX && y + elmHeight < mouseY && y + elmHeight - 2 > mouseY) {
-                hovered = true;
-            }
-            if (x < mouseX && x + 2 > mouseX && y + elmHeight < mouseY && y + elmHeight - 2 > mouseY) {
-                hovered = true;
-            }
+        if (!visible) return false;
+
+        LOGGER.info("changed");
+        int elmWidth = hudElement.getEstimatedWidth();
+        int elmHeight = hudElement.getEstimatedHeight();
+        if (x < mouseX && mouseX < x + scaleButtonSize && y < mouseY && mouseY < y + scaleButtonSize) {
+            activeCorner = DragCorner.TOP_LEFT;
+        } else if (x + elmWidth - scaleButtonSize < mouseX && mouseX < x + elmWidth && y < mouseY && mouseY < y + scaleButtonSize) {
+            activeCorner = DragCorner.TOP_RIGHT;
+        } else if (x + elmWidth - scaleButtonSize < mouseX && mouseX < x + elmWidth && y + elmHeight - scaleButtonSize < mouseY && mouseY < y + elmHeight) {
+            activeCorner = DragCorner.BOTTOM_RIGHT;
+        } else if (x < mouseX && mouseX < x + scaleButtonSize && y + elmHeight - scaleButtonSize < mouseY && mouseY < y + elmHeight) {
+            activeCorner = DragCorner.BOTTOM_LEFT;
+        } else {
+            activeCorner = DragCorner.NONE;
         }
-        LOGGER.info(String.valueOf(hovered));
-        return hovered;
+
+        return activeCorner != DragCorner.NONE;
     }
 
     @Override
@@ -68,7 +77,52 @@ public class ScaleWidget implements Drawable, Element, Selectable {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        LOGGER.info("yes");
+        if (activeCorner == DragCorner.NONE) return false;
+
+        switch (activeCorner) {
+            case TOP_LEFT -> {
+                hudElement.x = (int) mouseX;
+                hudElement.y = (int) mouseY;
+
+                double cursorDeltaX = Math.abs(mouseX - x);
+                double cursorDeltaY = Math.abs(mouseY - y);
+
+                double scaleX = cursorDeltaX / originalWidth;
+                double scaleY = cursorDeltaY / originalHeight;
+
+                double uniformScale = Math.max(0.4f, Math.min(scaleX, scaleY)); // 0.4 min scale
+
+                hudElement.scale = (float) uniformScale;
+            }
+//            case TOP_RIGHT -> {
+//                int newWidth = (int)(mouseX - x);
+//                int newHeight = (int)(elmHeight + (y - mouseY));
+//                y = (int)mouseY;
+//                elmWidth = Math.max(1, newWidth);
+//                elmHeight = Math.max(1, newHeight);
+//            }
+            case BOTTOM_RIGHT -> {
+                LOGGER.info("here");
+                double cursorDeltaX = mouseX - x;
+                double cursorDeltaY = mouseY - y;
+
+                double scaleX = cursorDeltaX / originalWidth;
+                double scaleY = cursorDeltaY / originalHeight;
+
+                double uniformScale = Math.max(0.4f, Math.min(scaleX, scaleY)); // 0.4 min scale
+
+                hudElement.scale = (float) uniformScale;
+                LOGGER.info(String.valueOf(hudElement.scale));
+            }
+//            case BOTTOM_LEFT -> {
+//                int newWidth = (int)(elmWidth + (x - mouseX));
+//                int newHeight = (int)(mouseY - y);
+//                x = (int)mouseX;
+//                elmWidth = Math.max(1, newWidth);
+//                elmHeight = Math.max(1, newHeight);
+//            }
+        }
+
         return Element.super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
@@ -88,5 +142,9 @@ public class ScaleWidget implements Drawable, Element, Selectable {
     @Override
     public void appendNarrations(NarrationMessageBuilder builder) {
 
+    }
+
+    private enum DragCorner {
+        NONE, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
     }
 }

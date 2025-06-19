@@ -15,13 +15,13 @@ public class TextElement extends HudElement {
     }
 
     @Override
-    public int getEstimatedWidth() {
+    public int getEstimatedWidthWithoutScale() {
         // unparsed
         return client.textRenderer.getWidth(content);
     }
 
     @Override
-    public int getEstimatedHeight() {
+    public int getEstimatedHeightWithoutScale() {
         return 20;
     }
 
