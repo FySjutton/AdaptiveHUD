@@ -24,11 +24,11 @@ public class CustomTextField extends TextFieldWidget {
         if (value) {
             if (!errors.containsKey(this.getMessage().getString())) {
                 errors.put(this.getMessage().getString(), errorMessage);
-                this.setEditableColor(0xa83832);
+                this.setEditableColor(0xffa83832);
             }
         } else {
             errors.remove(this.getMessage().getString());
-            this.setEditableColor(0xFFFFFF);
+            this.setEditableColor(0xFFFFFFFF);
         }
         screen.updateDoneButton();
     }

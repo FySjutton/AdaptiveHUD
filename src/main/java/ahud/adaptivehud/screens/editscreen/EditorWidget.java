@@ -264,6 +264,7 @@ import ahud.adaptivehud.Tools;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -371,7 +372,8 @@ public class EditorWidget extends ScrollableTextFieldWidget {
                 if (bl && bl2 && i >= substring.beginIndex() && i <= substring.endIndex()) {
                     if (bl3) {
                         MutableText part1 = tools.colorTextRenderer(string.substring(substring.beginIndex(), substring.endIndex()), i - substring.beginIndex(), openings);
-                        j = context.drawTextWithShadow(textRenderer, part1, this.getX() + this.getPadding(), l, 0xFFFFFFFF) - 1;
+                        context.drawTextWithShadow(textRenderer, part1, this.getX() + this.getPadding(), l, 0xFFFFFFFF);
+                        j = textRenderer.getWidth(part1) - 1;
 //                        j = context.drawTextWithShadow(this.textRenderer, string.substring(substring.beginIndex(), i), this.getTextX(), l, -2039584) - 1;
                         int var10002 = l - 1;
                         int var10003 = j + 1;
@@ -379,12 +381,14 @@ public class EditorWidget extends ScrollableTextFieldWidget {
                         Objects.requireNonNull(this.textRenderer);
                         context.fill(j, var10002, var10003, var10004 + 9, -3092272);
                         MutableText part2 = tools.colorTextRenderer(string.substring(i, substring.endIndex()), substring.endIndex() - i, openings);
-                        j = context.drawTextWithShadow(textRenderer, part2, j, l, 0xFFFFFFFF);
+                        context.drawTextWithShadow(textRenderer, part2, j, l, 0xFFFFFFFF);
+                        j = textRenderer.getWidth(part2);
                     }
                 } else {
                     if (bl3) {
                         MutableText displayText = tools.colorTextRenderer(string.substring(substring.beginIndex(), substring.endIndex()), substring.endIndex() - substring.beginIndex(), openings);
-                        j = context.drawTextWithShadow(textRenderer, displayText, this.getX() + this.getPadding(), l, 0xFFFFFFFF);
+                        context.drawTextWithShadow(textRenderer, displayText, this.getX() + this.getPadding(), l, 0xFFFFFFFF);
+                        j = textRenderer.getWidth(displayText);
                     }
 
                     k = l;
@@ -461,7 +465,7 @@ public class EditorWidget extends ScrollableTextFieldWidget {
     }
 
     private void drawSelection(DrawContext context, int left, int top, int right, int bottom) {
-        context.fill(RenderLayer.getGuiTextHighlight(), left, top, right, bottom, -16776961);
+        context.fill(RenderPipelines.GUI_TEXT_HIGHLIGHT, left, top, right, bottom, -16776961);
     }
 
     private void onCursorChange() {

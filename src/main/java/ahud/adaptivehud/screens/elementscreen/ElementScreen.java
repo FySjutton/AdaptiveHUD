@@ -116,7 +116,7 @@ public class ElementScreen extends Screen {
     public void updateDoneButton() {
         doneButton.active = errors.isEmpty();
         if (!errors.isEmpty()) {
-            doneButton.setMessage(Text.translatable("adaptivehud.config.save_error").append(Text.literal(errors.values().toArray()[0].toString())).withColor(0xFF4F4F));
+            doneButton.setMessage(Text.translatable("adaptivehud.config.save_error").append(Text.literal(errors.values().toArray()[0].toString())).withColor(0xFFFF4F4F));
         } else {
             doneButton.setMessage(Text.translatable("adaptivehud.config.done"));
         }

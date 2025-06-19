@@ -15,7 +15,7 @@ public class TechincalInfo {
     }
 
     public String queued_tasks() {
-        return String.valueOf(client.worldRenderer.getChunkBuilder().getToBatchCount());
+        return String.valueOf(client.worldRenderer.getChunkBuilder().getScheduledTaskCount());
     }
 
     public String chunk_culling_enabled() {

@@ -86,7 +86,7 @@ public class Misc {
     }
 
     public String version() {
-        return SharedConstants.getGameVersion().getName();
+        return SharedConstants.getGameVersion().id();
     }
 
     public String mods() {

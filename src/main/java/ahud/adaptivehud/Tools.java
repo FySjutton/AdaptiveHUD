@@ -67,14 +67,14 @@ public class Tools {
             } else if ((openingChars.contains('[') || openingChars.contains('%')) && List.of('(', ')', '=', '<', '>', '&', '|', '+', '-', '/', '*', '^').contains(v)) {
                 color = 0xff8c8c8c;
             } else if ((openingChars.contains('[') || openingChars.contains('%')) && (String.valueOf(v).matches("\\d") || (v == '-' && next.matches("\\d")) || (v == '.' && String.valueOf(actualLast).matches("\\d") && next.matches("\\d")))) {
-                color = 0x6bffd3;
+                color = 0xff6bffd3;
             } else if (last == '[' && v == ':') {
                 openingChars.add(v);
-                color = 0xff6be1;
+                color = 0xffff6be1;
             } else if (openingChars.contains('[') && (v != ']' && v != ',')) {
-                color = 0x6bff8b;
+                color = 0xff6bff8b;
             } else if (last == ':' && v == ',') {
-                color = 0xc46bff;
+                color = 0xffc46bff;
                 openingChars.removeLast();
             } else if (openingChars.contains('[') && v == ']') {
                 color = 0xffffc766;

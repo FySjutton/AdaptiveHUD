@@ -13,6 +13,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -114,15 +115,15 @@ public class ConfigScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredTextWithShadow(textRenderer, "AdaptiveHUD", width / 2, 15, 0xffffff);
-        context.drawGuiTexture(RenderLayer::getGuiTextured, SEARCH_ICON, width / 2 + 1, 34, 12, 12);
+        context.drawCenteredTextWithShadow(textRenderer, "AdaptiveHUD", width / 2, 15, 0xffffffff);
+        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, SEARCH_ICON, width / 2 + 1, 34, 12, 12);
 
         if (renderDiscordButton) {
-            context.drawTexture(RenderLayer::getGuiTextured, DISCORD_TEXTURE, width - discordWidth - 13, 12, 0, 0, 14, 14, 14, 14);
-            context.drawText(textRenderer, DISCORD_TEXT, width - discordWidth + 6, (int) (15.5), 0xFFFFFF, true);
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, DISCORD_TEXTURE, width - discordWidth - 13, 12, 0, 0, 14, 14, 14, 14);
+            context.drawText(textRenderer, DISCORD_TEXT, width - discordWidth + 6, (int) (15.5), 0xFFFFFFFF, true);
         }
 
-        context.drawCenteredTextWithShadow(textRenderer, "§oDrag and drop files to add them", width / 2 + ((width - 17) - width / 2) / 2, height - 11, 0x888888);
+        context.drawCenteredTextWithShadow(textRenderer, "§oDrag and drop files to add them", width / 2 + ((width - 17) - width / 2) / 2, height - 11, 0xFF888888);
     }
 
     @Override
