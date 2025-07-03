@@ -9,6 +9,7 @@ import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.stat.Stat;
@@ -122,5 +123,10 @@ public class Misc {
 
     public String loaded_particles() {
         return String.valueOf(client.particleManager.particles.values().stream().mapToInt(Collection::size).sum());
+    }
+
+    public String totem() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        return String.valueOf((client.player.getMainHandStack().getItem() == Items.TOTEM_OF_UNDYING) || (client.player.getOffHandStack().getItem() == Items.TOTEM_OF_UNDYING));
     }
 }

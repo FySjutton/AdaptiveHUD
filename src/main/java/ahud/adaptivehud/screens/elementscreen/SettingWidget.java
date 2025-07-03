@@ -104,7 +104,7 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
             if (this.textField != null) {
                 this.textField.setY(y);
                 this.textField.render(drawContext, mouseX, mouseY, tickDelta);
-                drawContext.drawText(textRenderer, displayText, width / 2 - 150, y + entryHeight / 2 - textRenderer.fontHeight / 2, textField.error ? 0xff4f4f : 0xFFFFFFFF, true);
+                drawContext.drawText(textRenderer, displayText, width / 2 - 150, y + entryHeight / 2 - textRenderer.fontHeight / 2, textField.error ? 0xffff4f4f : 0xFFFFFFFF, true);
             }
             if (this.button != null) {
                 this.button.setY(y);
