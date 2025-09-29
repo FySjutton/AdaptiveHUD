@@ -7,9 +7,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 
@@ -67,9 +70,8 @@ public class ElementScreen extends Screen {
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        super.mouseReleased(mouseX, mouseY, button);
-        setFocused(null);
+    public boolean mouseReleased(Click click) {
+        super.mouseReleased(click);
         return true;
     }
 
@@ -84,19 +86,19 @@ public class ElementScreen extends Screen {
     }
 
     @Override
-    public boolean charTyped(char chr, int keyCode) {
-        if (scrollableArea.charTyped(chr, keyCode)) {
+    public boolean charTyped(CharInput input) {
+        if (scrollableArea.charTyped(input)) {
             return true;
         }
-        return super.charTyped(chr, keyCode);
+        return super.charTyped(input);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (scrollableArea.keyPressed(keyCode, scanCode, modifiers)) {
+    public boolean keyPressed(KeyInput input) {
+        if (scrollableArea.keyPressed(input)) {
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
 
     private void saveChanges() {

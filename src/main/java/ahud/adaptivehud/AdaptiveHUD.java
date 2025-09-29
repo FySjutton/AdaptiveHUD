@@ -11,11 +11,10 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,29 +25,30 @@ public class AdaptiveHUD implements ModInitializer {
 	public static VariableRegisterer variableRegister = new VariableRegisterer();
 	public static boolean renderElements = true;
 
+    private static final KeyBinding.Category category = KeyBinding.Category.create(Identifier.of(Text.translatable("adaptivehud.key.category").getString()));
 	public static final KeyBinding reloadElementsKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			Text.translatable("adaptivehud.key.reloadElements").getString(),
 			InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_UNKNOWN,
-			Text.translatable("adaptivehud.key.category").getString()
+			category
 	));
 	public static final KeyBinding reloadConfigKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			Text.translatable("adaptivehud.key.reloadConfig").getString(),
 			InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_UNKNOWN,
-			Text.translatable("adaptivehud.key.category").getString()
+            category
 	));
 	public static final KeyBinding openConfigKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			Text.translatable("adaptivehud.key.openConfig").getString(),
 			InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_F8,
-			Text.translatable("adaptivehud.key.category").getString()
+            category
 	));
 	public static final KeyBinding openMoveScreenKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			Text.translatable("adaptivehud.key.moveElements").getString(),
 			InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_RIGHT_SHIFT,
-			Text.translatable("adaptivehud.key.category").getString()
+            category
 	));
 
 	private RenderHUD hudRenderer;

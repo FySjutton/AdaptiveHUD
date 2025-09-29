@@ -38,7 +38,7 @@ public class DefaultVariables {
     // ----- BETA.5 BELOW
     public String display_name() {
         Text displayName = client.player.getDisplayName();
-        return displayName != null ? displayName.getString() : client.player.getGameProfile().getName();
+        return displayName != null ? displayName.getString() : client.player.getGameProfile().name();
     }
 
     // ----- BETA.3 BELOW
@@ -108,7 +108,7 @@ public class DefaultVariables {
     }
 
     public String forced_loaded_chunks() {
-        return String.valueOf(client.player.getWorld() instanceof ServerWorld ? ((ServerWorld) client.player.getWorld()).getForcedChunks() : 0);
+        return String.valueOf(client.player.getEntityWorld() instanceof ServerWorld ? ((ServerWorld) client.player.getEntityWorld()).getForcedChunks() : 0);
     }
 
     public String simulation_distance() {
@@ -189,19 +189,19 @@ public class DefaultVariables {
     }
 
     public String the_end() {
-        return String.valueOf(player.getWorld().getDimensionEntry().getKey().get() == DimensionTypes.THE_END);
+        return String.valueOf(player.getEntityWorld().getDimensionEntry().getKey().get() == DimensionTypes.THE_END);
     }
 
     public String nether() {
-        return String.valueOf(player.getWorld().getDimensionEntry().getKey().get() == DimensionTypes.THE_NETHER);
+        return String.valueOf(player.getEntityWorld().getDimensionEntry().getKey().get() == DimensionTypes.THE_NETHER);
     }
 
     public String overworld() {
-        return String.valueOf(player.getWorld().getDimensionEntry().getKey().get() == DimensionTypes.OVERWORLD); // OVERWORLD.CAVES?
+        return String.valueOf(player.getEntityWorld().getDimensionEntry().getKey().get() == DimensionTypes.OVERWORLD); // OVERWORLD.CAVES?
     }
 
     public String dimension() {
-        return String.valueOf(player.getWorld().getRegistryKey().getValue().toString());
+        return String.valueOf(player.getEntityWorld().getRegistryKey().getValue().toString());
     }
 
     public String on_ground() {
@@ -330,17 +330,17 @@ public class DefaultVariables {
 
     @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String tex() {
-        return String.valueOf(client.targetedEntity == null ? null : client.targetedEntity.getPos().x);
+        return String.valueOf(client.targetedEntity == null ? null : client.targetedEntity.getEntityPos().x);
     }
 
     @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String tey() {
-        return String.valueOf(client.targetedEntity == null ? null : client.targetedEntity.getPos().y);
+        return String.valueOf(client.targetedEntity == null ? null : client.targetedEntity.getEntityPos().y);
     }
 
     @SetDefaultGlobalFlag(flag = "round", values = {"1"})
     public String tez() {
-        return String.valueOf(client.targetedEntity == null ? null : client.targetedEntity.getPos().z);
+        return String.valueOf(client.targetedEntity == null ? null : client.targetedEntity.getEntityPos().z);
     }
 
     @SetDefaultGlobalFlag(flag = "round", values = {"1"})
@@ -577,8 +577,8 @@ public class DefaultVariables {
     }
 
     public String server_ip() {
-        if (player.getServer() != null) {
-            return String.valueOf(player.getServer().getServerIp());
+        if (player.getEntityWorld().getServer() != null) {
+            return String.valueOf(player.getEntityWorld().getServer().getServerIp());
         } else {
             return Text.translatable("adaptivehud.variable.noServerFound").getString();
         }

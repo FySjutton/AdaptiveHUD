@@ -3,12 +3,15 @@ package ahud.adaptivehud.screens.elementscreen;
 import com.google.gson.JsonObject;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
@@ -84,14 +87,14 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
                 .build();
             } else if (item.equals("anchorPointY") || item.equals("textAlignY")) {
                 this.button = ButtonWidget.builder(
-                    Text.literal(getY(parentElm.get(item).getAsInt())),
+                    Text.literal(getTextY(parentElm.get(item).getAsInt())),
                     ScrollableArea.this::alignY
                 )
                 .dimensions(clickableX, 0, 100, 20)
                 .build();
             } else if (item.equals("anchorPointX") || item.equals("textAlignX")) {
                 this.button = ButtonWidget.builder(
-                    Text.literal(getX(parentElm.get(item).getAsInt())),
+                    Text.literal(getTextX(parentElm.get(item).getAsInt())),
                     ScrollableArea.this::alignX
                 )
                 .dimensions(clickableX, 0, 100, 20)
@@ -133,37 +136,39 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
         }
 
         @Override
-        public void render(DrawContext drawContext, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             if (this.textField != null) {
-                this.textField.setY(y);
-                this.textField.render(drawContext, mouseX, mouseY, tickDelta);
-                drawContext.drawText(textRenderer, Text.translatable("adaptivehud.config.setting." + TITLES.get(index)).getString(), width / 2 - 150, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFFFF, true);
+                this.textField.setY(getY());
+                this.textField.render(context, mouseX, mouseY, deltaTicks);
+                context.drawText(textRenderer, Text.translatable("adaptivehud.config.setting." + setting), width / 2 - 150, getY() + itemHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFFFF, true);
             }
             if (this.button != null) {
-                this.button.setY(y);
-                this.button.render(drawContext, mouseX, mouseY, tickDelta);
-                drawContext.drawText(textRenderer, Text.translatable("adaptivehud.config.setting." + TITLES.get(index)).getString(), width / 2 - 150, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFFFF, true);
+                this.button.setY(getY());
+                this.button.render(context, mouseX, mouseY, deltaTicks);
+                context.drawText(textRenderer, Text.translatable("adaptivehud.config.setting." + setting), width / 2 - 150, getY() + itemHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFFFF, true);
             }
             if (this.title != null) {
-                drawContext.drawCenteredTextWithShadow(textRenderer, Text.translatable("adaptivehud.config.title." + this.title).getString(), width / 2, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFFFF);
+                context.drawCenteredTextWithShadow(textRenderer, Text.translatable("adaptivehud.config.title." + this.title).getString(), width / 2, getY() + itemHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFFFF);
             }
         }
 
         @Override
-        public boolean charTyped(char chr, int keyCode) {
-            return textField != null && textField.charTyped(chr, keyCode);
+        public boolean charTyped(CharInput input) {
+            return textField != null && textField.charTyped(input);
         }
 
         @Override
-        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            return textField != null && textField.keyPressed(keyCode, scanCode, modifiers);
+        public boolean keyPressed(KeyInput input) {
+            return textField != null && textField.keyPressed(input);
         }
 
         @Override
-        public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        public boolean mouseReleased(Click click) {
             if (!(this.getFocused() instanceof TextFieldWidget)) {
                 this.setFocused(null);
-            } else if (!this.getFocused().isMouseOver(mouseX, mouseY)) {
+                LOGGER.info("setting null2");
+            } else if (!this.getFocused().isMouseOver(click.x(), click.y())) {
+                LOGGER.info("Setting null");
                 this.setFocused(null);
             }
             return true;
@@ -198,7 +203,7 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
         }
     }
 
-    private String getX(int number) {
+    private String getTextX(int number) {
         if (number == 0) {
             return LEFT;
         } else if (number == 1) {
@@ -207,7 +212,7 @@ public class ScrollableArea extends ElementListWidget<ScrollableArea.Entry> {
             return RIGHT;
         }
     }
-    private String getY(int number) {
+    private String getTextY(int number) {
         if (number == 0) {
             return TOP;
         } else if (number == 1) {

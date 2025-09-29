@@ -9,8 +9,10 @@ import com.google.gson.JsonObject;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
@@ -88,29 +90,30 @@ public class MoveScreen extends Screen {
         client.setScreen(parent);
     }
 
+
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    public boolean mouseDragged(Click click, double offsetX, double offsetY) {
         if (dragged != null) {
             boolean foundX = false;
             boolean foundY = false;
             if (!shiftPressed) {
                 for (int x : this.snapPointsX) {
-                    if (Math.abs(mouseX - offsetX - x) < 5) {
+                    if (Math.abs(click.x() - offsetX - x) < 5) {
                         dragged.addProperty("posX", new CoordCalculators().getRelativeCords(dragged, x, client.getWindow().getScaledWidth(), width, "X"));
                         snapX = x;
                         foundX = true;
-                    } else if (Math.abs(mouseX - offsetX + width - x) < 5) {
+                    } else if (Math.abs(click.x() - offsetX + width - x) < 5) {
                         dragged.addProperty("posX", new CoordCalculators().getRelativeCords(dragged, x - width, client.getWindow().getScaledWidth(), width, "X"));
                         snapX = x;
                         foundX = true;
                     }
                 }
                 for (int y : this.snapPointsY) {
-                    if (Math.abs(mouseY - offsetY - y) < 5) {
+                    if (Math.abs(click.y() - offsetY - y) < 5) {
                         dragged.addProperty("posY", new CoordCalculators().getRelativeCords(dragged, y, client.getWindow().getScaledHeight(), height, "Y"));
                         snapY = y;
                         foundY = true;
-                    } else if (Math.abs(mouseY - offsetY + height - y) < 5) {
+                    } else if (Math.abs(click.y() - offsetY + height - y) < 5) {
                         dragged.addProperty("posY", new CoordCalculators().getRelativeCords(dragged, y - height, client.getWindow().getScaledHeight(), height, "Y"));
                         snapY = y;
                         foundY = true;
@@ -120,24 +123,24 @@ public class MoveScreen extends Screen {
 
             if (!foundX) {
                 snapX = 0;
-                dragged.addProperty("posX", new CoordCalculators().getRelativeCords(dragged, (int) ((mouseX - offsetX)), client.getWindow().getScaledWidth(), width, "X"));
+                dragged.addProperty("posX", new CoordCalculators().getRelativeCords(dragged, (int) ((click.y() - offsetX)), client.getWindow().getScaledWidth(), width, "X"));
             }
             if (!foundY) {
                 snapY = 0;
-                dragged.addProperty("posY", new CoordCalculators().getRelativeCords(dragged, (int) ((mouseY - offsetY)), client.getWindow().getScaledHeight(), height, "Y"));
+                dragged.addProperty("posY", new CoordCalculators().getRelativeCords(dragged, (int) ((click.y() - offsetY)), client.getWindow().getScaledHeight(), height, "Y"));
             }
         }
         return true;
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0) {
+    public boolean mouseClicked(Click click, boolean doubled) {
+        if (click.button() == 0) {
             for (Object[] x : posList) {
-                if ((mouseX >= (int) x[1] && mouseX <= (int) x[3]) && (mouseY >= (int) x[2] && mouseY <= (int) x[4])) {
+                if ((click.x() >= (int) x[1] && click.x() <= (int) x[3]) && (click.y() >= (int) x[2] && click.y() <= (int) x[4])) {
                     dragged = ((JsonElement) x[0]).getAsJsonObject();
-                    offsetX = mouseX - (int) x[1];
-                    offsetY = mouseY - (int) x[2];
+                    offsetX = click.x() - (int) x[1];
+                    offsetY = click.y() - (int) x[2];
                     height = (int) x[4] - (int) x[2];
                     width = (int) x[3] - (int) x[1];
                     dragInf = x;
@@ -194,12 +197,12 @@ public class MoveScreen extends Screen {
                 }
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (button == 0 && dragged != null) {
+    public boolean mouseReleased(Click click) {
+        if (click.button() == 0 && dragged != null) {
             int actX = new CoordCalculators().getActualCords(dragged, dragged.get("posX").getAsInt(), client.getWindow().getScaledWidth(), width, 0, "X");
             int actY = new CoordCalculators().getActualCords(dragged, dragged.get("posY").getAsInt(), client.getWindow().getScaledHeight(), height, 0, "Y");
             dragInf[1] = actX;
@@ -208,23 +211,23 @@ public class MoveScreen extends Screen {
             dragInf[4] = actY + height;
             dragged = null;
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(click);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_LEFT_SHIFT) {
+    public boolean keyPressed(KeyInput input) {
+        if (input.getKeycode() == GLFW.GLFW_KEY_LEFT_SHIFT) {
             shiftPressed = true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
 
     @Override
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_LEFT_SHIFT) {
+    public boolean keyReleased(KeyInput input) {
+        if (input.getKeycode() == GLFW.GLFW_KEY_LEFT_SHIFT) {
             shiftPressed = false;
         }
-        return super.keyReleased(keyCode, scanCode, modifiers);
+        return super.keyReleased(input);
     }
 
     @Override

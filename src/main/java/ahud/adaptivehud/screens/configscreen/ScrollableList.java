@@ -27,7 +27,7 @@ public class ScrollableList extends ElementListWidget<ScrollableList.Entry> {
 
 
     public ScrollableList(MinecraftClient client, int height, int width, ConfigScreen parent) {
-        super(client, width / 2 - 10, height - 50 - 10, 50, 25, 0);
+        super(client, width / 2 - 10, height - 50 - 10, 50, 25);
         setX(width / 2);
         this.PARENT = parent;
         this.width = width;
@@ -91,15 +91,15 @@ public class ScrollableList extends ElementListWidget<ScrollableList.Entry> {
         }
 
         @Override
-        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickProgress) {
-            editBtn.setY(y);
-            editBtn.render(context, mouseX, mouseY, tickProgress);
+        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+            editBtn.setY(getY());
+            editBtn.render(context, mouseX, mouseY, deltaTicks);
 
-            enableBtn.setY(y);
-            enableBtn.render(context, mouseX, mouseY, tickProgress);
+            enableBtn.setY(getY());
+            enableBtn.render(context, mouseX, mouseY, deltaTicks);
 
-            deleteBtn.setY(y);
-            deleteBtn.render(context, mouseX, mouseY, tickProgress);
+            deleteBtn.setY(getY());
+            deleteBtn.render(context, mouseX, mouseY, deltaTicks);
         }
     }
 
