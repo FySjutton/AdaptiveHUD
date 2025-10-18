@@ -21,6 +21,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,23 +40,24 @@ public class AdaptiveHUD implements ModInitializer {
 	public static final Map<String, Method> FLAGS = new HashMap<>();
 	public static final Map<Class<?>, Class<?>> ATTRIBUTE_CLASSES = new HashMap<>();
 
+    private static final KeyBinding.Category keybindingCategory = KeyBinding.Category.create(Identifier.of(Text.translatable("adaptivehud.key.category").getString()));
 	private static final KeyBinding reloadElementsKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			Text.translatable("adaptivehud.key.reloadElements").getString(),
 			InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_UNKNOWN,
-			Text.translatable("adaptivehud.key.category").getString()
+            keybindingCategory
 	));
 	private static final KeyBinding openConfigKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			Text.translatable("adaptivehud.key.openConfig").getString(),
 			InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_F8,
-			Text.translatable("adaptivehud.key.category").getString()
+            keybindingCategory
 	));
 	private static final KeyBinding openMoveScreenKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 			Text.translatable("adaptivehud.key.moveElements").getString(),
 			InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_RIGHT_SHIFT,
-			Text.translatable("adaptivehud.key.category").getString()
+            keybindingCategory
 	));
 
 	private RenderHUD hudRenderer;

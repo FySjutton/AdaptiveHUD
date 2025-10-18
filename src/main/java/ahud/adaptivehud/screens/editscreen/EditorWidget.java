@@ -263,6 +263,7 @@ package ahud.adaptivehud.screens.editscreen;//package ahud.adaptivehud.screens.e
 import ahud.adaptivehud.Tools;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
@@ -270,6 +271,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.gui.widget.ScrollableTextFieldWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -319,18 +321,18 @@ public class EditorWidget extends ScrollableTextFieldWidget {
     }
 
     public void onClick(double mouseX, double mouseY) {
-        this.editBox.setSelecting(Screen.hasShiftDown());
+        this.editBox.setSelecting(MinecraftClient.getInstance().isShiftPressed());
         this.moveCursor(mouseX, mouseY);
     }
 
     protected void onDrag(double mouseX, double mouseY, double deltaX, double deltaY) {
         this.editBox.setSelecting(true);
         this.moveCursor(mouseX, mouseY);
-        this.editBox.setSelecting(Screen.hasShiftDown());
+        this.editBox.setSelecting(MinecraftClient.getInstance().isShiftPressed());
     }
 
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return this.editBox.handleSpecialKey(keyCode);
+    public boolean keyPressed(KeyInput input) {
+        return this.editBox.handleSpecialKey(input);
     }
 
     public boolean charTyped(char chr, int modifiers) {

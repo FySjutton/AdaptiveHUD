@@ -20,7 +20,7 @@ public class Player {
 
     public String display_name() {
         Text displayName = player.getDisplayName();
-        return displayName != null ? displayName.getString() : player.getGameProfile().getName();
+        return displayName != null ? displayName.getString() : player.getGameProfile().name();
     }
 
     public String name() {

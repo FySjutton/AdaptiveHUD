@@ -16,7 +16,7 @@ public class CurrentPlayer {
 
     public String display_name() {
         Text displayName = client.player.getDisplayName();
-        return displayName != null ? displayName.getString() : client.player.getGameProfile().getName();
+        return displayName != null ? displayName.getString() : client.player.getGameProfile().name();
     }
 
     public String player_name() {

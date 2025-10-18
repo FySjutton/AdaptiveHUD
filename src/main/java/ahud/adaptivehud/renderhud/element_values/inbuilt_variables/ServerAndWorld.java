@@ -9,8 +9,8 @@ public class ServerAndWorld {
     private final PlayerEntity player = client.player;
 
     public String server_ip() {
-        if (player.getServer() != null) {
-            return String.valueOf(player.getServer().getServerIp());
+        if (client.getServer() != null) {
+            return String.valueOf(client.getServer().getServerIp());
         } else {
             return Text.translatable("adaptivehud.variable.noServerFound").getString();
         }

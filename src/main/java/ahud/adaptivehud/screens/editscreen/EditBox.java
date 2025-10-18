@@ -11,6 +11,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.input.CursorMovement;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Style;
 import net.minecraft.util.math.MathHelper;
 
@@ -153,31 +154,32 @@ public class EditBox {
         this.moveCursor(CursorMovement.ABSOLUTE, substring.beginIndex + k);
     }
 
-    public boolean handleSpecialKey(int keyCode) {
-        this.selecting = Screen.hasShiftDown();
-        if (Screen.isSelectAll(keyCode)) {
+    public boolean handleSpecialKey(KeyInput key) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        this.selecting = key.hasShift();
+        if (key.isSelectAll()) {
             this.cursor = this.text.length();
             this.selectionEnd = 0;
             return true;
-        } else if (Screen.isCopy(keyCode)) {
+        } else if (key.isCopy()) {
             MinecraftClient.getInstance().keyboard.setClipboard(this.getSelectedText());
             return true;
-        } else if (Screen.isPaste(keyCode)) {
+        } else if (key.isPaste()) {
             this.replaceSelection(MinecraftClient.getInstance().keyboard.getClipboard());
             return true;
-        } else if (Screen.isCut(keyCode)) {
+        } else if (key.isCut()) {
             MinecraftClient.getInstance().keyboard.setClipboard(this.getSelectedText());
             this.replaceSelection("");
             return true;
         } else {
             Substring substring;
-            return switch (keyCode) {
+            return switch (key.getKeycode()) {
                 case 257, 335 -> {
                     this.replaceSelection("\n");
                     yield true;
                 }
                 case 259 -> {
-                    if (Screen.hasControlDown()) {
+                    if (key.hasCtrl()) {
                         substring = this.getPreviousWordAtCursor();
                         this.delete(substring.beginIndex - this.cursor);
                     } else {
@@ -196,7 +198,7 @@ public class EditBox {
                     yield true;
                 }
                 case 261 -> {
-                    if (Screen.hasControlDown()) {
+                    if (key.hasCtrl()) {
                         substring = this.getNextWordAtCursor();
                         this.delete(substring.beginIndex - this.cursor);
                     } else {
@@ -205,7 +207,7 @@ public class EditBox {
                     yield true;
                 }
                 case 262 -> {
-                    if (Screen.hasControlDown()) {
+                    if (key.hasCtrl()) {
                         substring = this.getNextWordAtCursor();
                         this.moveCursor(CursorMovement.ABSOLUTE, substring.beginIndex);
                     } else {
@@ -214,7 +216,7 @@ public class EditBox {
                     yield true;
                 }
                 case 263 -> {
-                    if (Screen.hasControlDown()) {
+                    if (key.hasCtrl()) {
                         substring = this.getPreviousWordAtCursor();
                         this.moveCursor(CursorMovement.ABSOLUTE, substring.beginIndex);
                     } else {
@@ -223,13 +225,13 @@ public class EditBox {
                     yield true;
                 }
                 case 264 -> {
-                    if (!Screen.hasControlDown()) {
+                    if (!key.hasCtrl()) {
                         this.moveCursorLine(1);
                     }
                     yield true;
                 }
                 case 265 -> {
-                    if (!Screen.hasControlDown()) {
+                    if (!key.hasCtrl()) {
                         this.moveCursorLine(-1);
                     }
                     yield true;
@@ -243,7 +245,7 @@ public class EditBox {
                     yield true;
                 }
                 case 268 -> {
-                    if (Screen.hasControlDown()) {
+                    if (key.hasCtrl()) {
                         this.moveCursor(CursorMovement.ABSOLUTE, 0);
                     } else {
                         this.moveCursor(CursorMovement.ABSOLUTE, this.getCurrentLine().beginIndex);
@@ -251,7 +253,7 @@ public class EditBox {
                     yield true;
                 }
                 case 269 -> {
-                    if (Screen.hasControlDown()) {
+                    if (key.hasCtrl()) {
                         this.moveCursor(CursorMovement.END, 0);
                     } else {
                         this.moveCursor(CursorMovement.ABSOLUTE, this.getCurrentLine().endIndex);

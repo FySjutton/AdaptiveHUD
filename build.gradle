@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.10-SNAPSHOT'
+	id 'fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 }
 
@@ -29,7 +29,7 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation "com.terraformersmc:modmenu:15.0.0-beta.2"
+	modImplementation "com.terraformersmc:modmenu:16.0.0-rc.1"
 
 	include implementation('com.ezylang:EvalEx:3.4.0') // Adds math library, about +138kb to jar file
 }
@@ -59,7 +59,6 @@ jar {
 	}
 }
 
-// Source sets configuration
 sourceSets {
 	main {
 		java {
@@ -68,17 +67,5 @@ sourceSets {
 		resources {
 			srcDirs = ['src/main/resources']
 		}
-	}
-}
-
-publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
-			artifactId = project.archives_base_name
-			from components.java
-		}
-	}
-
-	repositories {
 	}
 }

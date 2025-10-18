@@ -100,16 +100,17 @@ public class SettingWidget extends ElementListWidget<SettingWidget.Entry> {
         }
 
         @Override
-        public void render(DrawContext drawContext, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            if (this.textField != null) {
-                this.textField.setY(y);
-                this.textField.render(drawContext, mouseX, mouseY, tickDelta);
-                drawContext.drawText(textRenderer, displayText, width / 2 - 150, y + entryHeight / 2 - textRenderer.fontHeight / 2, textField.error ? 0xffff4f4f : 0xFFFFFFFF, true);
+        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+
+                if (this.textField != null) {
+                this.textField.setY(getY());
+                this.textField.render(context, mouseX, mouseY, deltaTicks);
+                    context.drawText(textRenderer, displayText, width / 2 - 150, getY() + itemHeight / 2 - textRenderer.fontHeight / 2, textField.error ? 0xffff4f4f : 0xFFFFFFFF, true);
             }
             if (this.button != null) {
-                this.button.setY(y);
-                this.button.render(drawContext, mouseX, mouseY, tickDelta);
-                drawContext.drawText(textRenderer, displayText, width / 2 - 150, y + entryHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFFFF, true);
+                this.button.setY(getY());
+                this.button.render(context, mouseX, mouseY, deltaTicks);
+                context.drawText(textRenderer, displayText, width / 2 - 150, getY() + itemHeight / 2 - textRenderer.fontHeight / 2, 0xFFFFFFFF, true);
             }
         }
     }

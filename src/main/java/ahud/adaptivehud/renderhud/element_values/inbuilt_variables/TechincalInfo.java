@@ -35,6 +35,6 @@ public class TechincalInfo {
     }
 
     public String forced_loaded_chunks() {
-        return String.valueOf(client.player.getWorld() instanceof ServerWorld ? ((ServerWorld) client.player.getWorld()).getForcedChunks() : 0);
+        return String.valueOf(client.player.getEntityWorld() instanceof ServerWorld ? ((ServerWorld) client.player.getEntityWorld()).getForcedChunks() : 0);
     }
 }

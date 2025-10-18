@@ -99,14 +99,14 @@ public class ElementWidget extends ElementListWidget<ElementWidget.Entry> {
         }
 
         @Override
-        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            this.editBtn.setY(y);
-            this.toggleBtn.setY(y);
-            this.deleteBtn.setY(y);
+        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+            this.editBtn.setY(getY());
+            this.toggleBtn.setY(getY());
+            this.deleteBtn.setY(getY());
 
-            this.editBtn.render(context, mouseX, mouseY, tickDelta);
-            this.toggleBtn.render(context, mouseX, mouseY, tickDelta);
-            this.deleteBtn.render(context, mouseX, mouseY, tickDelta);
+            this.editBtn.render(context, mouseX, mouseY, deltaTicks);
+            this.toggleBtn.render(context, mouseX, mouseY, deltaTicks);
+            this.deleteBtn.render(context, mouseX, mouseY, deltaTicks);
         }
     }
 

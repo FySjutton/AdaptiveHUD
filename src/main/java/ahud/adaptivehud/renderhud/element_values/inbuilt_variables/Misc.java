@@ -122,11 +122,6 @@ public class Misc {
     }
 
     public String loaded_particles() {
-        return String.valueOf(client.particleManager.particles.values().stream().mapToInt(Collection::size).sum());
-    }
-
-    public String totem() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        return String.valueOf((client.player.getMainHandStack().getItem() == Items.TOTEM_OF_UNDYING) || (client.player.getOffHandStack().getItem() == Items.TOTEM_OF_UNDYING));
+        return String.valueOf(client.particleManager.particles.values().stream().mapToInt(renderer -> renderer.size()).sum());
     }
 }

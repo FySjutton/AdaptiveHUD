@@ -27,19 +27,19 @@ public class Environment {
     }
 
     public String dimension() {
-        return String.valueOf(player.getWorld().getRegistryKey().getValue().toString());
+        return String.valueOf(player.getEntityWorld().getRegistryKey().getValue().toString());
     }
 
     public String overworld() {
-        return String.valueOf(player.getWorld().getDimensionEntry().getKey().get() == DimensionTypes.OVERWORLD); // OVERWORLD.CAVES?
+        return String.valueOf(player.getEntityWorld().getDimensionEntry().getKey().get() == DimensionTypes.OVERWORLD); // OVERWORLD.CAVES?
     }
 
     public String nether() {
-        return String.valueOf(player.getWorld().getDimensionEntry().getKey().get() == DimensionTypes.THE_NETHER);
+        return String.valueOf(player.getEntityWorld().getDimensionEntry().getKey().get() == DimensionTypes.THE_NETHER);
     }
 
     public String the_end() {
-        return String.valueOf(player.getWorld().getDimensionEntry().getKey().get() == DimensionTypes.THE_END);
+        return String.valueOf(player.getEntityWorld().getDimensionEntry().getKey().get() == DimensionTypes.THE_END);
     }
 
     public String snowing() {
